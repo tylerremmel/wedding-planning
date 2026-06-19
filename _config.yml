@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Senior product designer
+title: The Grande-Remmel Wedding
 email: tyler@tylerremmel.com
 description: >- # this means to ignore newlines until "baseurl:"
   Tyler and Jenna are getting married! This is our wedding website, where you can find all the details about our big day.
