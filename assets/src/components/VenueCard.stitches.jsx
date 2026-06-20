@@ -171,6 +171,11 @@ export const DislikeButton = styled("button", {
   fontWeight: 700,
 });
 
+export const Icon = styled("span", {
+  position: "relative",
+  top: "1px",
+});
+
 export const CommentForm = styled("form", {
   display: "grid",
   gap: "12px",

@@ -70,8 +70,9 @@ export const ControlPanel = styled("div", {
 });
 
 export const FilterGroup = styled("div", {
-  display: "grid",
-  gap: "12px",
+  display: "none",
+  // display: "grid",
+  // gap: "12px",
 });
 
 export const LeftPanel = styled("div", {
