@@ -1,224 +1,174 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { styled } from "../styles/stitches";
-import { fetchRecordComments, submitComment } from "../utils/airtableApi";
+import {
+  fetchRecordComments,
+  submitComment,
+  submitReaction,
+} from "../utils/airtableApi";
+import { clearSession, getUserToken } from "../utils/airtableAuth";
+import {
+  Card,
+  CarouselWrapper,
+  CarouselImage,
+  CarouselNav,
+  CardBody,
+  VenueTitleRow,
+  VenueTitleLink,
+  VenueAddress,
+  CommentsSection,
+  CommentsTitle,
+  CommentsStream,
+  CommentBubble,
+  CommentMeta,
+  CommentText,
+  CommentPortal,
+  AddCommentButton,
+  HeartButton,
+  LikeButton,
+  DislikeButton,
+  CommentActions,
+  CommentForm,
+  CommentInput,
+  CommentSubmit,
+  StatusMessage,
+} from "./VenueCard.stitches";
+import {
+  FaRegThumbsUp,
+  FaThumbsUp,
+  FaRegThumbsDown,
+  FaThumbsDown,
+  FaRegHeart,
+  FaHeart,
+} from "react-icons/fa";
 
-const Card = styled("article", {
-  backgroundColor: "$white",
-  border: "1px solid $gray300",
-  borderRadius: "$lg",
-  overflow: "hidden",
-  boxShadow: "$card",
-  display: "flex",
-  flexDirection: "column",
-});
-
-const CarouselWrapper = styled("div", {
-  position: "relative",
-  width: "100%",
-  aspectRatio: "4 / 3",
-  backgroundColor: "$gray200",
-});
-
-const CarouselImage = styled("img", {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  display: "block",
-});
-
-const CarouselNav = styled("button", {
-  position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
-  width: "36px",
-  height: "36px",
-  borderRadius: "50%",
-  backgroundColor: "rgba(255,255,255,0.92)",
-  border: "none",
-  color: "$gray800",
-  fontWeight: 700,
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-  variants: {
-    position: {
-      left: {
-        left: "15px",
-      },
-      right: {
-        right: "15px",
-      },
-    },
-  },
-});
-
-const CardBody = styled("div", {
-  padding: "20px",
-});
-
-const VenueTitleRow = styled("div", {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-  marginBottom: "8px",
-});
-
-const VenueTitleLink = styled("a", {
-  textDecoration: "none",
-  color: "inherit",
-  "& h3": {
-    margin: 0,
-    fontSize: "1.2rem",
-    fontWeight: 700,
-  },
-  "&:hover": {
-    color: "$blue500",
-  },
-});
-
-const VenueAddress = styled("p", {
-  margin: "0 0 16px",
-  color: "$gray600",
-  fontSize: "0.95rem",
-  lineHeight: 1.5,
-});
-
-const CommentsSection = styled("div", {
-  borderTop: "1px solid $gray200",
-  paddingTop: "16px",
-});
-
-const CommentsTitle = styled("div", {
-  fontSize: "0.9rem",
-  fontWeight: 700,
-  color: "$gray700",
-  marginBottom: "10px",
-});
-
-const CommentsStream = styled("div", {
-  display: "grid",
-  gap: "12px",
-});
-
-const CommentBubble = styled("div", {
-  display: "flex",
-  gap: "10px",
-  fontSize: "0.9rem",
-  lineHeight: 1.4,
-  color: "$gray700",
-});
-
-const CommentMeta = styled("span", {
-  fontWeight: 700,
-  color: "$gray800",
-  whiteSpace: "nowrap",
-});
-
-const CommentText = styled("span", {
-  color: "$gray700",
-});
-
-const CommentPortal = styled("div", {
-  marginTop: "14px",
-});
-
-const AddCommentButton = styled("button", {
-  marginTop: "8px",
-  padding: "8px 12px",
-  borderRadius: "$sm",
-  border: "none",
-  backgroundColor: "$blue500",
-  color: "$white",
-  cursor: "pointer",
-  fontWeight: 700,
-});
-
-const CommentForm = styled("form", {
-  display: "grid",
-  gap: "12px",
-  marginTop: "12px",
-});
-
-const CommentInput = styled("textarea", {
-  width: "100%",
-  minHeight: "80px",
-  padding: "12px",
-  borderRadius: "$sm",
-  border: "1px solid $gray300",
-  resize: "vertical",
-  fontSize: "0.95rem",
-  color: "$gray800",
-  backgroundColor: "$white",
-});
-
-const CommentSubmit = styled("button", {
-  justifySelf: "flex-end",
-  padding: "8px 14px",
-  borderRadius: "$sm",
-  border: "none",
-  backgroundColor: "$gray800",
-  color: "$white",
-  cursor: "pointer",
-  fontWeight: 700,
-  "&:disabled": {
-    opacity: 0.65,
-    cursor: "not-allowed",
-  },
-});
-
-const StatusMessage = styled("div", {
-  fontSize: "0.85rem",
-  color: "$gray500",
-  marginTop: "6px",
-});
-
-export default function VenueCard({ record, userToken }) {
+export default function VenueCard({
+  record,
+  userToken,
+  userEmail = null,
+  shouldLoadComments = false,
+  onCommentsLoaded = () => {},
+}) {
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [comments, setComments] = useState([]);
-  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsLoading, setCommentsLoading] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reactionStatus, setReactionStatus] = useState("");
+  const [isReacting, setIsReacting] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [localReactions, setLocalReactions] = useState(() =>
+    deriveActiveReactions(record.fields, userEmail),
+  );
 
   const fields = record.fields;
+  const effectiveUserToken = userToken || getUserToken();
+  const canReact = Boolean(effectiveUserToken);
   let images = [];
   try {
     images = JSON.parse(fields["Images JSON"] || "[]");
   } catch (e) {
     images = [];
   }
+  const svgPlaceholder = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236c757d' font-family='Arial, sans-serif' font-size='24'>Image Unavailable</text></svg>`;
+  const placeholderDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgPlaceholder)}`;
   if (images.length === 0) {
-    images = ["https://via.placeholder.com/600x400?text=Image+Unavailable"];
+    images = [placeholderDataUri];
+  }
+
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   useEffect(() => {
+    setLocalReactions(deriveActiveReactions(record.fields, userEmail));
+  }, [record.fields, userEmail]);
+
+  const isReactionActive = useMemo(
+    () => (reactionType) => localReactions.has(reactionType),
+    [localReactions],
+  );
+
+  useEffect(() => {
     let cancelled = false;
+    let loadSucceeded = false;
 
     async function loadComments() {
       setCommentsLoading(true);
-      try {
-        const payload = await fetchRecordComments(record.id, userToken);
-        if (!cancelled) {
-          setComments(payload.comments || []);
+      const token = userToken || getUserToken();
+      const maxAttempts = 3;
+      let attempt = 0;
+      let lastError = null;
+
+      while (attempt < maxAttempts && !cancelled) {
+        try {
+          const payload = await fetchRecordComments(record.id, token);
+          if (!cancelled) {
+            setComments(payload.comments || []);
+            loadSucceeded = true;
+          }
+          break;
+        } catch (err) {
+          lastError = err;
+          if (err && err.isAuthError) {
+            if (!cancelled) {
+              setComments([]);
+            }
+            clearSession();
+            return;
+          }
+
+          const isRateLimit =
+            Boolean(err && err.isRateLimit) ||
+            /rate limited|too many requests/i.test(err?.message || "");
+
+          attempt += 1;
+          if (cancelled || !isRateLimit || attempt >= maxAttempts) {
+            console.debug("Failed to load comments:", err);
+            if (!cancelled) {
+              setComments([]);
+            }
+            break;
+          }
+
+          const delay = 250 * Math.pow(2, attempt - 1);
+          await sleep(delay);
         }
-      } catch (err) {
-        console.error("Failed to load comments:", err);
-        if (!cancelled) {
-          setComments([]);
+      }
+
+      if (!cancelled) {
+        setCommentsLoading(false);
+        if (loadSucceeded && !commentsLoaded) {
+          setCommentsLoaded(true);
+          try {
+            onCommentsLoaded(record.id);
+          } catch (e) {
+            console.debug("onCommentsLoaded callback failed", e);
+          }
         }
-      } finally {
-        if (!cancelled) setCommentsLoading(false);
+      }
+
+      if (!loadSucceeded && lastError && !cancelled) {
+        console.debug("Comment loading failed after retries:", lastError);
       }
     }
 
-    loadComments();
+    if (shouldLoadComments && !commentsLoaded) {
+      loadComments();
+    }
+
     return () => {
       cancelled = true;
     };
-  }, [record.id, userToken]);
+  }, [
+    record.id,
+    userToken,
+    shouldLoadComments,
+    commentsLoaded,
+    onCommentsLoaded,
+  ]);
 
   async function handleCommentSubmit(event) {
     event.preventDefault();
@@ -229,18 +179,179 @@ export default function VenueCard({ record, userToken }) {
     setSubmitStatus("Posting comment...");
 
     try {
-      await submitComment(record.id, trimmedText, userToken);
+      const token = userToken || getUserToken();
+      await submitComment(record.id, trimmedText, token);
       setCommentText("");
       setSubmitStatus("Success!");
       setShowCommentForm(false);
-      const payload = await fetchRecordComments(record.id, userToken);
-      setComments(payload.comments || []);
       setTimeout(() => setSubmitStatus(""), 3000);
     } catch (err) {
-      setSubmitStatus(`Error: ${err.message}`);
+      if (err && err.isAuthError) {
+        clearSession();
+        setSubmitStatus("Session expired. Please log in again.");
+      } else {
+        setSubmitStatus(`Error: ${err.message || "Unable to submit comment."}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  async function handleReactionClick(reactionType) {
+    if (isReacting) return;
+
+    const token = userToken || getUserToken();
+    if (!token) {
+      setReactionStatus("Please sign in before reacting.");
+      return;
+    }
+
+    setIsReacting(true);
+    setReactionStatus(`Recording ${reactionType.replace(/_/g, " ")}...`);
+
+    try {
+      const result = await submitReaction(record.id, reactionType, token);
+      setLocalReactions((current) => {
+        const next = new Set(current);
+        if (result?.active === false) {
+          next.delete(reactionType);
+        } else {
+          next.add(reactionType);
+        }
+        return next;
+      });
+      setReactionStatus("Verified reaction recorded.");
+      setTimeout(() => setReactionStatus(""), 3000);
+    } catch (err) {
+      const errorMessage = err?.message || "Unable to record reaction.";
+
+      if (err && err.isAuthError) {
+        setReactionStatus("Session expired. Please log in again.");
+      } else if (err && err.isRateLimit) {
+        setReactionStatus("Too many requests — please wait a moment and try again.");
+      } else if (
+        /missing userToken|missing venueId|missing type/i.test(errorMessage)
+      ) {
+        setReactionStatus(`Unable to record reaction: ${errorMessage}`);
+      } else {
+        setReactionStatus(`Error sending reaction: ${errorMessage}`);
+      }
+    } finally {
+      setIsReacting(false);
+    }
+  }
+
+  function normalizeReactionName(value) {
+    if (!value && value !== 0) return null;
+    const normalized = String(value)
+      .trim()
+      .toLowerCase()
+      .replace(/[-\s]+/g, "_");
+
+    switch (normalized) {
+      case "hearts":
+      case "love":
+      case "loved":
+      case "favorite":
+      case "favourite":
+        return "heart";
+      case "thumbs_up":
+      case "thumbsup":
+      case "thumbs_up_reaction":
+      case "thumbs-up":
+      case "like":
+      case "liked":
+        return "thumbs_up";
+      case "thumbs_down":
+      case "thumbsdown":
+      case "thumbs_down_reaction":
+      case "thumbs-down":
+      case "dislike":
+      case "disliked":
+        return "thumbs_down";
+      default:
+        return normalized;
+    }
+  }
+
+  function deriveActiveReactions(fieldsToInspect, currentUserEmail) {
+    const allReactions = fieldsToInspect["All reactions"];
+    if (allReactions && typeof allReactions === "string" && currentUserEmail) {
+      const active = new Set();
+      allReactions.split(",").forEach((entry) => {
+        const pipeIdx = entry.indexOf("|");
+        if (pipeIdx === -1) return;
+        const email = entry.slice(0, pipeIdx).trim();
+        const type = entry.slice(pipeIdx + 1).trim();
+        if (
+          email === currentUserEmail &&
+          ["heart", "thumbs_up", "thumbs_down"].includes(type)
+        ) {
+          active.add(type);
+        }
+      });
+      return active;
+    }
+
+    const reactionFields = [
+      "Venue reactions",
+      "Reaction types",
+      "Reactions",
+      "My reactions",
+      "User reactions",
+      "Current user reactions",
+      "My reaction",
+      "User reaction",
+      "Reaction type",
+      "User reaction type",
+    ];
+
+    const active = [];
+
+    reactionFields.forEach((fieldName) => {
+      const value = fieldsToInspect[fieldName];
+      if (Array.isArray(value)) {
+        active.push(...value);
+      } else if (typeof value === "string" && value.trim()) {
+        active.push(...value.split(/\s*,\s*/));
+      }
+    });
+
+    const booleanReactionFields = {
+      heart: ["Heart", "Heart reaction", "Loved", "Favorite", "Favourite"],
+      thumbs_up: ["Thumbs up", "Thumbs up reaction", "Like", "Liked"],
+      thumbs_down: [
+        "Thumbs down",
+        "Thumbs down reaction",
+        "Dislike",
+        "Disliked",
+      ],
+    };
+
+    Object.entries(booleanReactionFields).forEach(([reactionType, fields]) => {
+      fields.forEach((fieldName) => {
+        const value = fieldsToInspect[fieldName];
+        if (
+          value === true ||
+          value === 1 ||
+          value === "1" ||
+          value === "true" ||
+          value === "True" ||
+          value === "yes" ||
+          value === "Yes"
+        ) {
+          active.push(reactionType);
+        }
+      });
+    });
+
+    return new Set(
+      active
+        .map(normalizeReactionName)
+        .filter((reactionType) =>
+          ["heart", "thumbs_up", "thumbs_down"].includes(reactionType),
+        ),
+    );
   }
 
   const currentImage = images[currentImageIdx];
@@ -253,8 +364,7 @@ export default function VenueCard({ record, userToken }) {
           alt={fields["Venue name"]}
           loading="lazy"
           onError={(event) => {
-            event.currentTarget.src =
-              "https://via.placeholder.com/600x400?text=Image+Unavailable";
+            event.currentTarget.src = placeholderDataUri;
           }}
         />
         {images.length > 1 && (
@@ -295,11 +405,75 @@ export default function VenueCard({ record, userToken }) {
         </VenueTitleRow>
 
         <VenueAddress>
-          {fields["Full address"] || "No address supplied."}
+          {fields["City"] || ""}
+          {fields["City"] && fields["State"] ? ", " : ""}
+          {fields["State"] || ""}
         </VenueAddress>
 
         <CommentsSection>
-          <CommentsTitle>Discussion Feed</CommentsTitle>
+          <CommentPortal>
+            {!showCommentForm ? (
+              <CommentActions>
+                <AddCommentButton
+                  type="button"
+                  onClick={() => {
+                    // Do not trigger parallel comment fetches here — just show the form.
+                    // Comment loading is parent-driven via `shouldLoadComments`.
+                    setShowCommentForm(true);
+                  }}
+                >
+                  Add note
+                </AddCommentButton>
+                <HeartButton
+                  type="button"
+                  disabled={isReacting || !canReact}
+                  aria-pressed={isReactionActive("heart")}
+                  onClick={() => handleReactionClick("heart")}
+                >
+                  {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
+                </HeartButton>
+                <LikeButton
+                  type="button"
+                  disabled={isReacting || !canReact}
+                  aria-pressed={isReactionActive("thumbs_up")}
+                  onClick={() => handleReactionClick("thumbs_up")}
+                >
+                  {isReactionActive("thumbs_up") ? (
+                    <FaThumbsUp />
+                  ) : (
+                    <FaRegThumbsUp />
+                  )}
+                </LikeButton>
+                <DislikeButton
+                  type="button"
+                  disabled={isReacting || !canReact}
+                  aria-pressed={isReactionActive("thumbs_down")}
+                  onClick={() => handleReactionClick("thumbs_down")}
+                >
+                  {isReactionActive("thumbs_down") ? (
+                    <FaThumbsDown />
+                  ) : (
+                    <FaRegThumbsDown />
+                  )}
+                </DislikeButton>
+              </CommentActions>
+            ) : (
+              <CommentForm onSubmit={handleCommentSubmit}>
+                <CommentInput
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                  placeholder="Add a verified comment..."
+                  name="commentText"
+                  required
+                />
+                <CommentSubmit type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Posting..." : "Post Comment"}
+                </CommentSubmit>
+              </CommentForm>
+            )}
+            {submitStatus && <StatusMessage>{submitStatus}</StatusMessage>}
+            {reactionStatus && <StatusMessage>{reactionStatus}</StatusMessage>}
+          </CommentPortal>
           <CommentsStream>
             {commentsLoading ? (
               <StatusMessage>Comments loading...</StatusMessage>
@@ -308,39 +482,14 @@ export default function VenueCard({ record, userToken }) {
             ) : (
               comments.map((comment, index) => (
                 <CommentBubble key={index}>
-                  <CommentMeta>{comment.author?.name || "User"}:</CommentMeta>
+                  <CommentMeta>
+                    {comment.author?.name?.split(" ")[0] || "User"}:
+                  </CommentMeta>
                   <CommentText>{comment.text}</CommentText>
                 </CommentBubble>
               ))
             )}
           </CommentsStream>
-
-          {!commentsLoading && (
-            <CommentPortal>
-              {!showCommentForm ? (
-                <AddCommentButton
-                  type="button"
-                  onClick={() => setShowCommentForm(true)}
-                >
-                  Add comment
-                </AddCommentButton>
-              ) : (
-                <CommentForm onSubmit={handleCommentSubmit}>
-                  <CommentInput
-                    value={commentText}
-                    onChange={(event) => setCommentText(event.target.value)}
-                    placeholder="Add a verified comment..."
-                    name="commentText"
-                    required
-                  />
-                  <CommentSubmit type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Posting..." : "Post Comment"}
-                  </CommentSubmit>
-                </CommentForm>
-              )}
-              {submitStatus && <StatusMessage>{submitStatus}</StatusMessage>}
-            </CommentPortal>
-          )}
         </CommentsSection>
       </CardBody>
     </Card>

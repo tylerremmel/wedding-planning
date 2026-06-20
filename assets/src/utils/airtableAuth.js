@@ -1,8 +1,25 @@
 const CLIENT_ID = "5cf62d42-4eab-4c8c-9509-5aba4e28c22d";
 const PROXY_BASE = "https://airtable-proxy-olive.vercel.app";
 
+// Runtime redirect selection: prefer local preview when served locally.
+const PROD_REDIRECT = "https://tylerremmel.github.io/wedding-planning/venues/";
+const DEV_REDIRECT = "http://127.0.0.1:4001/venues/";
+
 export function getRedirectUri() {
-  return window.location.origin + window.location.pathname;
+  const envRedirect = import.meta?.env?.VITE_REDIRECT_URI;
+  if (
+    envRedirect &&
+    typeof envRedirect === "string" &&
+    envRedirect.length > 0
+  ) {
+    return envRedirect;
+  }
+
+  try {
+    return window.location.origin + window.location.pathname;
+  } catch (e) {
+    return PROD_REDIRECT;
+  }
 }
 
 export function generateRandomString(length) {
@@ -48,11 +65,7 @@ export async function redirectToAirtableOAuth() {
   targetQuery.append("code_challenge_method", "S256");
 
   const authUrl = `https://airtable.com/oauth2/v1/authorize?${targetQuery.toString()}`;
-  console.debug("Airtable OAuth redirect", {
-    authUrl,
-    state,
-    redirectUri: getRedirectUri(),
-  });
+  // Intentionally silent in production: redirect URL constructed above.
   window.location.href = authUrl;
 }
 
@@ -72,18 +85,21 @@ export async function exchangeCodeForToken(code) {
       const tokenData = await response.json();
       localStorage.setItem("airtable_user_token", tokenData.access_token);
       localStorage.setItem("user_email", "Verified User");
-      window.location.reload();
+      return true;
     } else {
       const err = await response.json();
-      alert(`Handshake error: ${err.error || "Server error"}`);
+      console.error("exchangeCodeForToken error", err);
+      return false;
     }
   } catch (e) {
     console.error(e);
+    return false;
   }
 }
 
 export function getUserToken() {
-  return localStorage.getItem("airtable_user_token");
+  const token = localStorage.getItem("airtable_user_token");
+  return token && token !== "undefined" && token !== "null" ? token : null;
 }
 
 export function clearSession() {
