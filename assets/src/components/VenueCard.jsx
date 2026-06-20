@@ -178,15 +178,37 @@ export default function VenueCard({
     setIsSubmitting(true);
     setSubmitStatus("Posting comment...");
 
+    const token = userToken || getUserToken();
+    const maxAttempts = 5;
+
     try {
-      const token = userToken || getUserToken();
-      await submitComment(record.id, trimmedText, token);
-      setCommentText("");
-      setSubmitStatus("Success!");
-      setShowCommentForm(false);
-      setTimeout(() => setSubmitStatus(""), 3000);
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+          await submitComment(record.id, trimmedText, token);
+          setCommentText("");
+          setShowCommentForm(false);
+          try {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const payload = await fetchRecordComments(record.id, token);
+            setComments(payload.comments || []);
+          } catch {
+            // Comment posted — refresh failed, user will see it on next load
+          }
+          setSubmitStatus("Success!");
+          setTimeout(() => setSubmitStatus(""), 3000);
+          return;
+        } catch (err) {
+          if (err && err.isRateLimit && attempt < maxAttempts - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            continue;
+          }
+          throw err;
+        }
+      }
     } catch (err) {
-      if (err && err.isAuthError) {
+      if (err && err.isRateLimit) {
+        setSubmitStatus("Too many requests — please try again in a moment.");
+      } else if (err && err.isAuthError) {
         clearSession();
         setSubmitStatus("Session expired. Please log in again.");
       } else {
@@ -228,7 +250,9 @@ export default function VenueCard({
       if (err && err.isAuthError) {
         setReactionStatus("Session expired. Please log in again.");
       } else if (err && err.isRateLimit) {
-        setReactionStatus("Too many requests — please wait a moment and try again.");
+        setReactionStatus(
+          "Too many requests — please wait a moment and try again.",
+        );
       } else if (
         /missing userToken|missing venueId|missing type/i.test(errorMessage)
       ) {
