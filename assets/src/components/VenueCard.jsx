@@ -31,6 +31,7 @@ import {
   CommentInput,
   CommentSubmit,
   StatusMessage,
+  Icon,
 } from "./VenueCard.stitches";
 import {
   FaRegThumbsUp,
@@ -492,7 +493,9 @@ export default function VenueCard({
                   aria-pressed={isReactionActive("heart")}
                   onClick={() => handleReactionClick("heart")}
                 >
-                  {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}{" "}
+                  <Icon>
+                    {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
+                  </Icon>{" "}
                   {localCounts.heart}
                 </HeartButton>
                 <LikeButton
@@ -501,11 +504,13 @@ export default function VenueCard({
                   aria-pressed={isReactionActive("thumbs_up")}
                   onClick={() => handleReactionClick("thumbs_up")}
                 >
-                  {isReactionActive("thumbs_up") ? (
-                    <FaThumbsUp />
-                  ) : (
-                    <FaRegThumbsUp />
-                  )}{" "}
+                  <Icon>
+                    {isReactionActive("thumbs_up") ? (
+                      <FaThumbsUp />
+                    ) : (
+                      <FaRegThumbsUp />
+                    )}
+                  </Icon>{" "}
                   {localCounts.thumbs_up}
                 </LikeButton>
                 <DislikeButton
@@ -514,11 +519,13 @@ export default function VenueCard({
                   aria-pressed={isReactionActive("thumbs_down")}
                   onClick={() => handleReactionClick("thumbs_down")}
                 >
-                  {isReactionActive("thumbs_down") ? (
-                    <FaThumbsDown />
-                  ) : (
-                    <FaRegThumbsDown />
-                  )}{" "}
+                  <Icon>
+                    {isReactionActive("thumbs_down") ? (
+                      <FaThumbsDown />
+                    ) : (
+                      <FaRegThumbsDown />
+                    )}
+                  </Icon>{" "}
                   {localCounts.thumbs_down}
                 </DislikeButton>
               </CommentActions>
