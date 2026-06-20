@@ -1,3 +1,36 @@
-To build locally, run `bundle exec jekyll serve` and open http://localhost:4000/ in your browser.
-
 This site is deployed to https://tylerremmel.github.io/wedding-planning/
+
+## React / Vite Setup
+
+This project now uses React for the venue interface on `venues.md`.
+The old `assets/js/airtable-submit.js` script has been removed and replaced by the React build.
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Build the React bundle
+
+```bash
+npm run build
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Local preview with automatic React rebuilds
+
+Run this command to start Vite in build watch mode and Jekyll locally together:
+
+```bash
+npm run preview
+```
+
+This will keep `npm run watch` rebuilding `assets/js/airtable-interface.bundle.js` on changes and serve the site with Jekyll at `http://localhost:4000/`.
+
+The React bundle is emitted to `assets/js/airtable-interface.bundle.js`, and `venues.md` mounts the application into the `#airtable-interface-root` element.
