@@ -60,6 +60,9 @@ export default function VenueCard({
   const [localReactions, setLocalReactions] = useState(() =>
     deriveActiveReactions(record.fields, userEmail),
   );
+  const [localCounts, setLocalCounts] = useState(() =>
+    deriveReactionCounts(record.fields),
+  );
 
   const fields = record.fields;
   const effectiveUserToken = userToken || getUserToken();
@@ -84,6 +87,7 @@ export default function VenueCard({
 
   useEffect(() => {
     setLocalReactions(deriveActiveReactions(record.fields, userEmail));
+    setLocalCounts(deriveReactionCounts(record.fields));
   }, [record.fields, userEmail]);
 
   const isReactionActive = useMemo(
@@ -231,19 +235,39 @@ export default function VenueCard({
     setIsReacting(true);
     setReactionStatus(`Recording ${reactionType.replace(/_/g, " ")}...`);
 
+    const maxAttempts = 5;
+
     try {
-      const result = await submitReaction(record.id, reactionType, token);
-      setLocalReactions((current) => {
-        const next = new Set(current);
-        if (result?.active === false) {
-          next.delete(reactionType);
-        } else {
-          next.add(reactionType);
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+          const result = await submitReaction(record.id, reactionType, token);
+          setLocalReactions((current) => {
+            const next = new Set(current);
+            if (result?.active === false) {
+              next.delete(reactionType);
+            } else {
+              next.add(reactionType);
+            }
+            return next;
+          });
+          setLocalCounts((prev) => ({
+            ...prev,
+            [reactionType]:
+              result?.active === false
+                ? Math.max(0, prev[reactionType] - 1)
+                : prev[reactionType] + 1,
+          }));
+          setReactionStatus("Verified reaction recorded.");
+          setTimeout(() => setReactionStatus(""), 3000);
+          return;
+        } catch (err) {
+          if (err && err.isRateLimit && attempt < maxAttempts - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            continue;
+          }
+          throw err;
         }
-        return next;
-      });
-      setReactionStatus("Verified reaction recorded.");
-      setTimeout(() => setReactionStatus(""), 3000);
+      }
     } catch (err) {
       const errorMessage = err?.message || "Unable to record reaction.";
 
@@ -296,6 +320,20 @@ export default function VenueCard({
       default:
         return normalized;
     }
+  }
+
+  function deriveReactionCounts(fieldsToInspect) {
+    const counts = { heart: 0, thumbs_up: 0, thumbs_down: 0 };
+    const allReactions = fieldsToInspect["All reactions"];
+    if (allReactions && typeof allReactions === "string") {
+      allReactions.split(",").forEach((entry) => {
+        const pipeIdx = entry.indexOf("|");
+        if (pipeIdx === -1) return;
+        const type = entry.slice(pipeIdx + 1).trim();
+        if (type in counts) counts[type]++;
+      });
+    }
+    return counts;
   }
 
   function deriveActiveReactions(fieldsToInspect, currentUserEmail) {
@@ -454,7 +492,8 @@ export default function VenueCard({
                   aria-pressed={isReactionActive("heart")}
                   onClick={() => handleReactionClick("heart")}
                 >
-                  {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
+                  {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}{" "}
+                  {localCounts.heart}
                 </HeartButton>
                 <LikeButton
                   type="button"
@@ -466,7 +505,8 @@ export default function VenueCard({
                     <FaThumbsUp />
                   ) : (
                     <FaRegThumbsUp />
-                  )}
+                  )}{" "}
+                  {localCounts.thumbs_up}
                 </LikeButton>
                 <DislikeButton
                   type="button"
@@ -478,7 +518,8 @@ export default function VenueCard({
                     <FaThumbsDown />
                   ) : (
                     <FaRegThumbsDown />
-                  )}
+                  )}{" "}
+                  {localCounts.thumbs_down}
                 </DislikeButton>
               </CommentActions>
             ) : (
