@@ -8,6 +8,11 @@ export const Card = styled("article", {
   boxShadow: "$card",
   display: "flex",
   flexDirection: "column",
+  cursor: "pointer",
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$gray100",
+  },
 });
 
 export const CarouselWrapper = styled("figure", {
@@ -53,6 +58,10 @@ export const CarouselNav = styled("button", {
       },
     },
   },
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "rgba(235,235,235,0.92)",
+  },
 });
 
 export const CardBody = styled("div", {
@@ -66,16 +75,13 @@ export const VenueTitleRow = styled("div", {
   marginBottom: "8px",
 });
 
-export const VenueTitleLink = styled("a", {
+export const VenueTitleLink = styled("div", {
   textDecoration: "none",
   color: "inherit",
   "& h3": {
     margin: 0,
     fontSize: "1.2rem",
     fontWeight: 700,
-  },
-  "&:hover": {
-    color: "$blue500",
   },
 });
 
@@ -135,20 +141,28 @@ export const AddCommentButton = styled("button", {
   padding: "8px 12px",
   borderRadius: "$sm",
   border: "none",
-  backgroundColor: "$blue500",
+  backgroundColor: "$blue700",
   color: "$white",
   cursor: "pointer",
   fontWeight: 700,
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$blue800",
+  },
 });
 
 export const HeartButton = styled("button", {
   padding: "8px 12px",
   borderRadius: "$sm",
   border: "none",
-  backgroundColor: "$red500",
+  backgroundColor: "$red700",
   color: "$white",
   cursor: "pointer",
   fontWeight: 700,
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$red800",
+  },
 });
 
 export const LikeButton = styled("button", {
@@ -159,6 +173,10 @@ export const LikeButton = styled("button", {
   color: "$gray800",
   cursor: "pointer",
   fontWeight: 700,
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$gray400",
+  },
 });
 
 export const DislikeButton = styled("button", {
@@ -169,6 +187,10 @@ export const DislikeButton = styled("button", {
   color: "$gray800",
   cursor: "pointer",
   fontWeight: 700,
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$gray400",
+  },
 });
 
 export const Icon = styled("span", {
@@ -206,6 +228,10 @@ export const CommentSubmit = styled("button", {
   "&:disabled": {
     opacity: 0.65,
     cursor: "not-allowed",
+  },
+  transition: "background 0.25s ease",
+  "&:hover": {
+    backgroundColor: "$gray700",
   },
 });
 

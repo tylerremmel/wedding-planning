@@ -41,6 +41,7 @@ import {
   FaRegHeart,
   FaHeart,
 } from "react-icons/fa";
+import Drawer from "@mui/material/Drawer";
 
 export default function VenueCard({
   record,
@@ -419,8 +420,18 @@ export default function VenueCard({
 
   const currentImage = images[currentImageIdx];
 
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+
   return (
-    <Card>
+    <Card
+      onClick={(e) => {
+        if (e.currentTarget.contains(e.target)) toggleDrawer(true)();
+      }}
+    >
       <CarouselWrapper>
         <CarouselImage
           src={currentImage}
@@ -434,25 +445,27 @@ export default function VenueCard({
           <>
             <CarouselNav
               position="left"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 setCurrentImageIdx(
                   currentImageIdx === 0
                     ? images.length - 1
                     : currentImageIdx - 1,
-                )
-              }
+                );
+              }}
             >
               ‹
             </CarouselNav>
             <CarouselNav
               position="right"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 setCurrentImageIdx(
                   currentImageIdx === images.length - 1
                     ? 0
                     : currentImageIdx + 1,
-                )
-              }
+                );
+              }}
             >
               ›
             </CarouselNav>
@@ -462,7 +475,7 @@ export default function VenueCard({
 
       <CardBody>
         <VenueTitleRow>
-          <VenueTitleLink href={fields["URL"]} target="_blank" rel="noreferrer">
+          <VenueTitleLink>
             <h3>{fields["Venue name"]}</h3>
           </VenueTitleLink>
         </VenueTitleRow>
@@ -479,9 +492,8 @@ export default function VenueCard({
               <CommentActions>
                 <AddCommentButton
                   type="button"
-                  onClick={() => {
-                    // Do not trigger parallel comment fetches here — just show the form.
-                    // Comment loading is parent-driven via `shouldLoadComments`.
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setShowCommentForm(true);
                   }}
                 >
@@ -491,7 +503,10 @@ export default function VenueCard({
                   type="button"
                   disabled={isReacting || !canReact}
                   aria-pressed={isReactionActive("heart")}
-                  onClick={() => handleReactionClick("heart")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReactionClick("heart");
+                  }}
                 >
                   <Icon>
                     {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
@@ -502,7 +517,10 @@ export default function VenueCard({
                   type="button"
                   disabled={isReacting || !canReact}
                   aria-pressed={isReactionActive("thumbs_up")}
-                  onClick={() => handleReactionClick("thumbs_up")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReactionClick("thumbs_up");
+                  }}
                 >
                   <Icon>
                     {isReactionActive("thumbs_up") ? (
@@ -517,7 +535,10 @@ export default function VenueCard({
                   type="button"
                   disabled={isReacting || !canReact}
                   aria-pressed={isReactionActive("thumbs_down")}
-                  onClick={() => handleReactionClick("thumbs_down")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReactionClick("thumbs_down");
+                  }}
                 >
                   <Icon>
                     {isReactionActive("thumbs_down") ? (
@@ -564,6 +585,17 @@ export default function VenueCard({
           </CommentsStream>
         </CommentsSection>
       </CardBody>
+      <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+        <div onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={toggleDrawer(false)}
+            aria-label="Close drawer"
+          >
+            ✕ close drawer
+          </button>
+        </div>
+      </Drawer>
     </Card>
   );
 }
