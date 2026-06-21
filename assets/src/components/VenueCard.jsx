@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { styled } from "../styles/stitches";
+import React, { useEffect, useState } from "react";
 import {
   fetchRecordComments,
   submitComment,
@@ -15,33 +14,44 @@ import {
   VenueTitleRow,
   VenueTitleLink,
   VenueAddress,
-  CommentsSection,
-  CommentsTitle,
-  CommentsStream,
-  CommentBubble,
-  CommentMeta,
-  CommentText,
-  CommentPortal,
-  AddCommentButton,
-  HeartButton,
-  LikeButton,
-  DislikeButton,
-  CommentActions,
-  CommentForm,
-  CommentInput,
-  CommentSubmit,
-  StatusMessage,
+  Button,
   Icon,
+  VenueVibe,
+  InnerDrawer,
+  DrawerCloseButton,
+  DrawerVenueName,
+  DrawerLinksRow,
+  DrawerContactInfoRow,
+  DrawerContactInfo,
+  DrawerBody,
+  DrawerImageGrid,
+  DrawerImageWrapper,
+  DrawerImageSkeleton,
+  DrawerImageEl,
 } from "./VenueCard.stitches";
-import {
-  FaRegThumbsUp,
-  FaThumbsUp,
-  FaRegThumbsDown,
-  FaThumbsDown,
-  FaRegHeart,
-  FaHeart,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaLink } from "react-icons/fa";
 import Drawer from "@mui/material/Drawer";
+import VenueComments from "./VenueComments";
+
+function ImageWithLoader({ src, alt, placeholderDataUri }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <DrawerImageWrapper>
+      {!loaded && <DrawerImageSkeleton />}
+      <DrawerImageEl
+        src={src}
+        alt={alt}
+        loading="lazy"
+        css={{ opacity: loaded ? 1 : 0 }}
+        onLoad={() => setLoaded(true)}
+        onError={(e) => {
+          e.currentTarget.src = placeholderDataUri;
+          setLoaded(true);
+        }}
+      />
+    </DrawerImageWrapper>
+  );
+}
 
 export default function VenueCard({
   record,
@@ -92,10 +102,7 @@ export default function VenueCard({
     setLocalCounts(deriveReactionCounts(record.fields));
   }, [record.fields, userEmail]);
 
-  const isReactionActive = useMemo(
-    () => (reactionType) => localReactions.has(reactionType),
-    [localReactions],
-  );
+  const isReactionActive = (reactionType) => localReactions.has(reactionType);
 
   useEffect(() => {
     let cancelled = false;
@@ -480,121 +487,184 @@ export default function VenueCard({
           </VenueTitleLink>
         </VenueTitleRow>
 
+        {fields["Vibe check"] && (
+          <VenueVibe>{fields["Vibe check"] || ""}</VenueVibe>
+        )}
+
         <VenueAddress>
+          <Icon>
+            <FaMapMarkerAlt />
+          </Icon>{" "}
           {fields["City"] || ""}
           {fields["City"] && fields["State"] ? ", " : ""}
           {fields["State"] || ""}
         </VenueAddress>
 
-        <CommentsSection>
-          <CommentPortal>
-            {!showCommentForm ? (
-              <CommentActions>
-                <AddCommentButton
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowCommentForm(true);
-                  }}
-                >
-                  Add note
-                </AddCommentButton>
-                <HeartButton
-                  type="button"
-                  disabled={isReacting || !canReact}
-                  aria-pressed={isReactionActive("heart")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReactionClick("heart");
-                  }}
-                >
-                  <Icon>
-                    {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
-                  </Icon>{" "}
-                  {localCounts.heart}
-                </HeartButton>
-                <LikeButton
-                  type="button"
-                  disabled={isReacting || !canReact}
-                  aria-pressed={isReactionActive("thumbs_up")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReactionClick("thumbs_up");
-                  }}
-                >
-                  <Icon>
-                    {isReactionActive("thumbs_up") ? (
-                      <FaThumbsUp />
-                    ) : (
-                      <FaRegThumbsUp />
-                    )}
-                  </Icon>{" "}
-                  {localCounts.thumbs_up}
-                </LikeButton>
-                <DislikeButton
-                  type="button"
-                  disabled={isReacting || !canReact}
-                  aria-pressed={isReactionActive("thumbs_down")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReactionClick("thumbs_down");
-                  }}
-                >
-                  <Icon>
-                    {isReactionActive("thumbs_down") ? (
-                      <FaThumbsDown />
-                    ) : (
-                      <FaRegThumbsDown />
-                    )}
-                  </Icon>{" "}
-                  {localCounts.thumbs_down}
-                </DislikeButton>
-              </CommentActions>
-            ) : (
-              <CommentForm onSubmit={handleCommentSubmit}>
-                <CommentInput
-                  value={commentText}
-                  onChange={(event) => setCommentText(event.target.value)}
-                  placeholder="Add a verified comment..."
-                  name="commentText"
-                  required
-                />
-                <CommentSubmit type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Posting..." : "Post Comment"}
-                </CommentSubmit>
-              </CommentForm>
-            )}
-            {submitStatus && <StatusMessage>{submitStatus}</StatusMessage>}
-            {reactionStatus && <StatusMessage>{reactionStatus}</StatusMessage>}
-          </CommentPortal>
-          <CommentsStream>
-            {commentsLoading ? (
-              <StatusMessage>Comments loading...</StatusMessage>
-            ) : comments.length === 0 ? (
-              <StatusMessage>No notes added yet.</StatusMessage>
-            ) : (
-              comments.map((comment, index) => (
-                <CommentBubble key={index}>
-                  <CommentMeta>
-                    {comment.author?.name?.split(" ")[0] || "User"}:
-                  </CommentMeta>
-                  <CommentText>{comment.text}</CommentText>
-                </CommentBubble>
-              ))
-            )}
-          </CommentsStream>
-        </CommentsSection>
+        <VenueComments
+          variant="card"
+          showCommentForm={showCommentForm}
+          setShowCommentForm={setShowCommentForm}
+          commentText={commentText}
+          setCommentText={setCommentText}
+          isSubmitting={isSubmitting}
+          handleCommentSubmit={handleCommentSubmit}
+          submitStatus={submitStatus}
+          isReacting={isReacting}
+          canReact={canReact}
+          isReactionActive={isReactionActive}
+          localCounts={localCounts}
+          handleReactionClick={handleReactionClick}
+          reactionStatus={reactionStatus}
+          commentsLoading={commentsLoading}
+          comments={comments}
+        />
       </CardBody>
       <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-        <div onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
+        <InnerDrawer onClick={(e) => e.stopPropagation()}>
+          <DrawerCloseButton
             onClick={toggleDrawer(false)}
             aria-label="Close drawer"
           >
-            ✕ close drawer
-          </button>
-        </div>
+            ✕
+          </DrawerCloseButton>
+          <DrawerVenueName>{fields["Venue name"]}</DrawerVenueName>
+          <DrawerContactInfo>
+            {fields["Full address"] && (
+              <DrawerContactInfoRow>
+                <Icon>
+                  <FaMapMarkerAlt />
+                </Icon>{" "}
+                {fields["Full address"]}
+              </DrawerContactInfoRow>
+            )}
+
+            {fields["Phone number"] && (
+              <DrawerContactInfoRow>
+                <Icon>
+                  <FaPhone />
+                </Icon>{" "}
+                {fields["Phone number"]}
+              </DrawerContactInfoRow>
+            )}
+            {fields["Email"] && (
+              <DrawerContactInfoRow>
+                <Icon>
+                  <FaEnvelope />
+                </Icon>{" "}
+                <a href={`mailto:${fields["Email"]}`}>{fields["Email"]}</a>
+              </DrawerContactInfoRow>
+            )}
+          </DrawerContactInfo>
+
+          <DrawerLinksRow>
+            {fields["URL"] && (
+              <Button
+                as="a"
+                color="gray"
+                href={fields["URL"]}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon>
+                  <FaLink />
+                </Icon>{" "}
+                Link 1
+              </Button>
+            )}
+            {fields["URL 2"] && (
+              <Button
+                as="a"
+                color="gray"
+                href={fields["URL 2"]}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon>
+                  <FaLink />
+                </Icon>{" "}
+                Link 2
+              </Button>
+            )}
+          </DrawerLinksRow>
+
+          <VenueComments
+            variant="drawer"
+            showCommentForm={showCommentForm}
+            setShowCommentForm={setShowCommentForm}
+            commentText={commentText}
+            setCommentText={setCommentText}
+            isSubmitting={isSubmitting}
+            handleCommentSubmit={handleCommentSubmit}
+            submitStatus={submitStatus}
+            isReacting={isReacting}
+            canReact={canReact}
+            isReactionActive={isReactionActive}
+            localCounts={localCounts}
+            handleReactionClick={handleReactionClick}
+            reactionStatus={reactionStatus}
+            commentsLoading={commentsLoading}
+            comments={comments}
+          />
+
+          <DrawerBody>
+            {fields["Vibe check"] && (
+              <p>
+                <strong>Vibe check:</strong> {fields["Vibe check"]}
+              </p>
+            )}
+
+            {fields["Capacity"] && (
+              <p>
+                <strong>Capacity:</strong> {fields["Capacity"]}
+              </p>
+            )}
+            {fields["Capacity notes"] && (
+              <p>
+                <strong>Capacity notes:</strong> {fields["Capacity notes"]}
+              </p>
+            )}
+            {fields["Ideal season(s)"]?.length > 0 && (
+              <p>
+                <strong>Ideal seasons:</strong>{" "}
+                {fields["Ideal season(s)"].join(", ")}
+              </p>
+            )}
+            {fields["Pet friendly?"] && (
+              <p>
+                <strong>Pet friendly:</strong> Yes
+              </p>
+            )}
+            {fields["Pet notes"] && (
+              <p>
+                <strong>Pet notes:</strong> {fields["Pet notes"]}
+              </p>
+            )}
+            {fields["Deposit info"] && (
+              <p>
+                <strong>Deposit info:</strong> {fields["Deposit info"]}
+              </p>
+            )}
+            {fields["Extras/notes"] && (
+              <p>
+                <strong>Extras/notes:</strong> {fields["Extras/notes"]}
+              </p>
+            )}
+          </DrawerBody>
+          {images.filter((url) => url !== placeholderDataUri).length > 0 && (
+            <DrawerImageGrid>
+              {images
+                .filter((url) => url !== placeholderDataUri)
+                .map((url, idx) => (
+                  <ImageWithLoader
+                    key={idx}
+                    src={url}
+                    alt={`${fields["Venue name"]} photo ${idx + 1}`}
+                    placeholderDataUri={placeholderDataUri}
+                  />
+                ))}
+            </DrawerImageGrid>
+          )}
+        </InnerDrawer>
       </Drawer>
     </Card>
   );
