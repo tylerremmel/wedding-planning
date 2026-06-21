@@ -138,7 +138,12 @@ export default function VenueComments({
               >
                 Cancel
               </Button>
-              <Button color="black" type="submit" disabled={isSubmitting}>
+              <Button
+                color="black"
+                type="submit"
+                disabled={isSubmitting}
+                onClick={(e) => e.stopPropagation()}
+              >
                 {isSubmitting ? "Posting..." : "Post Comment"}
               </Button>
             </CommentInputActions>
