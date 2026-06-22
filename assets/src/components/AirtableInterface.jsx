@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { styled } from "../styles/stitches";
 import VenueCard from "./VenueCard";
+import MapPanel from "./MapPanel";
 import {
   getUserToken,
   redirectToAirtableOAuth,
@@ -8,6 +9,7 @@ import {
   clearSession,
 } from "../utils/airtableAuth";
 import { fetchVenueRecords, fetchUserProfile } from "../utils/airtableApi";
+import { geocodeAndPersistMissingCoords } from "../utils/geocodeVenues";
 import {
   PageShell,
   HeaderPanel,
@@ -36,6 +38,12 @@ export default function AirtableInterface() {
   const [errorMessage, setErrorMessage] = useState("");
   const [filterText, setFilterText] = useState("");
   const [sortKey, setSortKey] = useState("name");
+  const [hoveredVenueId, setHoveredVenueId] = useState(null);
+  const [pinHoveredVenueId, setPinHoveredVenueId] = useState(null);
+  const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
+  const [mapBounds, setMapBounds] = useState(null);
+  const [fitKey, setFitKey] = useState(0);
+  const initialFitDone = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -73,6 +81,20 @@ export default function AirtableInterface() {
     }
   }, [userToken]);
 
+  // Clear bounds and refit map when text filter or sort changes
+  useEffect(() => {
+    setMapBounds(null);
+    setFitKey((k) => k + 1);
+  }, [filterText, sortKey]);
+
+  // Refit map only on first records load — geocoding batch updates should not refit
+  useEffect(() => {
+    if (records.length > 0 && !initialFitDone.current) {
+      initialFitDone.current = true;
+      setFitKey((k) => k + 1);
+    }
+  }, [records]);
+
   function invalidateAuthToken() {
     localStorage.removeItem("airtable_user_token");
     localStorage.removeItem("user_email");
@@ -98,6 +120,27 @@ export default function AirtableInterface() {
           if (data.records && data.records.length > 0) {
             setRecords(data.records);
             setNextCommentsIndex(0);
+            // Auto-geocode venues missing coordinates and write back to Airtable.
+            // Uses a callback so pins appear progressively as each batch resolves.
+            geocodeAndPersistMissingCoords(data.records, token, (batchResults) => {
+              const coordsMap = new Map(
+                batchResults.map((r) => [r.recordId, { lat: r.lat, lng: r.lng }]),
+              );
+              setRecords((prev) =>
+                prev.map((record) => {
+                  const coords = coordsMap.get(record.id);
+                  if (!coords) return record;
+                  return {
+                    ...record,
+                    fields: {
+                      ...record.fields,
+                      Latitude: coords.lat,
+                      Longitude: coords.lng,
+                    },
+                  };
+                }),
+              );
+            }).catch((err) => console.error("[geocode] Top-level error:", err));
           } else {
             setRecords([]);
           }
@@ -166,10 +209,27 @@ export default function AirtableInterface() {
       .filter((record) => {
         const name = record.fields["Venue name"] || "";
         const address = record.fields["Full address"] || "";
-        return (
+        const matchesText =
           name.toLowerCase().includes(normalizedFilter) ||
-          address.toLowerCase().includes(normalizedFilter)
-        );
+          address.toLowerCase().includes(normalizedFilter);
+
+        if (!matchesText) return false;
+
+        if (mapBounds) {
+          const lat = record.fields["Latitude"];
+          const lng = record.fields["Longitude"];
+          if (lat != null && lng != null) {
+            return (
+              lat >= mapBounds.south &&
+              lat <= mapBounds.north &&
+              lng >= mapBounds.west &&
+              lng <= mapBounds.east
+            );
+          }
+          return false;
+        }
+
+        return true;
       })
       .sort((a, b) => {
         if (sortKey === "name") {
@@ -179,7 +239,7 @@ export default function AirtableInterface() {
         }
         return 0;
       });
-  }, [records, filterText, sortKey]);
+  }, [records, filterText, sortKey, mapBounds]);
 
   return (
     <PageShell>
@@ -240,6 +300,11 @@ export default function AirtableInterface() {
                   onCommentsLoaded={() =>
                     setNextCommentsIndex((prev) => Math.max(prev, index + 1))
                   }
+                  isHovered={hoveredVenueId === record.id}
+                  scrollTo={pinHoveredVenueId === record.id}
+                  openDrawer={openDrawerVenueId === record.id}
+                  onDrawerClose={() => setOpenDrawerVenueId(null)}
+                  onCardHover={setHoveredVenueId}
                 />
               ))}
             </GridContainer>
@@ -249,7 +314,22 @@ export default function AirtableInterface() {
         </LeftPanel>
 
         <RightPanel>
-          Map placeholder — map integration can be added here later.
+          <MapPanel
+            venues={filteredRecords}
+            hoveredVenueId={hoveredVenueId}
+            onPinHover={(id) => {
+              setHoveredVenueId(id);
+              setPinHoveredVenueId(id);
+            }}
+            onPinClick={setOpenDrawerVenueId}
+            onBoundsChange={setMapBounds}
+            onShowAll={() => {
+              setMapBounds(null);
+              setFitKey((k) => k + 1);
+            }}
+            fitKey={fitKey}
+            isBoundsFiltered={mapBounds !== null}
+          />
         </RightPanel>
       </ControlPanel>
     </PageShell>
