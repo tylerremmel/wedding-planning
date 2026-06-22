@@ -14,9 +14,18 @@ export const Card = styled("article", {
   display: "flex",
   flexDirection: "column",
   cursor: "pointer",
-  transition: "background 0.25s ease",
+  transition: "background 0.25s ease, border-color 0.25s ease",
   "&:hover": {
     backgroundColor: "$gray100",
+    borderColor: "$gray300",
+  },
+  variants: {
+    highlighted: {
+      true: {
+        backgroundColor: "$amber100",
+        borderColor: "$amber500",
+      },
+    },
   },
 });
 

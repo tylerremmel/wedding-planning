@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   fetchRecordComments,
   submitComment,
@@ -59,6 +59,11 @@ export default function VenueCard({
   userEmail = null,
   shouldLoadComments = false,
   onCommentsLoaded = () => {},
+  isHovered = false,
+  scrollTo = false,
+  openDrawer = false,
+  onDrawerClose = () => {},
+  onCardHover = () => {},
 }) {
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [comments, setComments] = useState([]);
@@ -427,16 +432,30 @@ export default function VenueCard({
 
   const currentImage = images[currentImageIdx];
 
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const cardRef = useRef(null);
 
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
+  const effectiveOpen = openDrawer || internalOpen;
+
+  const handleDrawerClose = () => {
+    setInternalOpen(false);
+    onDrawerClose();
   };
+
+  useEffect(() => {
+    if (scrollTo && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [scrollTo]);
 
   return (
     <Card
+      ref={cardRef}
+      highlighted={isHovered}
+      onMouseEnter={() => onCardHover(record.id)}
+      onMouseLeave={() => onCardHover(null)}
       onClick={(e) => {
-        if (e.currentTarget.contains(e.target)) toggleDrawer(true)();
+        if (e.currentTarget.contains(e.target)) setInternalOpen(true);
       }}
     >
       <CarouselWrapper>
@@ -519,10 +538,10 @@ export default function VenueCard({
           comments={comments}
         />
       </CardBody>
-      <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+      <Drawer anchor="left" open={effectiveOpen} onClose={handleDrawerClose}>
         <InnerDrawer onClick={(e) => e.stopPropagation()}>
           <DrawerCloseButton
-            onClick={toggleDrawer(false)}
+            onClick={handleDrawerClose}
             aria-label="Close drawer"
           >
             ✕

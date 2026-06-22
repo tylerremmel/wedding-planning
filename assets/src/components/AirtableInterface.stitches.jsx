@@ -71,8 +71,7 @@ export const ControlPanel = styled("div", {
 
 export const FilterGroup = styled("div", {
   display: "none",
-  // display: "grid",
-  // gap: "12px",
+  gap: "12px",
 });
 
 export const LeftPanel = styled("div", {
@@ -85,12 +84,7 @@ export const RightPanel = styled("div", {
   top: "24px",
   height: "calc(100vh - 48px)",
   borderRadius: "$md",
-  backgroundColor: "$gray400",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "$white",
-  fontSize: "0.95rem",
+  overflow: "hidden",
   boxShadow: "$card",
 });
 
