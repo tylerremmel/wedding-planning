@@ -7,6 +7,9 @@ import {
   redirectToAirtableOAuth,
   exchangeCodeForToken,
   clearSession,
+  getTokenExpiry,
+  savePreAuthState,
+  restorePreAuthState,
 } from "../utils/airtableAuth";
 import { fetchVenueRecords, fetchUserProfile } from "../utils/airtableApi";
 import { geocodeAndPersistMissingCoords } from "../utils/geocodeVenues";
@@ -43,6 +46,7 @@ export default function AirtableInterface() {
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
   const [mapBounds, setMapBounds] = useState(null);
   const [fitKey, setFitKey] = useState(0);
+  const [minutesLeft, setMinutesLeft] = useState(null);
   const initialFitDone = useRef(false);
 
   useEffect(() => {
@@ -59,6 +63,13 @@ export default function AirtableInterface() {
           const u = new URL(window.location.href);
           u.search = "";
           window.history.replaceState({}, document.title, u.toString());
+          const saved = restorePreAuthState();
+          if (saved) {
+            if (saved.filterText != null) setFilterText(saved.filterText);
+            if (saved.sortKey != null) setSortKey(saved.sortKey);
+            if (saved.openDrawerVenueId != null)
+              setOpenDrawerVenueId(saved.openDrawerVenueId);
+          }
           setStatusMessage("Authentication successful. Loading records...");
           loadRecords();
         } else {
@@ -97,12 +108,35 @@ export default function AirtableInterface() {
 
   function invalidateAuthToken() {
     localStorage.removeItem("airtable_user_token");
+    localStorage.removeItem("airtable_token_expiry");
     localStorage.removeItem("user_email");
     setUserToken(null);
+    setMinutesLeft(null);
   }
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  useEffect(() => {
+    if (!userToken) {
+      setMinutesLeft(null);
+      return;
+    }
+    function checkExpiry() {
+      const expiry = getTokenExpiry();
+      if (!expiry) return;
+      const ms = expiry - Date.now();
+      setMinutesLeft(ms > 0 ? Math.floor(ms / 60000) : 0);
+    }
+    checkExpiry();
+    const id = setInterval(checkExpiry, 30000);
+    return () => clearInterval(id);
+  }, [userToken]);
+
+  function handleRefreshSession() {
+    savePreAuthState({ filterText, sortKey, openDrawerVenueId });
+    redirectToAirtableOAuth();
   }
 
   async function loadRecords() {
@@ -122,25 +156,32 @@ export default function AirtableInterface() {
             setNextCommentsIndex(0);
             // Auto-geocode venues missing coordinates and write back to Airtable.
             // Uses a callback so pins appear progressively as each batch resolves.
-            geocodeAndPersistMissingCoords(data.records, token, (batchResults) => {
-              const coordsMap = new Map(
-                batchResults.map((r) => [r.recordId, { lat: r.lat, lng: r.lng }]),
-              );
-              setRecords((prev) =>
-                prev.map((record) => {
-                  const coords = coordsMap.get(record.id);
-                  if (!coords) return record;
-                  return {
-                    ...record,
-                    fields: {
-                      ...record.fields,
-                      Latitude: coords.lat,
-                      Longitude: coords.lng,
-                    },
-                  };
-                }),
-              );
-            }).catch((err) => console.error("[geocode] Top-level error:", err));
+            geocodeAndPersistMissingCoords(
+              data.records,
+              token,
+              (batchResults) => {
+                const coordsMap = new Map(
+                  batchResults.map((r) => [
+                    r.recordId,
+                    { lat: r.lat, lng: r.lng },
+                  ]),
+                );
+                setRecords((prev) =>
+                  prev.map((record) => {
+                    const coords = coordsMap.get(record.id);
+                    if (!coords) return record;
+                    return {
+                      ...record,
+                      fields: {
+                        ...record.fields,
+                        Latitude: coords.lat,
+                        Longitude: coords.lng,
+                      },
+                    };
+                  }),
+                );
+              },
+            ).catch((err) => console.error("[geocode] Top-level error:", err));
           } else {
             setRecords([]);
           }
@@ -248,6 +289,28 @@ export default function AirtableInterface() {
           <p>{statusMessage}</p>
           {errorMessage && <p style={{ color: "#e03131" }}>{errorMessage}</p>}
         </StatusBlock>
+
+        {minutesLeft !== null && minutesLeft <= 5 && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "6px 12px",
+              background: minutesLeft === 0 ? "#fff0f0" : "#fffbe6",
+              borderRadius: "6px",
+              fontSize: "0.85rem",
+              color: minutesLeft === 0 ? "#c92a2a" : "#e67700",
+            }}
+          >
+            {minutesLeft === 0
+              ? "Session expired."
+              : `Session expires in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`}
+            <Button intent="secondary" onClick={handleRefreshSession}>
+              Refresh session
+            </Button>
+          </div>
+        )}
 
         <ActionButtons>
           {!userToken ? (
