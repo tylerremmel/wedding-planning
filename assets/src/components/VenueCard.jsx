@@ -33,6 +33,13 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaLink } from "react-icons/fa";
 import Drawer from "@mui/material/Drawer";
 import VenueComments from "./VenueComments";
 
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, "");
+  const ten = digits.length === 11 && digits[0] === "1" ? digits.slice(1) : digits;
+  if (ten.length !== 10) return raw;
+  return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`;
+}
+
 function ImageWithLoader({ src, alt, placeholderDataUri }) {
   const [loaded, setLoaded] = useState(false);
   return (
@@ -562,7 +569,7 @@ export default function VenueCard({
                 <Icon>
                   <FaPhone />
                 </Icon>{" "}
-                {fields["Phone number"]}
+                {formatPhone(fields["Phone number"])}
               </DrawerContactInfoRow>
             )}
             {fields["Email"] && (
@@ -714,7 +721,7 @@ export default function VenueCard({
                 {"$" + Number(fields["Minimum spend"]).toLocaleString()}
               </p>
             )}
-            {fields["Estimated total cost"] != null && (
+            {!!fields["Estimated total cost"] && (
               <p>
                 <strong>Estimated total cost:</strong>{" "}
                 {"$" + Number(fields["Estimated total cost"]).toLocaleString()}

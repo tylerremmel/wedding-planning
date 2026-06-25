@@ -358,11 +358,13 @@ export default function AirtableInterface() {
     <PageShell>
       <HeaderPanel>
         <StatusBlock>
-          <p>{statusMessage}</p>
-          {errorMessage && <p style={{ color: "#e03131" }}>{errorMessage}</p>}
+          <div>{statusMessage}</div>
+          {errorMessage && (
+            <div style={{ color: "#e03131" }}>{errorMessage}</div>
+          )}
         </StatusBlock>
 
-        {minutesLeft !== null && minutesLeft <= 65 && (
+        {minutesLeft !== null && minutesLeft <= 5 && (
           <div
             style={{
               display: "flex",
