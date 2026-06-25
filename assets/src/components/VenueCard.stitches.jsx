@@ -131,21 +131,25 @@ export const CommentsStream = styled("div", {
 });
 
 export const CommentBubble = styled("div", {
-  display: "block",
+  display: "inline",
   fontSize: "0.9rem",
   lineHeight: 1.4,
-  color: "$gray700",
+  border: "1px solid $gray300",
+  backgroundColor: "$blue100",
+  padding: "8px 12px",
+  marginRight: "auto",
+  borderRadius: "$sm",
+  color: "$blue800",
+  marginTop: "12px",
 });
 
 export const CommentMeta = styled("span", {
   fontWeight: 700,
-  color: "$gray800",
   whiteSpace: "nowrap",
   paddingRight: "4px",
 });
 
 export const CommentText = styled("span", {
-  color: "$gray700",
   paddingTop: "12px",
 });
 

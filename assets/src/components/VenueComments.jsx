@@ -22,6 +22,7 @@ import {
   FaThumbsDown,
   FaRegHeart,
   FaHeart,
+  FaComment,
 } from "react-icons/fa";
 import TextField from "@mui/material/TextField";
 
@@ -169,6 +170,9 @@ export default function VenueComments({
           comments.map((comment, index) => (
             <CommentBubble key={index}>
               <CommentMeta>
+                <Icon>
+                  <FaComment />
+                </Icon>{" "}
                 {comment.author?.name?.split(" ")[0] || "User"}:
               </CommentMeta>
               <CommentText>{comment.text}</CommentText>
