@@ -22,7 +22,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const AMBER_500 = "#f59e0b";
+const GRAY_400 = "#ced4da";
 
 const PIN_SVG = (color, size) => `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="${size[0]}" height="${size[1]}">
@@ -34,7 +34,7 @@ const PIN_SVG = (color, size) => `
 
 const defaultIcon = L.divIcon({
   className: "",
-  html: PIN_SVG("#3b82f6", [24, 36]),
+  html: PIN_SVG("#339af0", [24, 36]),
   iconSize: [24, 36],
   iconAnchor: [12, 36],
   tooltipAnchor: [0, -36],
@@ -42,7 +42,7 @@ const defaultIcon = L.divIcon({
 
 const highlightedIcon = L.divIcon({
   className: "",
-  html: PIN_SVG(AMBER_500, [30, 45]),
+  html: PIN_SVG(GRAY_400, [30, 45]),
   iconSize: [30, 45],
   iconAnchor: [15, 45],
   tooltipAnchor: [0, -45],
@@ -55,7 +55,10 @@ function MapController({ venues, fitKey, onBoundsChange }) {
   const boundsTimerRef = useRef(null);
 
   useEffect(() => {
-    const points = venues.map((v) => [v.fields["Latitude"], v.fields["Longitude"]]);
+    const points = venues.map((v) => [
+      v.fields["Latitude"],
+      v.fields["Longitude"],
+    ]);
     if (points.length > 0) {
       skipNextMoveRef.current = true;
       try {

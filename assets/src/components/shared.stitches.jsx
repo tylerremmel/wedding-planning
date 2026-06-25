@@ -20,16 +20,25 @@ export const Button = styled("button", {
         backgroundColor: "$blue500",
         color: "$white",
         "&:hover:not(:disabled)": { backgroundColor: "$blue600" },
+        "&:visited": {
+          color: "$white",
+        },
       },
       gray: {
         backgroundColor: "$gray300",
         color: "$gray800",
         "&:hover:not(:disabled)": { backgroundColor: "$gray400" },
+        "&:visited": {
+          color: "$gray800",
+        },
       },
       red: {
         backgroundColor: "$red500",
         color: "$white",
         "&:hover:not(:disabled)": { backgroundColor: "$red600" },
+        "&:visited": {
+          color: "$white",
+        },
       },
     },
     size: {

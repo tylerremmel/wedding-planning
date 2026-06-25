@@ -14,16 +14,17 @@ import {
   Icon,
   StatusMessage,
 } from "./VenueCard.stitches";
-
 import {
-  FaRegThumbsUp,
-  FaThumbsUp,
-  FaRegThumbsDown,
-  FaThumbsDown,
-  FaRegHeart,
-  FaHeart,
-  FaComment,
-} from "react-icons/fa";
+  MdOutlineAddComment,
+  MdOutlineThumbDown,
+  MdThumbDown,
+  MdOutlineThumbUp,
+  MdThumbUp,
+  MdFavoriteBorder,
+  MdFavorite,
+  MdAccountCircle,
+} from "react-icons/md";
+
 import TextField from "@mui/material/TextField";
 
 export default function VenueComments({
@@ -61,6 +62,9 @@ export default function VenueComments({
                 setShowCommentForm(true);
               }}
             >
+              <Icon>
+                <MdOutlineAddComment />
+              </Icon>{" "}
               Add note
             </Button>
             <Button
@@ -75,7 +79,11 @@ export default function VenueComments({
               }}
             >
               <Icon>
-                {isReactionActive("heart") ? <FaHeart /> : <FaRegHeart />}
+                {isReactionActive("heart") ? (
+                  <MdFavoriteBorder />
+                ) : (
+                  <MdFavorite />
+                )}
               </Icon>{" "}
               {localCounts.heart}
             </Button>
@@ -92,9 +100,9 @@ export default function VenueComments({
             >
               <Icon>
                 {isReactionActive("thumbs_up") ? (
-                  <FaThumbsUp />
+                  <MdThumbUp />
                 ) : (
-                  <FaRegThumbsUp />
+                  <MdOutlineThumbUp />
                 )}
               </Icon>{" "}
               {localCounts.thumbs_up}
@@ -112,9 +120,9 @@ export default function VenueComments({
             >
               <Icon>
                 {isReactionActive("thumbs_down") ? (
-                  <FaThumbsDown />
+                  <MdThumbDown />
                 ) : (
-                  <FaRegThumbsDown />
+                  <MdOutlineThumbDown />
                 )}
               </Icon>{" "}
               {localCounts.thumbs_down}
@@ -171,7 +179,7 @@ export default function VenueComments({
             <CommentBubble key={index}>
               <CommentMeta>
                 <Icon>
-                  <FaComment />
+                  <MdAccountCircle />
                 </Icon>{" "}
                 {comment.author?.name?.split(" ")[0] || "User"}:
               </CommentMeta>
