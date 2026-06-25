@@ -579,7 +579,8 @@ export default function VenueCard({
             {fields["URL"] && (
               <Button
                 as="a"
-                color="gray"
+                variant="gray"
+                size="compact"
                 href={fields["URL"]}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -593,7 +594,8 @@ export default function VenueCard({
             {fields["URL 2"] && (
               <Button
                 as="a"
-                color="gray"
+                variant="gray"
+                size="compact"
                 href={fields["URL 2"]}
                 target="_blank"
                 rel="noopener noreferrer"

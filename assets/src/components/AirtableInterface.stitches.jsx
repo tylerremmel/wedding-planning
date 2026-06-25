@@ -1,4 +1,5 @@
 import { styled } from "../styles/stitches";
+export { Button } from "./shared.stitches";
 
 export const PageShell = styled("section", {
   maxWidth: "1240px",
@@ -34,34 +35,6 @@ export const ActionButtons = styled("div", {
   flexWrap: "wrap",
 });
 
-export const Button = styled("button", {
-  padding: "10px 16px",
-  borderRadius: "$sm",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: 700,
-  transition: "transform 0.15s ease",
-  "&:hover": {
-    transform: "translateY(-1px)",
-  },
-  variants: {
-    intent: {
-      primary: {
-        backgroundColor: "$blue500",
-        color: "$white",
-      },
-      danger: {
-        backgroundColor: "$red500",
-        color: "$white",
-      },
-      secondary: {
-        backgroundColor: "$gray300",
-        color: "$gray800",
-      },
-    },
-  },
-});
-
 export const ControlPanel = styled("div", {
   display: "grid",
   gap: "28px",
@@ -70,8 +43,27 @@ export const ControlPanel = styled("div", {
 });
 
 export const FilterGroup = styled("div", {
-  display: "none",
+  display: "flex",
+  flexDirection: "column",
+  gap: "8px",
+  padding: "22px",
+  borderRadius: "$lg",
+  backgroundColor: "$white",
+  boxShadow: "$card",
+  flexGrow: 0,
+});
+
+export const FilterSubGroup = styled("div", {
+  display: "flex",
+  flexDirection: "row",
   gap: "12px",
+  width: "100%",
+});
+
+export const FilterGroupText = styled("div", {
+  fontSize: "0.95rem",
+  color: "$gray700",
+  fontWeight: 600,
 });
 
 export const LeftPanel = styled("div", {
@@ -112,6 +104,7 @@ export const GridContainer = styled("div", {
   display: "grid",
   gap: "28px",
   gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  flexGrow: 4,
 });
 
 export const Notification = styled("div", {

@@ -12,6 +12,7 @@ import {
   restorePreAuthState,
 } from "../utils/airtableAuth";
 import { fetchVenueRecords, fetchUserProfile } from "../utils/airtableApi";
+import { getCachedVenues, setCachedVenues } from "../utils/venueCache";
 import { geocodeAndPersistMissingCoords } from "../utils/geocodeVenues";
 import {
   PageShell,
@@ -23,11 +24,28 @@ import {
   LeftPanel,
   RightPanel,
   FilterGroup,
+  FilterSubGroup,
+  FilterGroupText,
   Input,
   Select,
   GridContainer,
   Notification,
 } from "./AirtableInterface.stitches";
+import { Autocomplete, TextField } from "@mui/material";
+
+const SEASON_OPTIONS = [
+  "Winter",
+  "Spring",
+  "Summer",
+  "Late summer",
+  "Early fall",
+  "Fall",
+];
+const OPTIONS_INCLUDED = [
+  "The intimate microwedding",
+  "The extended family party",
+  "The more-the-merrier shindig",
+];
 
 export default function AirtableInterface() {
   const [records, setRecords] = useState([]);
@@ -46,6 +64,9 @@ export default function AirtableInterface() {
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
   const [mapBounds, setMapBounds] = useState(null);
   const [fitKey, setFitKey] = useState(0);
+  const [filterStates, setFilterStates] = useState([]);
+  const [filterSeasons, setFilterSeasons] = useState([]);
+  const [filterOptions, setFilterOptions] = useState(null);
   const [minutesLeft, setMinutesLeft] = useState(null);
   const initialFitDone = useRef(false);
 
@@ -92,11 +113,11 @@ export default function AirtableInterface() {
     }
   }, [userToken]);
 
-  // Clear bounds and refit map when text filter or sort changes
+  // Clear bounds and refit map when filters or sort changes
   useEffect(() => {
     setMapBounds(null);
     setFitKey((k) => k + 1);
-  }, [filterText, sortKey]);
+  }, [filterText, sortKey, filterStates, filterSeasons, filterOptions]);
 
   // Refit map only on first records load — geocoding batch updates should not refit
   useEffect(() => {
@@ -139,9 +160,23 @@ export default function AirtableInterface() {
     redirectToAirtableOAuth();
   }
 
-  async function loadRecords() {
-    setLoading(true);
+  async function loadRecords(force = false) {
     setErrorMessage("");
+
+    if (!force) {
+      const cached = getCachedVenues();
+      if (cached) {
+        setRecords(cached.records);
+        setNextCommentsIndex(0);
+        const ageMinutes = Math.floor((Date.now() - cached.cachedAt) / 60000);
+        const ageLabel = ageMinutes === 0 ? "just now" : `${ageMinutes}m ago`;
+        setStatusMessage(`Venues loaded from cache · updated ${ageLabel}`);
+        return;
+      }
+    }
+
+    setLoading(true);
+    setStatusMessage("Fetching live venue data...");
 
     const token = userToken || getUserToken();
     const maxAttempts = 3;
@@ -153,6 +188,7 @@ export default function AirtableInterface() {
           const data = await fetchVenueRecords(token);
           if (data.records && data.records.length > 0) {
             setRecords(data.records);
+            setCachedVenues(data.records);
             setNextCommentsIndex(0);
             // Auto-geocode venues missing coordinates and write back to Airtable.
             // Uses a callback so pins appear progressively as each batch resolves.
@@ -244,6 +280,13 @@ export default function AirtableInterface() {
     }
   }
 
+  const availableStates = useMemo(() => {
+    const states = new Set(
+      records.map((r) => r.fields["State"]).filter(Boolean),
+    );
+    return Array.from(states).sort();
+  }, [records]);
+
   const filteredRecords = useMemo(() => {
     const normalizedFilter = filterText.toLowerCase().trim();
     return records
@@ -255,6 +298,22 @@ export default function AirtableInterface() {
           address.toLowerCase().includes(normalizedFilter);
 
         if (!matchesText) return false;
+
+        if (
+          filterStates.length > 0 &&
+          !filterStates.includes(record.fields["State"])
+        )
+          return false;
+
+        if (filterSeasons.length > 0) {
+          const seasons = record.fields["Ideal season(s)"] || [];
+          if (!filterSeasons.some((s) => seasons.includes(s))) return false;
+        }
+
+        if (filterOptions) {
+          const options = record.fields["Options included"] || [];
+          if (!options.includes(filterOptions)) return false;
+        }
 
         if (mapBounds) {
           const lat = record.fields["Latitude"];
@@ -278,9 +337,22 @@ export default function AirtableInterface() {
             b.fields["Venue name"] || "",
           );
         }
+        if (sortKey === "capacity") {
+          const capA = Number(a.fields["Capacity"]) || 0;
+          const capB = Number(b.fields["Capacity"]) || 0;
+          return capB - capA;
+        }
         return 0;
       });
-  }, [records, filterText, sortKey, mapBounds]);
+  }, [
+    records,
+    filterText,
+    sortKey,
+    mapBounds,
+    filterStates,
+    filterSeasons,
+    filterOptions,
+  ]);
 
   return (
     <PageShell>
@@ -290,7 +362,7 @@ export default function AirtableInterface() {
           {errorMessage && <p style={{ color: "#e03131" }}>{errorMessage}</p>}
         </StatusBlock>
 
-        {minutesLeft !== null && minutesLeft <= 5 && (
+        {minutesLeft !== null && minutesLeft <= 65 && (
           <div
             style={{
               display: "flex",
@@ -306,7 +378,7 @@ export default function AirtableInterface() {
             {minutesLeft === 0
               ? "Session expired."
               : `Session expires in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`}
-            <Button intent="secondary" onClick={handleRefreshSession}>
+            <Button variant="gray" onClick={handleRefreshSession}>
               Refresh session
             </Button>
           </div>
@@ -314,15 +386,15 @@ export default function AirtableInterface() {
 
         <ActionButtons>
           {!userToken ? (
-            <Button intent="primary" onClick={redirectToAirtableOAuth}>
+            <Button variant="blue" onClick={redirectToAirtableOAuth}>
               Log In with Airtable
             </Button>
           ) : (
             <>
-              <Button intent="secondary" onClick={loadRecords}>
+              <Button variant="gray" onClick={() => loadRecords(true)}>
                 Refresh venues
               </Button>
-              <Button intent="danger" onClick={clearSession}>
+              <Button variant="red" onClick={clearSession}>
                 Log Out
               </Button>
             </>
@@ -333,21 +405,75 @@ export default function AirtableInterface() {
       <ControlPanel>
         <LeftPanel>
           <FilterGroup>
-            <Input
-              name="filterText"
-              value={filterText}
-              onChange={(event) => setFilterText(event.target.value)}
-              placeholder="Filter by venue name or address"
-              aria-label="Venue search"
-            />
-            <Select
-              name="sortKey"
-              value={sortKey}
-              onChange={(event) => setSortKey(event.target.value)}
-              aria-label="Sort venues"
-            >
-              <option value="name">Sort by name</option>
-            </Select>
+            <FilterGroupText>Filter by:</FilterGroupText>
+            <FilterSubGroup>
+              <Autocomplete
+                multiple
+                size="small"
+                limitTags={2}
+                id="filter-state"
+                options={availableStates}
+                value={filterStates}
+                onChange={(_, newValue) => setFilterStates(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="State"
+                    placeholder="All states"
+                  />
+                )}
+                sx={{ width: "100%" }}
+              />
+              {/* <Autocomplete
+              multiple
+              size="small"
+              limitTags={2}
+              id="filter-season"
+              options={SEASON_OPTIONS}
+              value={filterSeasons}
+              onChange={(_, newValue) => setFilterSeasons(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Ideal season"
+                  placeholder="All seasons"
+                />
+              )}
+              sx={{ width: "100%" }}
+            /> */}
+              <Autocomplete
+                size="small"
+                id="filter-options"
+                options={OPTIONS_INCLUDED}
+                value={filterOptions}
+                onChange={(_, newValue) => setFilterOptions(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Options included"
+                    placeholder="All"
+                  />
+                )}
+                sx={{ width: "100%" }}
+              />
+            </FilterSubGroup>
+            <FilterGroupText css={{ paddingTop: "12px" }}>
+              Sort by:
+            </FilterGroupText>
+            <FilterSubGroup>
+              <Button
+                variant={sortKey === "name" ? "blue" : "gray"}
+                onClick={() => setSortKey("name")}
+              >
+                Venue name
+              </Button>
+              <Button
+                variant={sortKey === "capacity" ? "blue" : "gray"}
+                onClick={() => setSortKey("capacity")}
+              >
+                Capacity
+              </Button>
+            </FilterSubGroup>
           </FilterGroup>
           {loading ? (
             <Notification>Loading venue cards…</Notification>

@@ -1,5 +1,7 @@
 import { createStitches } from "@stitches/react";
 
+export const FONT_BODY = "Inter, system-ui, sans-serif";
+
 export const { styled, css, globalCss, keyframes } = createStitches({
   theme: {
     colors: {
@@ -38,7 +40,7 @@ export const { styled, css, globalCss, keyframes } = createStitches({
       white: "#ffffff",
     },
     fonts: {
-      body: "Inter, system-ui, sans-serif",
+      body: FONT_BODY,
     },
     radii: {
       sm: "8px",
