@@ -84,6 +84,10 @@ export async function exchangeCodeForToken(code) {
     if (response.ok) {
       const tokenData = await response.json();
       localStorage.setItem("airtable_user_token", tokenData.access_token);
+      localStorage.setItem(
+        "airtable_token_expiry",
+        String(Date.now() + (tokenData.expires_in ?? 3600) * 1000),
+      );
       localStorage.setItem("user_email", "Verified User");
       return true;
     } else {
@@ -105,4 +109,24 @@ export function getUserToken() {
 export function clearSession() {
   localStorage.clear();
   window.location.reload();
+}
+
+export function getTokenExpiry() {
+  const val = localStorage.getItem("airtable_token_expiry");
+  return val ? parseInt(val, 10) : null;
+}
+
+export function savePreAuthState(state) {
+  sessionStorage.setItem("airtable_pre_auth_state", JSON.stringify(state));
+}
+
+export function restorePreAuthState() {
+  const raw = sessionStorage.getItem("airtable_pre_auth_state");
+  if (!raw) return null;
+  sessionStorage.removeItem("airtable_pre_auth_state");
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }

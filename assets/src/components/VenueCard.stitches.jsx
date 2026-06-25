@@ -1,4 +1,5 @@
 import { styled, keyframes } from "../styles/stitches";
+export { Button } from "./shared.stitches";
 
 const skeletonPulse = keyframes({
   "0%, 100%": { opacity: 1 },
@@ -32,7 +33,7 @@ export const Card = styled("article", {
 export const CarouselWrapper = styled("figure", {
   position: "relative",
   width: "100%",
-  aspectRatio: "1 / 1",
+  aspectRatio: "5 / 4",
   overflow: "hidden",
   backgroundColor: "$gray200",
   marginBottom: 0,
@@ -130,21 +131,25 @@ export const CommentsStream = styled("div", {
 });
 
 export const CommentBubble = styled("div", {
-  display: "block",
+  display: "inline",
   fontSize: "0.9rem",
   lineHeight: 1.4,
-  color: "$gray700",
+  border: "1px solid $gray300",
+  backgroundColor: "$blue100",
+  padding: "8px 12px",
+  marginRight: "auto",
+  borderRadius: "$sm",
+  color: "$blue800",
+  marginTop: "12px",
 });
 
 export const CommentMeta = styled("span", {
   fontWeight: 700,
-  color: "$gray800",
   whiteSpace: "nowrap",
   paddingRight: "4px",
 });
 
 export const CommentText = styled("span", {
-  color: "$gray700",
   paddingTop: "12px",
 });
 
@@ -153,49 +158,6 @@ export const CommentPortal = styled("div", {});
 export const CommentActions = styled("div", {
   display: "flex",
   gap: "8px",
-});
-
-export const Button = styled("button", {
-  display: "inline-flex",
-  gap: "4px",
-  alignItems: "center",
-  padding: "8px 12px",
-  borderRadius: "$sm",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: 700,
-  fontSize: "0.8rem",
-  lineHeight: 1,
-  textDecoration: "none !important",
-  transition: "background 0.25s ease",
-  "&:disabled": {
-    opacity: 0.65,
-    cursor: "not-allowed",
-  },
-  variants: {
-    color: {
-      blue: {
-        backgroundColor: "$blue700",
-        color: "$white",
-        "&:hover": { backgroundColor: "$blue800" },
-      },
-      red: {
-        backgroundColor: "$red700",
-        color: "$white",
-        "&:hover": { backgroundColor: "$red800" },
-      },
-      gray: {
-        backgroundColor: "$gray300",
-        color: "$gray800",
-        "&:hover": { backgroundColor: "$gray400" },
-      },
-      black: {
-        backgroundColor: "$gray800",
-        color: "$white",
-        "&:hover": { backgroundColor: "$gray700" },
-      },
-    },
-  },
 });
 
 export const Icon = styled("span", {

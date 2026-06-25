@@ -5,7 +5,6 @@ import {
   CommentPortal,
   CommentActions,
   CommentForm,
-  CommentInput,
   CommentInputActions,
   CommentsStream,
   CommentBubble,
@@ -15,6 +14,7 @@ import {
   Icon,
   StatusMessage,
 } from "./VenueCard.stitches";
+
 import {
   FaRegThumbsUp,
   FaThumbsUp,
@@ -22,7 +22,9 @@ import {
   FaThumbsDown,
   FaRegHeart,
   FaHeart,
+  FaComment,
 } from "react-icons/fa";
+import TextField from "@mui/material/TextField";
 
 export default function VenueComments({
   variant = "card",
@@ -42,7 +44,8 @@ export default function VenueComments({
   commentsLoading,
   comments,
 }) {
-  const Wrapper = variant === "drawer" ? DrawerCommentsSection : CommentsSection;
+  const Wrapper =
+    variant === "drawer" ? DrawerCommentsSection : CommentsSection;
 
   return (
     <Wrapper>
@@ -50,7 +53,8 @@ export default function VenueComments({
         {!showCommentForm ? (
           <CommentActions>
             <Button
-              color="blue"
+              variant="blue"
+              size="compact"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -60,7 +64,8 @@ export default function VenueComments({
               Add note
             </Button>
             <Button
-              color={isReactionActive("heart") ? "red" : "gray"}
+              variant="red"
+              size="compact"
               type="button"
               disabled={isReacting || !canReact}
               aria-pressed={isReactionActive("heart")}
@@ -75,7 +80,8 @@ export default function VenueComments({
               {localCounts.heart}
             </Button>
             <Button
-              color={isReactionActive("thumbs_up") ? "blue" : "gray"}
+              variant={isReactionActive("thumbs_up") ? "blue" : "gray"}
+              size="compact"
               type="button"
               disabled={isReacting || !canReact}
               aria-pressed={isReactionActive("thumbs_up")}
@@ -94,7 +100,8 @@ export default function VenueComments({
               {localCounts.thumbs_up}
             </Button>
             <Button
-              color={isReactionActive("thumbs_down") ? "black" : "gray"}
+              variant="gray"
+              size="compact"
               type="button"
               disabled={isReacting || !canReact}
               aria-pressed={isReactionActive("thumbs_down")}
@@ -115,19 +122,22 @@ export default function VenueComments({
           </CommentActions>
         ) : (
           <CommentForm onSubmit={handleCommentSubmit}>
-            <CommentInput
-              value={commentText}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              onChange={(event) => setCommentText(event.target.value)}
-              placeholder="Add a verified comment..."
+            <TextField
+              multiline
+              size="small"
+              rows={2}
+              label="Add a note"
               name="commentText"
               required
+              fullWidth
+              value={commentText}
+              onChange={(event) => setCommentText(event.target.value)}
+              onClick={(e) => e.stopPropagation()}
             />
             <CommentInputActions>
               <Button
-                color="gray"
+                variant="gray"
+                size="compact"
                 type="button"
                 disabled={isSubmitting}
                 onClick={(e) => {
@@ -139,7 +149,8 @@ export default function VenueComments({
                 Cancel
               </Button>
               <Button
-                color="black"
+                variant="blue"
+                size="compact"
                 type="submit"
                 disabled={isSubmitting}
                 onClick={(e) => e.stopPropagation()}
@@ -159,6 +170,9 @@ export default function VenueComments({
           comments.map((comment, index) => (
             <CommentBubble key={index}>
               <CommentMeta>
+                <Icon>
+                  <FaComment />
+                </Icon>{" "}
                 {comment.author?.name?.split(" ")[0] || "User"}:
               </CommentMeta>
               <CommentText>{comment.text}</CommentText>

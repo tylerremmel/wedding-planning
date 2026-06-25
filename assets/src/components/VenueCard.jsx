@@ -33,6 +33,13 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaLink } from "react-icons/fa";
 import Drawer from "@mui/material/Drawer";
 import VenueComments from "./VenueComments";
 
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, "");
+  const ten = digits.length === 11 && digits[0] === "1" ? digits.slice(1) : digits;
+  if (ten.length !== 10) return raw;
+  return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`;
+}
+
 function ImageWithLoader({ src, alt, placeholderDataUri }) {
   const [loaded, setLoaded] = useState(false);
   return (
@@ -562,7 +569,7 @@ export default function VenueCard({
                 <Icon>
                   <FaPhone />
                 </Icon>{" "}
-                {fields["Phone number"]}
+                {formatPhone(fields["Phone number"])}
               </DrawerContactInfoRow>
             )}
             {fields["Email"] && (
@@ -579,7 +586,8 @@ export default function VenueCard({
             {fields["URL"] && (
               <Button
                 as="a"
-                color="gray"
+                variant="gray"
+                size="compact"
                 href={fields["URL"]}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -593,7 +601,8 @@ export default function VenueCard({
             {fields["URL 2"] && (
               <Button
                 as="a"
-                color="gray"
+                variant="gray"
+                size="compact"
                 href={fields["URL 2"]}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -632,6 +641,25 @@ export default function VenueCard({
               </p>
             )}
 
+            {fields["Type of venue"]?.length > 0 && (
+              <p>
+                <strong>Type of venue:</strong>{" "}
+                {fields["Type of venue"].join(", ")}
+              </p>
+            )}
+            {fields["Reception options"]?.length > 0 && (
+              <p>
+                <strong>Reception options:</strong>{" "}
+                {fields["Reception options"].join(", ")}
+              </p>
+            )}
+            {fields["Options included"]?.length > 0 && (
+              <p>
+                <strong>Options included:</strong>{" "}
+                {fields["Options included"].join(", ")}
+              </p>
+            )}
+
             {fields["Capacity"] && (
               <p>
                 <strong>Capacity:</strong> {fields["Capacity"]}
@@ -658,11 +686,65 @@ export default function VenueCard({
                 <strong>Pet notes:</strong> {fields["Pet notes"]}
               </p>
             )}
+
+            {fields["Catering included?"] && (
+              <p>
+                <strong>Catering included:</strong> Yes
+              </p>
+            )}
+            {fields["Catering notes"] && (
+              <p>
+                <strong>Catering notes:</strong> {fields["Catering notes"]}
+              </p>
+            )}
+            {fields["Bar package"] && (
+              <p>
+                <strong>Bar package:</strong> {fields["Bar package"]}
+              </p>
+            )}
+
+            {fields["Rental fee"] != null && (
+              <p>
+                <strong>Rental fee:</strong>{" "}
+                {"$" + Number(fields["Rental fee"]).toLocaleString()}
+              </p>
+            )}
+            {fields["Per-person cost"] != null && (
+              <p>
+                <strong>Per-person cost:</strong>{" "}
+                {"$" + Number(fields["Per-person cost"]).toLocaleString()}
+              </p>
+            )}
+            {fields["Minimum spend"] != null && (
+              <p>
+                <strong>Minimum spend:</strong>{" "}
+                {"$" + Number(fields["Minimum spend"]).toLocaleString()}
+              </p>
+            )}
+            {!!fields["Estimated total cost"] && (
+              <p>
+                <strong>Estimated total cost:</strong>{" "}
+                {"$" + Number(fields["Estimated total cost"]).toLocaleString()}
+              </p>
+            )}
+
             {fields["Deposit info"] && (
               <p>
                 <strong>Deposit info:</strong> {fields["Deposit info"]}
               </p>
             )}
+            {fields["Payment schedule"] && (
+              <p>
+                <strong>Payment schedule:</strong> {fields["Payment schedule"]}
+              </p>
+            )}
+            {fields["Cancellation policy"] && (
+              <p>
+                <strong>Cancellation policy:</strong>{" "}
+                {fields["Cancellation policy"]}
+              </p>
+            )}
+
             {fields["Extras/notes"] && (
               <p>
                 <strong>Extras/notes:</strong> {fields["Extras/notes"]}
