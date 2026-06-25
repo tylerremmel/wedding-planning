@@ -29,13 +29,23 @@ import {
   DrawerImageSkeleton,
   DrawerImageEl,
 } from "./VenueCard.stitches";
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaLink } from "react-icons/fa";
+import {
+  MdOutlineLocationOn,
+  MdOutlineLocalPhone,
+  MdOutlineLocalPostOffice,
+  MdLink,
+  MdArrowBack,
+  MdArrowForward,
+  MdClose,
+} from "react-icons/md";
+import { SiAirtable } from "react-icons/si";
 import Drawer from "@mui/material/Drawer";
 import VenueComments from "./VenueComments";
 
 function formatPhone(raw) {
   const digits = raw.replace(/\D/g, "");
-  const ten = digits.length === 11 && digits[0] === "1" ? digits.slice(1) : digits;
+  const ten =
+    digits.length === 11 && digits[0] === "1" ? digits.slice(1) : digits;
   if (ten.length !== 10) return raw;
   return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`;
 }
@@ -487,7 +497,9 @@ export default function VenueCard({
                 );
               }}
             >
-              ‹
+              <Icon>
+                <MdArrowBack />
+              </Icon>
             </CarouselNav>
             <CarouselNav
               position="right"
@@ -500,7 +512,9 @@ export default function VenueCard({
                 );
               }}
             >
-              ›
+              <Icon>
+                <MdArrowForward />
+              </Icon>
             </CarouselNav>
           </>
         )}
@@ -519,7 +533,7 @@ export default function VenueCard({
 
         <VenueAddress>
           <Icon>
-            <FaMapMarkerAlt />
+            <MdOutlineLocationOn />
           </Icon>{" "}
           {fields["City"] || ""}
           {fields["City"] && fields["State"] ? ", " : ""}
@@ -551,14 +565,16 @@ export default function VenueCard({
             onClick={handleDrawerClose}
             aria-label="Close drawer"
           >
-            ✕
+            <Icon>
+              <MdClose />
+            </Icon>
           </DrawerCloseButton>
           <DrawerVenueName>{fields["Venue name"]}</DrawerVenueName>
           <DrawerContactInfo>
             {fields["Full address"] && (
               <DrawerContactInfoRow>
                 <Icon>
-                  <FaMapMarkerAlt />
+                  <MdOutlineLocationOn />
                 </Icon>{" "}
                 {fields["Full address"]}
               </DrawerContactInfoRow>
@@ -567,7 +583,7 @@ export default function VenueCard({
             {fields["Phone number"] && (
               <DrawerContactInfoRow>
                 <Icon>
-                  <FaPhone />
+                  <MdOutlineLocalPhone />
                 </Icon>{" "}
                 {formatPhone(fields["Phone number"])}
               </DrawerContactInfoRow>
@@ -575,7 +591,7 @@ export default function VenueCard({
             {fields["Email"] && (
               <DrawerContactInfoRow>
                 <Icon>
-                  <FaEnvelope />
+                  <MdOutlineLocalPostOffice />
                 </Icon>{" "}
                 <a href={`mailto:${fields["Email"]}`}>{fields["Email"]}</a>
               </DrawerContactInfoRow>
@@ -593,7 +609,7 @@ export default function VenueCard({
                 rel="noopener noreferrer"
               >
                 <Icon>
-                  <FaLink />
+                  <MdLink />
                 </Icon>{" "}
                 Link 1
               </Button>
@@ -608,11 +624,24 @@ export default function VenueCard({
                 rel="noopener noreferrer"
               >
                 <Icon>
-                  <FaLink />
+                  <MdLink />
                 </Icon>{" "}
                 Link 2
               </Button>
             )}
+            <Button
+              as="a"
+              variant="gray"
+              size="compact"
+              href={`https://airtable.com/appeGKWTopqdxvdOQ/tblk2NoAYESIgeZUO/viwG4dvpitMPaxMYJ/${record.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon css={{ top: "1px" }}>
+                <SiAirtable />
+              </Icon>{" "}
+              Edit in Airtable
+            </Button>
           </DrawerLinksRow>
 
           <VenueComments

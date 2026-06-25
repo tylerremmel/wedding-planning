@@ -23,8 +23,8 @@ export const Card = styled("article", {
   variants: {
     highlighted: {
       true: {
-        backgroundColor: "$amber100",
-        borderColor: "$amber500",
+        backgroundColor: "$gray100",
+        borderColor: "$gray300",
       },
     },
   },
@@ -54,7 +54,7 @@ export const CarouselNav = styled("button", {
   width: "36px",
   height: "36px",
   borderRadius: "50%",
-  backgroundColor: "rgba(255,255,255,0.92)",
+  backgroundColor: "rgba(255,255,255,0.4)",
   border: "none",
   color: "$gray800",
   fontWeight: 700,
@@ -62,20 +62,19 @@ export const CarouselNav = styled("button", {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
   variants: {
     position: {
       left: {
-        left: "15px",
+        left: "12px",
       },
       right: {
-        right: "15px",
+        right: "12px",
       },
     },
   },
   transition: "background 0.25s ease",
   "&:hover": {
-    backgroundColor: "rgba(235,235,235,0.92)",
+    backgroundColor: "rgba(255,255,255,0.8)",
   },
 });
 
@@ -132,13 +131,13 @@ export const CommentsStream = styled("div", {
 
 export const CommentBubble = styled("div", {
   display: "inline",
-  fontSize: "0.9rem",
+  fontSize: "0.85rem",
   lineHeight: 1.4,
-  border: "1px solid $gray300",
+  border: "1px solid $blue500",
   backgroundColor: "$blue100",
   padding: "8px 12px",
   marginRight: "auto",
-  borderRadius: "$sm",
+  borderRadius: "0 $sm $sm $sm",
   color: "$blue800",
   marginTop: "12px",
 });
@@ -228,7 +227,7 @@ export const DrawerVenueName = styled("h2", {
 
 export const DrawerLinksRow = styled("div", {
   display: "flex",
-  gap: "12px",
+  gap: "8px",
 });
 
 export const DrawerContactInfoRow = styled("div", {
