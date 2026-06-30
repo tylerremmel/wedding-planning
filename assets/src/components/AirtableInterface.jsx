@@ -8,6 +8,7 @@ import {
   exchangeCodeForToken,
   clearSession,
   getTokenExpiry,
+  performTokenRefresh,
   savePreAuthState,
   restorePreAuthState,
 } from "../utils/airtableAuth";
@@ -68,9 +69,17 @@ export default function AirtableInterface() {
   const [filterSeasons, setFilterSeasons] = useState([]);
   const [filterOptions, setFilterOptions] = useState(null);
   const [minutesLeft, setMinutesLeft] = useState(null);
+  const [refreshFailed, setRefreshFailed] = useState(false);
   const initialFitDone = useRef(false);
+  const isRefreshing = useRef(false);
+  const refreshAttempted = useRef(false);
 
   useEffect(() => {
+    if (isRefreshing.current) {
+      isRefreshing.current = false;
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
     const oauthCode = params.get("code");
 
@@ -130,9 +139,12 @@ export default function AirtableInterface() {
   function invalidateAuthToken() {
     localStorage.removeItem("airtable_user_token");
     localStorage.removeItem("airtable_token_expiry");
+    localStorage.removeItem("airtable_refresh_token");
     localStorage.removeItem("user_email");
     setUserToken(null);
     setMinutesLeft(null);
+    setRefreshFailed(false);
+    refreshAttempted.current = false;
   }
 
   function sleep(ms) {
@@ -154,6 +166,21 @@ export default function AirtableInterface() {
     const id = setInterval(checkExpiry, 30000);
     return () => clearInterval(id);
   }, [userToken]);
+
+  useEffect(() => {
+    if (minutesLeft === null || minutesLeft > 5 || refreshAttempted.current) return;
+    refreshAttempted.current = true;
+    performTokenRefresh().then((ok) => {
+      if (ok) {
+        refreshAttempted.current = false;
+        setRefreshFailed(false);
+        isRefreshing.current = true;
+        setUserToken(getUserToken());
+      } else {
+        setRefreshFailed(true);
+      }
+    });
+  }, [minutesLeft]);
 
   function handleRefreshSession() {
     savePreAuthState({ filterText, sortKey, openDrawerVenueId });
@@ -364,7 +391,7 @@ export default function AirtableInterface() {
           )}
         </StatusBlock>
 
-        {minutesLeft !== null && minutesLeft <= 5 && (
+        {refreshFailed && minutesLeft !== null && minutesLeft <= 5 && (
           <div
             style={{
               display: "flex",
@@ -379,9 +406,9 @@ export default function AirtableInterface() {
           >
             {minutesLeft === 0
               ? "Session expired."
-              : `Session expires in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`}
+              : "Could not refresh session automatically."}
             <Button variant="gray" onClick={handleRefreshSession}>
-              Refresh session
+              Log in again
             </Button>
           </div>
         )}

@@ -88,6 +88,9 @@ export async function exchangeCodeForToken(code) {
         "airtable_token_expiry",
         String(Date.now() + (tokenData.expires_in ?? 3600) * 1000),
       );
+      if (tokenData.refresh_token) {
+        localStorage.setItem("airtable_refresh_token", tokenData.refresh_token);
+      }
       localStorage.setItem("user_email", "Verified User");
       return true;
     } else {
@@ -114,6 +117,38 @@ export function clearSession() {
 export function getTokenExpiry() {
   const val = localStorage.getItem("airtable_token_expiry");
   return val ? parseInt(val, 10) : null;
+}
+
+export function getRefreshToken() {
+  return localStorage.getItem("airtable_refresh_token");
+}
+
+export async function performTokenRefresh() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  try {
+    const response = await fetch(`${PROXY_BASE}/api/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) return false;
+
+    const tokenData = await response.json();
+    localStorage.setItem("airtable_user_token", tokenData.access_token);
+    localStorage.setItem(
+      "airtable_token_expiry",
+      String(Date.now() + (tokenData.expires_in ?? 3600) * 1000),
+    );
+    if (tokenData.refresh_token) {
+      localStorage.setItem("airtable_refresh_token", tokenData.refresh_token);
+    }
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function savePreAuthState(state) {
