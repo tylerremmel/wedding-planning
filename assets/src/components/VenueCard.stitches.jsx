@@ -126,7 +126,6 @@ export const CommentsTitle = styled("div", {
 
 export const CommentsStream = styled("div", {
   display: "grid",
-  gap: "12px",
 });
 
 export const CommentBubble = styled("div", {
