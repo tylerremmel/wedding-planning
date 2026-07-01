@@ -80,9 +80,9 @@ export default function VenueComments({
             >
               <Icon>
                 {isReactionActive("heart") ? (
-                  <MdFavoriteBorder />
-                ) : (
                   <MdFavorite />
+                ) : (
+                  <MdFavoriteBorder />
                 )}
               </Icon>{" "}
               {localCounts.heart}
