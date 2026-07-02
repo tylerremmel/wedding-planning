@@ -11,13 +11,16 @@ import {
 import { fetchUserProfile } from "../utils/airtableApi";
 
 // Manages the Airtable OAuth session: initial code exchange, token expiry
-// tracking, and silent refresh. `loadRecordsRef` lets this hook trigger a
-// records load without taking a direct dependency on the records hook.
-export function useAirtableAuth({ setStatusMessage, loadRecordsRef, onRestoreState }) {
+// tracking, and silent refresh. `authEpoch` increments only on events that
+// should trigger a records load (fresh login, or an existing token found at
+// mount) — never on a silent refresh — so callers can just watch it instead
+// of being handed an imperative "load now" callback.
+export function useAirtableAuth({ setStatusMessage, onRestoreState }) {
   const [userToken, setUserToken] = useState(getUserToken());
   const [userEmail, setUserEmail] = useState(null);
   const [minutesLeft, setMinutesLeft] = useState(null);
   const [refreshFailed, setRefreshFailed] = useState(false);
+  const [authEpoch, setAuthEpoch] = useState(0);
   const isRefreshing = useRef(false);
   const refreshAttempted = useRef(false);
 
@@ -42,7 +45,7 @@ export function useAirtableAuth({ setStatusMessage, loadRecordsRef, onRestoreSta
           const saved = restorePreAuthState();
           if (saved) onRestoreState(saved);
           setStatusMessage("Authentication successful. Loading records...");
-          loadRecordsRef.current();
+          setAuthEpoch((e) => e + 1);
         } else {
           setStatusMessage("Authentication failed. Please try again.");
         }
@@ -55,7 +58,7 @@ export function useAirtableAuth({ setStatusMessage, loadRecordsRef, onRestoreSta
       fetchUserProfile(userToken).then((profile) => {
         if (profile?.email) setUserEmail(profile.email);
       });
-      loadRecordsRef.current();
+      setAuthEpoch((e) => e + 1);
     } else {
       setStatusMessage(
         "Log in with an approved Airtable account to unlock entries.",
@@ -116,6 +119,7 @@ export function useAirtableAuth({ setStatusMessage, loadRecordsRef, onRestoreSta
     userEmail,
     minutesLeft,
     refreshFailed,
+    authEpoch,
     invalidateAuthToken,
     handleRefreshSession,
   };

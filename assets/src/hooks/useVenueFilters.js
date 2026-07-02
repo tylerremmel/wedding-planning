@@ -8,7 +8,6 @@ export function useVenueFilters(records) {
   const [sortKey, setSortKey] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
   const [filterStates, setFilterStates] = useState([]);
-  const [filterSeasons, setFilterSeasons] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
   const [filterPetFriendly, setFilterPetFriendly] = useState(false);
   const [filterReactions, setFilterReactions] = useState([]);
@@ -24,7 +23,6 @@ export function useVenueFilters(records) {
     filterText,
     sortKey,
     filterStates,
-    filterSeasons,
     filterOptions,
     filterPetFriendly,
     filterReactions,
@@ -62,11 +60,6 @@ export function useVenueFilters(records) {
           !filterStates.includes(record.fields["State"])
         )
           return false;
-
-        if (filterSeasons.length > 0) {
-          const seasons = record.fields["Ideal season(s)"] || [];
-          if (!filterSeasons.some((s) => seasons.includes(s))) return false;
-        }
 
         if (filterOptions.length > 0) {
           const options = record.fields["Options included"] || [];
@@ -140,7 +133,6 @@ export function useVenueFilters(records) {
     sortDir,
     mapBounds,
     filterStates,
-    filterSeasons,
     filterOptions,
     filterPetFriendly,
     filterReactions,
@@ -155,8 +147,6 @@ export function useVenueFilters(records) {
     setSortDir,
     filterStates,
     setFilterStates,
-    filterSeasons,
-    setFilterSeasons,
     filterOptions,
     setFilterOptions,
     filterPetFriendly,

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import VenueCard from "./VenueCard";
 import MapPanel from "./MapPanel";
 import VenueFilterSortMenu from "./VenueFilterSortMenu";
@@ -33,35 +33,33 @@ export default function AirtableInterface() {
   const [pinHoveredVenueId, setPinHoveredVenueId] = useState(null);
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
 
-  // Bridges the auth hook's oauth-completion callback to the records hook's
-  // loadRecords function, which isn't created until after the auth hook.
-  const loadRecordsRef = useRef(() => {});
-
   const {
     userToken,
     userEmail,
     minutesLeft,
     refreshFailed,
+    authEpoch,
     invalidateAuthToken,
     handleRefreshSession: redirectForRefresh,
   } = useAirtableAuth({
     setStatusMessage,
-    loadRecordsRef,
     onRestoreState: (saved) => {
       if (saved.filterText != null) setFilterText(saved.filterText);
       if (saved.sortKey != null) setSortKey(saved.sortKey);
+      if (saved.sortDir != null) setSortDir(saved.sortDir);
+      if (saved.filterStates != null) setFilterStates(saved.filterStates);
+      if (saved.filterOptions != null) setFilterOptions(saved.filterOptions);
+      if (saved.filterPetFriendly != null)
+        setFilterPetFriendly(saved.filterPetFriendly);
+      if (saved.filterReactions != null)
+        setFilterReactions(saved.filterReactions);
       if (saved.openDrawerVenueId != null)
         setOpenDrawerVenueId(saved.openDrawerVenueId);
     },
   });
 
   const { records, loading, errorMessage, nextCommentsIndex, setNextCommentsIndex, loadRecords } =
-    useVenueRecords({ userToken, setStatusMessage, invalidateAuthToken });
-
-  // Keep the ref current every render so useAirtableAuth's effects (which
-  // may run before this component's own effects) always call the latest
-  // loadRecords, even though it's re-created each render.
-  loadRecordsRef.current = loadRecords;
+    useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken });
 
   const {
     filterText,
@@ -86,8 +84,30 @@ export default function AirtableInterface() {
     filteredRecords,
   } = useVenueFilters(records);
 
+  // Stable callback identities so VenueCard's React.memo can actually skip
+  // re-rendering cards whose own props didn't change (e.g. on hover).
+  const filteredRecordsRef = useRef(filteredRecords);
+  filteredRecordsRef.current = filteredRecords;
+
+  const handleCommentsLoaded = useCallback((recordId) => {
+    const idx = filteredRecordsRef.current.findIndex((r) => r.id === recordId);
+    if (idx === -1) return;
+    setNextCommentsIndex((prev) => Math.max(prev, idx + 1));
+  }, [setNextCommentsIndex]);
+
+  const handleDrawerClose = useCallback(() => setOpenDrawerVenueId(null), []);
+
   function handleRefreshSession() {
-    redirectForRefresh({ filterText, sortKey, openDrawerVenueId });
+    redirectForRefresh({
+      filterText,
+      sortKey,
+      sortDir,
+      filterStates,
+      filterOptions,
+      filterPetFriendly,
+      filterReactions,
+      openDrawerVenueId,
+    });
   }
 
   return (
@@ -165,13 +185,11 @@ export default function AirtableInterface() {
                   userToken={userToken}
                   userEmail={userEmail}
                   shouldLoadComments={index === nextCommentsIndex}
-                  onCommentsLoaded={() =>
-                    setNextCommentsIndex((prev) => Math.max(prev, index + 1))
-                  }
+                  onCommentsLoaded={handleCommentsLoaded}
                   isHovered={hoveredVenueId === record.id}
                   scrollTo={pinHoveredVenueId === record.id}
                   openDrawer={openDrawerVenueId === record.id}
-                  onDrawerClose={() => setOpenDrawerVenueId(null)}
+                  onDrawerClose={handleDrawerClose}
                   onCardHover={setHoveredVenueId}
                 />
               ))}

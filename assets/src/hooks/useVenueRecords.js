@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchVenueRecords } from "../utils/airtableApi";
 import { getUserToken } from "../utils/airtableAuth";
 import { getCachedVenues, setCachedVenues } from "../utils/venueCache";
 import { geocodeAndPersistMissingCoords } from "../utils/geocodeVenues";
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { sleep } from "../utils/sleep";
 
 // Loads venue records (from cache or the Airtable API, with retry/backoff),
 // and kicks off background geocoding for records missing coordinates.
-export function useVenueRecords({ userToken, setStatusMessage, invalidateAuthToken }) {
+// `authEpoch` (from useAirtableAuth) triggers a load on fresh login/mount,
+// but not on a silent token refresh.
+export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -135,6 +134,11 @@ export function useVenueRecords({ userToken, setStatusMessage, invalidateAuthTok
       );
     }
   }
+
+  useEffect(() => {
+    if (userToken) loadRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authEpoch]);
 
   return {
     records,

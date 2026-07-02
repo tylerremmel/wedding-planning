@@ -182,7 +182,7 @@ export default function VenueComments({
           <StatusMessage>Comments loading...</StatusMessage>
         ) : comments.length === 0 ? null : (
           [...comments].reverse().map((comment, index) => (
-            <CommentBubble key={index}>
+            <CommentBubble key={comment.id ?? index}>
               <CommentMeta>
                 <Icon style={{ top: "-1px" }}>
                   <img

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   fetchRecordComments,
   submitComment,
   submitReaction,
 } from "../utils/airtableApi";
 import { clearSession, getUserToken } from "../utils/airtableAuth";
+import { sleep } from "../utils/sleep";
 import {
   Card,
   CarouselWrapper,
@@ -72,7 +73,7 @@ function ImageWithLoader({ src, alt, placeholderDataUri }) {
   );
 }
 
-export default function VenueCard({
+function VenueCard({
   record,
   userToken,
   userEmail = null,
@@ -116,10 +117,6 @@ export default function VenueCard({
   }
 
   const [commentsLoaded, setCommentsLoaded] = useState(false);
-
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   useEffect(() => {
     setLocalReactions(deriveActiveReactions(record.fields, userEmail));
@@ -225,7 +222,7 @@ export default function VenueCard({
           setCommentText("");
           setShowCommentForm(false);
           try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             const payload = await fetchRecordComments(record.id, token);
             setComments(payload.comments || []);
           } catch {
@@ -236,7 +233,7 @@ export default function VenueCard({
           return;
         } catch (err) {
           if (err && err.isRateLimit && attempt < maxAttempts - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             continue;
           }
           throw err;
@@ -295,7 +292,7 @@ export default function VenueCard({
           return;
         } catch (err) {
           if (err && err.isRateLimit && attempt < maxAttempts - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             continue;
           }
           throw err;
@@ -835,3 +832,5 @@ export default function VenueCard({
     </Card>
   );
 }
+
+export default memo(VenueCard);
