@@ -22,8 +22,14 @@ import {
   MdThumbUp,
   MdFavoriteBorder,
   MdFavorite,
-  MdAccountCircle,
 } from "react-icons/md";
+
+function getAvatarSrc(authorName) {
+  const base = window.SITE_BASEURL || "";
+  const first = (authorName || "").split(" ")[0].toLowerCase();
+  const file = first === "tyler" || first === "jenna" ? first : "default";
+  return `${base}/assets/img/avatars/${file}.png`;
+}
 
 import TextField from "@mui/material/TextField";
 
@@ -175,11 +181,20 @@ export default function VenueComments({
         {commentsLoading ? (
           <StatusMessage>Comments loading...</StatusMessage>
         ) : comments.length === 0 ? null : (
-          comments.map((comment, index) => (
+          [...comments].reverse().map((comment, index) => (
             <CommentBubble key={index}>
               <CommentMeta>
-                <Icon>
-                  <MdAccountCircle />
+                <Icon style={{ top: "-1px" }}>
+                  <img
+                    src={getAvatarSrc(comment.author?.name)}
+                    alt=""
+                    style={{
+                      width: "1em",
+                      height: "1em",
+                      objectFit: "cover",
+                      verticalAlign: "middle",
+                    }}
+                  />
                 </Icon>{" "}
                 {comment.author?.name?.split(" ")[0] || "User"}:
               </CommentMeta>

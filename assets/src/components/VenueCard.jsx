@@ -10,6 +10,8 @@ import {
   CarouselWrapper,
   CarouselImage,
   CarouselNav,
+  CarouselDots,
+  CarouselDot,
   CardBody,
   VenueTitleRow,
   VenueTitleLink,
@@ -449,6 +451,21 @@ export default function VenueCard({
 
   const currentImage = images[currentImageIdx];
 
+  const DOT_MAX = 7;
+  const dotSizes = [10, 7, 5, 4];
+  const dotOpacities = [1, 0.75, 0.55, 0.4];
+  const dotWindowStart =
+    images.length <= DOT_MAX
+      ? 0
+      : Math.max(
+          0,
+          Math.min(
+            currentImageIdx - Math.floor(DOT_MAX / 2),
+            images.length - DOT_MAX,
+          ),
+        );
+  const dotCount = Math.min(images.length, DOT_MAX);
+
   const [internalOpen, setInternalOpen] = useState(false);
   const cardRef = useRef(null);
 
@@ -516,6 +533,25 @@ export default function VenueCard({
                 <MdArrowForward />
               </Icon>
             </CarouselNav>
+            <CarouselDots>
+              {Array.from({ length: dotCount }, (_, i) => {
+                const idx = dotWindowStart + i;
+                const dist = Math.min(
+                  Math.abs(idx - currentImageIdx),
+                  dotSizes.length - 1,
+                );
+                return (
+                  <CarouselDot
+                    key={idx}
+                    style={{
+                      width: `${dotSizes[dist]}px`,
+                      height: `${dotSizes[dist]}px`,
+                      opacity: dotOpacities[dist],
+                    }}
+                  />
+                );
+              })}
+            </CarouselDots>
           </>
         )}
       </CarouselWrapper>

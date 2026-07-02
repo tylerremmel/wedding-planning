@@ -78,6 +78,25 @@ export const CarouselNav = styled("button", {
   },
 });
 
+export const CarouselDots = styled("div", {
+  position: "absolute",
+  bottom: "12px",
+  left: "50%",
+  transform: "translateX(-50%)",
+  display: "flex",
+  gap: "6px",
+  alignItems: "center",
+  height: "10px",
+  pointerEvents: "none",
+});
+
+export const CarouselDot = styled("span", {
+  borderRadius: "50%",
+  backgroundColor: "rgba(255,255,255,0.95)",
+  flexShrink: 0,
+  transition: "width 0.2s ease, height 0.2s ease, opacity 0.2s ease",
+});
+
 export const CardBody = styled("div", {
   padding: "16px",
 });
@@ -132,12 +151,11 @@ export const CommentBubble = styled("div", {
   display: "inline",
   fontSize: "0.85rem",
   lineHeight: 1.4,
-  border: "1px solid $blue500",
-  backgroundColor: "$blue100",
+  backgroundColor: "$gray200",
   padding: "8px 12px",
   marginRight: "auto",
   borderRadius: "0 $sm $sm $sm",
-  color: "$blue800",
+  color: "$gray600",
   marginTop: "12px",
 });
 
