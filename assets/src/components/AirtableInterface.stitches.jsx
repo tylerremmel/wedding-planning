@@ -24,15 +24,62 @@ export const HeaderPanel = styled("div", {
 });
 
 export const StatusBlock = styled("div", {
-  color: "$gray700",
-  fontSize: "0.95rem",
-  lineHeight: 1.6,
+  color: "$gray500",
+  fontSize: "0.75rem",
+  lineHeight: 1.4,
+});
+
+export const StatusText = styled("div", {});
+
+export const NumberOfRecordsText = styled("div", {});
+
+export const ErrorText = styled("div", {
+  color: "$red800",
+});
+
+export const MenuGroup = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "12px",
+  flexWrap: "wrap",
+  flexShrink: 0,
+});
+
+export const StatusGroup = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "16px",
+  flexWrap: "wrap",
+  flex: 1,
+  minWidth: 0,
+});
+
+export const SessionWarning = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  padding: "6px 12px",
+  borderRadius: "6px",
+  fontSize: "0.85rem",
+  variants: {
+    severity: {
+      critical: {
+        backgroundColor: "#fff0f0",
+        color: "#c92a2a",
+      },
+      warning: {
+        backgroundColor: "#fffbe6",
+        color: "#e67700",
+      },
+    },
+  },
 });
 
 export const ActionButtons = styled("div", {
   display: "flex",
   gap: "12px",
   flexWrap: "wrap",
+  flexShrink: 0,
 });
 
 export const ControlPanel = styled("div", {
@@ -40,35 +87,13 @@ export const ControlPanel = styled("div", {
   gap: "28px",
   marginBottom: "24px",
   gridTemplateColumns: "6fr 4fr",
-});
-
-export const FilterGroup = styled("div", {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-  padding: "22px",
-  borderRadius: "$lg",
-  backgroundColor: "$white",
-  boxShadow: "$card",
-  flexGrow: 0,
-});
-
-export const FilterSubGroup = styled("div", {
-  display: "flex",
-  flexDirection: "row",
-  gap: "12px",
-  width: "100%",
-});
-
-export const FilterGroupText = styled("div", {
-  fontSize: "0.95rem",
-  color: "$gray700",
-  fontWeight: 600,
+  alignItems: "start",
 });
 
 export const LeftPanel = styled("div", {
   display: "grid",
   gap: "28px",
+  alignItems: "start",
 });
 
 export const RightPanel = styled("div", {
@@ -105,6 +130,7 @@ export const GridContainer = styled("div", {
   gap: "28px",
   gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
   flexGrow: 4,
+  paddingBottom: "28px",
 });
 
 export const Notification = styled("div", {

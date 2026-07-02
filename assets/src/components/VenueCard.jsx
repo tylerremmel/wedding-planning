@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   fetchRecordComments,
   submitComment,
   submitReaction,
 } from "../utils/airtableApi";
 import { clearSession, getUserToken } from "../utils/airtableAuth";
+import { sleep } from "../utils/sleep";
 import {
   Card,
   CarouselWrapper,
   CarouselImage,
   CarouselNav,
+  CarouselDots,
+  CarouselDot,
   CardBody,
   VenueTitleRow,
   VenueTitleLink,
@@ -70,7 +73,7 @@ function ImageWithLoader({ src, alt, placeholderDataUri }) {
   );
 }
 
-export default function VenueCard({
+function VenueCard({
   record,
   userToken,
   userEmail = null,
@@ -114,10 +117,6 @@ export default function VenueCard({
   }
 
   const [commentsLoaded, setCommentsLoaded] = useState(false);
-
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   useEffect(() => {
     setLocalReactions(deriveActiveReactions(record.fields, userEmail));
@@ -223,7 +222,7 @@ export default function VenueCard({
           setCommentText("");
           setShowCommentForm(false);
           try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             const payload = await fetchRecordComments(record.id, token);
             setComments(payload.comments || []);
           } catch {
@@ -234,7 +233,7 @@ export default function VenueCard({
           return;
         } catch (err) {
           if (err && err.isRateLimit && attempt < maxAttempts - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             continue;
           }
           throw err;
@@ -293,7 +292,7 @@ export default function VenueCard({
           return;
         } catch (err) {
           if (err && err.isRateLimit && attempt < maxAttempts - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
             continue;
           }
           throw err;
@@ -449,6 +448,21 @@ export default function VenueCard({
 
   const currentImage = images[currentImageIdx];
 
+  const DOT_MAX = 7;
+  const dotSizes = [10, 7, 5, 4];
+  const dotOpacities = [1, 0.75, 0.55, 0.4];
+  const dotWindowStart =
+    images.length <= DOT_MAX
+      ? 0
+      : Math.max(
+          0,
+          Math.min(
+            currentImageIdx - Math.floor(DOT_MAX / 2),
+            images.length - DOT_MAX,
+          ),
+        );
+  const dotCount = Math.min(images.length, DOT_MAX);
+
   const [internalOpen, setInternalOpen] = useState(false);
   const cardRef = useRef(null);
 
@@ -516,6 +530,25 @@ export default function VenueCard({
                 <MdArrowForward />
               </Icon>
             </CarouselNav>
+            <CarouselDots>
+              {Array.from({ length: dotCount }, (_, i) => {
+                const idx = dotWindowStart + i;
+                const dist = Math.min(
+                  Math.abs(idx - currentImageIdx),
+                  dotSizes.length - 1,
+                );
+                return (
+                  <CarouselDot
+                    key={idx}
+                    style={{
+                      width: `${dotSizes[dist]}px`,
+                      height: `${dotSizes[dist]}px`,
+                      opacity: dotOpacities[dist],
+                    }}
+                  />
+                );
+              })}
+            </CarouselDots>
           </>
         )}
       </CarouselWrapper>
@@ -799,3 +832,5 @@ export default function VenueCard({
     </Card>
   );
 }
+
+export default memo(VenueCard);
