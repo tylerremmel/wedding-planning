@@ -12,9 +12,9 @@ import {
   CommentText,
   CommentName,
   Button,
-  Icon,
   StatusMessage,
 } from "./VenueCard.stitches";
+import { Icon } from "./shared.stitches";
 import {
   MdOutlineAddComment,
   MdOutlineThumbDown,
@@ -188,14 +188,14 @@ export default function VenueComments({
           [...comments].reverse().map((comment, index) => (
             <CommentBubble key={comment.id ?? index}>
               <CommentMeta>
-                <Icon style={{ top: "-1px" }}>
+                <Icon size="100" style={{ top: "2px" }}>
                   <img
                     src={getAvatarSrc(comment.author?.name)}
                     alt=""
                     style={{
                       width: "1em",
                       height: "1em",
-                      objectFit: "cover",
+                      objectFit: "contain",
                       verticalAlign: "middle",
                     }}
                   />

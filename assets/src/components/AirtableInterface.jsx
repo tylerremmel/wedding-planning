@@ -17,13 +17,13 @@ import {
   StatusGroup,
   SessionWarning,
   ActionButtons,
-  Button,
   ControlPanel,
   LeftPanel,
   RightPanel,
   GridContainer,
   Notification,
 } from "./AirtableInterface.stitches";
+import { Button } from "./shared.stitches";
 
 export default function AirtableInterface() {
   const [statusMessage, setStatusMessage] = useState(

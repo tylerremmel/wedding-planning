@@ -42,6 +42,14 @@ export const Button = styled("button", {
           color: "$white",
         },
       },
+      white: {
+        backgroundColor: "$white",
+        color: "$gray800",
+        "&:hover:not(:disabled)": { backgroundColor: "$gray100" },
+        "&:visited": {
+          color: "$gray800",
+        },
+      },
     },
     size: {
       standard: {
@@ -80,5 +88,55 @@ export const Button = styled("button", {
     size: "standard",
     variant: "gray",
     highlighted: false,
+  },
+});
+
+export const ButtonGroup = styled("div", {
+  display: "inline-flex",
+  borderRadius: "$sm",
+  overflow: "hidden",
+
+  "& > button": {
+    border: "none",
+    borderRadius: 0,
+    boxShadow: "none",
+  },
+  variants: {
+    direction: {
+      column: {
+        flexDirection: "column",
+      },
+      row: {
+        flexDirection: "row",
+      },
+    },
+  },
+  defaultVariants: {
+    direction: "column",
+  },
+});
+
+export const Icon = styled("span", {
+  position: "relative",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  // react-icons renders its <svg> with explicit width/height="1em"
+  // attributes, which beat the span's own box size unless overridden here.
+  "& svg": {
+    width: "100%",
+    height: "100%",
+    display: "block",
+  },
+  variants: {
+    size: {
+      100: { height: "12px", width: "12px" },
+      125: { height: "15px", width: "15px" },
+      150: { height: "18px", width: "18px" },
+      200: { height: "24px", width: "24px" },
+    },
+  },
+  defaultVariants: {
+    size: "100",
   },
 });

@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MdCheck, MdChevronRight, MdFilterList, MdSort } from "react-icons/md";
-import { Button } from "./AirtableInterface.stitches";
+import { Button, Icon } from "./shared.stitches";
 
 const OPTIONS_INCLUDED = [
   "The intimate microwedding",
@@ -109,7 +109,9 @@ export default function VenueFilterSortMenu({
         variant={hasActiveFilters ? "blue" : "gray"}
         onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
       >
-        <MdFilterList style={{ marginRight: 4 }} />
+        <Icon size="125">
+          <MdFilterList />
+        </Icon>
         Filters
         {hasActiveFilters &&
           ` (${(filterStates != null ? 1 : 0) + (filterOptions != null ? 1 : 0) + (filterVenueTypes != null ? 1 : 0) + (isReactionsScoreFilterActive ? 1 : 0) + (filterPetFriendly ? 1 : 0) + (filterCeremony ? 1 : 0) + (filterReception ? 1 : 0) + (filterLodging ? 1 : 0) + (filterUninteracted ? 1 : 0)})`}
@@ -403,7 +405,9 @@ export default function VenueFilterSortMenu({
         variant="gray"
         onClick={(e) => setSortMenuAnchor(e.currentTarget)}
       >
-        <MdSort style={{ marginRight: 4 }} />
+        <Icon size="125">
+          <MdSort />
+        </Icon>
         Sort
       </Button>
       <Menu

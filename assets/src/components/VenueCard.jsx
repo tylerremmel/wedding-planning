@@ -17,7 +17,6 @@ import {
   VenueTitle,
   VenueAddress,
   Button,
-  Icon,
   VenueVibe,
   InnerDrawer,
   DrawerCloseButton,
@@ -31,6 +30,7 @@ import {
   DrawerImageSkeleton,
   DrawerImageEl,
 } from "./VenueCard.stitches";
+import { Icon } from "./shared.stitches";
 import {
   MdOutlineLocationOn,
   MdOutlineLocalPhone,
@@ -562,7 +562,7 @@ function VenueCard({
         )}
 
         <VenueAddress>
-          <Icon>
+          <Icon size="100">
             <MdOutlineLocationOn />
           </Icon>{" "}
           {fields["City"] || ""}
@@ -603,7 +603,7 @@ function VenueCard({
           <DrawerContactInfo>
             {fields["Full address"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocationOn />
                 </Icon>{" "}
                 {fields["Full address"]}
@@ -612,7 +612,7 @@ function VenueCard({
 
             {fields["Phone number"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocalPhone />
                 </Icon>{" "}
                 {formatPhone(fields["Phone number"])}
@@ -620,7 +620,7 @@ function VenueCard({
             )}
             {fields["Email"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocalPostOffice />
                 </Icon>{" "}
                 <a href={`mailto:${fields["Email"]}`}>{fields["Email"]}</a>

@@ -180,11 +180,6 @@ export const CommentActions = styled("div", {
   gap: "8px",
 });
 
-export const Icon = styled("span", {
-  position: "relative",
-  top: "2px",
-});
-
 export const CommentForm = styled("form", {
   display: "grid",
   gap: "12px",

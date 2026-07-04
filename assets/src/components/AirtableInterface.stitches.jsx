@@ -1,5 +1,4 @@
 import { styled } from "../styles/stitches";
-export { Button } from "./shared.stitches";
 
 export const PageShell = styled("section", {
   maxWidth: "1240px",
