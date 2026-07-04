@@ -7,6 +7,9 @@ const skeletonPulse = keyframes({
 });
 
 export const Card = styled("article", {
+  fontFamily: "$meta",
+  fontWeight: 300,
+
   backgroundColor: "$white",
   border: "1px solid $gray300",
   borderRadius: "$lg",
@@ -101,33 +104,28 @@ export const CardBody = styled("div", {
   padding: "16px",
 });
 
-export const VenueTitleRow = styled("div", {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-  marginBottom: "4px",
-});
-
-export const VenueTitleLink = styled("div", {
-  textDecoration: "none",
-  color: "inherit",
-  "& h3": {
-    margin: 0,
-    fontSize: "1.1rem",
-    fontWeight: 700,
-  },
+export const VenueTitle = styled("h4", {
+  fontFamily: "$headline",
+  fontWeight: 700,
+  fontSize: "1.15rem !important",
+  lineHeight: 1.3,
+  marginBottom: "6px",
+  wordBreak: "break-word",
+  letterSpacing: "-0.015em",
 });
 
 export const VenueAddress = styled("p", {
+  fontWeight: 400,
   color: "$gray500",
-  fontSize: "0.85rem",
+  fontSize: "0.9rem",
   lineHeight: 1.5,
 });
 
 export const VenueVibe = styled("p", {
-  margin: "0 0 12px",
+  margin: "0 0 10px",
   color: "$gray600",
-  fontSize: "0.95rem",
+  fontSize: "0.9rem",
+  fontWeight: 300,
   lineHeight: 1.5,
 });
 
@@ -149,7 +147,8 @@ export const CommentsStream = styled("div", {
 
 export const CommentBubble = styled("div", {
   display: "inline",
-  fontSize: "0.85rem",
+  fontSize: "0.9rem",
+  fontWeight: 400,
   lineHeight: 1.4,
   backgroundColor: "$gray200",
   padding: "8px 12px",
@@ -165,7 +164,12 @@ export const CommentMeta = styled("span", {
   paddingRight: "4px",
 });
 
+export const CommentName = styled("span", {
+  fontWeight: 700,
+});
+
 export const CommentText = styled("span", {
+  fontWeight: 400,
   paddingTop: "12px",
 });
 
@@ -234,10 +238,12 @@ export const DrawerCloseButton = styled("button", {
 });
 
 export const DrawerVenueName = styled("h2", {
-  fontSize: "1.5rem",
+  fontFamily: "$headline",
+  letterSpacing: "-0.015em",
+  fontSize: "1.7rem",
   fontWeight: 700,
   lineHeight: 1.2,
-  marginBottom: "16px",
+  marginBottom: "8px",
   paddingRight: "60px", // space for close button
   wordBreak: "break-word",
 });
@@ -252,7 +258,8 @@ export const DrawerContactInfoRow = styled("div", {
   alignItems: "center",
   gap: "8px",
   marginBottom: "6px",
-  fontSize: "0.9rem",
+  fontFamily: "$meta",
+  fontSize: "1rem",
   color: "$gray500",
   a: {
     transition: "color 0.25s ease",
@@ -270,6 +277,7 @@ export const DrawerContactInfo = styled("div", {
 });
 
 export const DrawerCommentsSection = styled("div", {
+  fontFamily: "$meta",
   borderBottom: "1px solid $gray200",
   padding: "16px 0",
   marginBottom: "16px",
@@ -280,6 +288,8 @@ export const DrawerCommentsSection = styled("div", {
 });
 
 export const DrawerBody = styled("div", {
+  fontFamily: "$body",
+  letterSpacing: "-0.015em",
   fontSize: "0.95rem",
   lineHeight: 1.5,
   color: "$gray700",

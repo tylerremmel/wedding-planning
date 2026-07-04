@@ -14,8 +14,7 @@ import {
   CarouselDots,
   CarouselDot,
   CardBody,
-  VenueTitleRow,
-  VenueTitleLink,
+  VenueTitle,
   VenueAddress,
   Button,
   Icon,
@@ -135,12 +134,14 @@ function VenueCard({
       const maxAttempts = 3;
       let attempt = 0;
       let lastError = null;
+      let loadedComments = [];
 
       while (attempt < maxAttempts && !cancelled) {
         try {
           const payload = await fetchRecordComments(record.id, token);
           if (!cancelled) {
-            setComments(payload.comments || []);
+            loadedComments = payload.comments || [];
+            setComments(loadedComments);
             loadSucceeded = true;
           }
           break;
@@ -177,7 +178,7 @@ function VenueCard({
         if (loadSucceeded && !commentsLoaded) {
           setCommentsLoaded(true);
           try {
-            onCommentsLoaded(record.id);
+            onCommentsLoaded(record.id, loadedComments);
           } catch (e) {
             console.debug("onCommentsLoaded callback failed", e);
           }
@@ -554,11 +555,7 @@ function VenueCard({
       </CarouselWrapper>
 
       <CardBody>
-        <VenueTitleRow>
-          <VenueTitleLink>
-            <h3>{fields["Venue name"]}</h3>
-          </VenueTitleLink>
-        </VenueTitleRow>
+        <VenueTitle>{fields["Venue name"]}</VenueTitle>
 
         {fields["Vibe check"] && (
           <VenueVibe>{fields["Vibe check"] || ""}</VenueVibe>

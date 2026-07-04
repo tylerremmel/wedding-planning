@@ -7,7 +7,9 @@ export const Button = styled("button", {
   borderRadius: "$sm",
   border: "none",
   cursor: "pointer",
+  fontFamily: "$meta",
   fontWeight: 700,
+
   textDecoration: "none !important",
   transition: "transform 0.15s ease, background-color 0.25s ease",
   "&:disabled": {
@@ -53,9 +55,30 @@ export const Button = styled("button", {
         lineHeight: 1,
       },
     },
+    highlighted: {
+      true: {},
+    },
   },
+  compoundVariants: [
+    {
+      variant: "blue",
+      highlighted: true,
+      css: { outline: "1px solid $blue800", outlineOffset: "-1px" },
+    },
+    {
+      variant: "gray",
+      highlighted: true,
+      css: { outline: "1px solid $gray600", outlineOffset: "-1px" },
+    },
+    {
+      variant: "red",
+      highlighted: true,
+      css: { outline: "1px solid $red800", outlineOffset: "-1px" },
+    },
+  ],
   defaultVariants: {
     size: "standard",
     variant: "gray",
+    highlighted: false,
   },
 });

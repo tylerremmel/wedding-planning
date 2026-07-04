@@ -1,8 +1,15 @@
 import { createStitches } from "@stitches/react";
 
-export const FONT_BODY = "Inter, system-ui, sans-serif";
+export const FONT_INTER = "Inter, system-ui, sans-serif";
+export const FONT_XENON = "'Monaspace Xenon', ui-monospace, monospace";
+export const FONT_ARGON = "'Monaspace Argon', ui-monospace, monospace";
+export const FONT_BIZ = "'BIZ UDPMincho', serif";
+export const FONT_QUICKSAND = "'Quicksand', system-ui, sans-serif";
 
-export const { styled, css, globalCss, keyframes } = createStitches({
+const XENON_FONT_URL = `${window.SITE_BASEURL || ""}/assets/fonts/monaspace-xenon-var.woff2`;
+const ARGON_FONT_URL = `${window.SITE_BASEURL || ""}/assets/fonts/monaspace-argon-var.woff2`;
+
+export const { styled, css, globalCss, keyframes, theme } = createStitches({
   theme: {
     colors: {
       gray100: "#f8fafc",
@@ -40,7 +47,9 @@ export const { styled, css, globalCss, keyframes } = createStitches({
       white: "#ffffff",
     },
     fonts: {
-      body: FONT_BODY,
+      headline: FONT_BIZ,
+      body: FONT_BIZ,
+      meta: FONT_QUICKSAND,
     },
     radii: {
       sm: "8px",
@@ -57,10 +66,36 @@ export const { styled, css, globalCss, keyframes } = createStitches({
   },
   utils: {
     px: (value) => ({ paddingLeft: value, paddingRight: value }),
+    // e.g. fontVariation: { wght: 500, wdth: 115, slnt: -8 }
+    fontVariation: (axes) => ({
+      fontVariationSettings: Object.entries(axes)
+        .map(([axis, value]) => `"${axis}" ${value}`)
+        .join(", "),
+    }),
   },
 });
 
 export const globalStyles = globalCss({
+  "@import":
+    "https://fonts.googleapis.com/css2?family=BIZ+UDPMincho:wght@400;700&family=Quicksand:wght@300..700&display=swap",
+  "@font-face": [
+    {
+      fontFamily: "Monaspace Xenon",
+      src: `url("${XENON_FONT_URL}") format("woff2")`,
+      fontWeight: "200 800",
+      fontStretch: "100% 125%",
+      fontStyle: "oblique -11deg 0deg",
+      fontDisplay: "swap",
+    },
+    {
+      fontFamily: "Monaspace Argon",
+      src: `url("${ARGON_FONT_URL}") format("woff2")`,
+      fontWeight: "200 800",
+      fontStretch: "100% 125%",
+      fontStyle: "oblique -11deg 0deg",
+      fontDisplay: "swap",
+    },
+  ],
   "*": {
     boxSizing: "border-box",
   },
@@ -81,4 +116,16 @@ export const globalStyles = globalCss({
     color: "inherit",
     textDecoration: "none",
   },
+});
+
+export const bizUdpminchoRegular = css({
+  fontFamily: FONT_BIZ,
+  fontWeight: 400,
+  fontStyle: "normal",
+});
+
+export const bizUdpminchoBold = css({
+  fontFamily: FONT_BIZ,
+  fontWeight: 700,
+  fontStyle: "normal",
 });

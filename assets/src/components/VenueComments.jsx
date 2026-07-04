@@ -10,6 +10,7 @@ import {
   CommentBubble,
   CommentMeta,
   CommentText,
+  CommentName,
   Button,
   Icon,
   StatusMessage,
@@ -75,6 +76,7 @@ export default function VenueComments({
             </Button>
             <Button
               variant="red"
+              highlighted={isReactionActive("heart")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -94,7 +96,8 @@ export default function VenueComments({
               {localCounts.heart}
             </Button>
             <Button
-              variant={isReactionActive("thumbs_up") ? "blue" : "gray"}
+              variant="gray"
+              highlighted={isReactionActive("thumbs_up")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -115,6 +118,7 @@ export default function VenueComments({
             </Button>
             <Button
               variant="gray"
+              highlighted={isReactionActive("thumbs_down")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -196,7 +200,9 @@ export default function VenueComments({
                     }}
                   />
                 </Icon>{" "}
-                {comment.author?.name?.split(" ")[0] || "User"}:
+                <CommentName>
+                  {comment.author?.name?.split(" ")[0] || "User"}:
+                </CommentName>
               </CommentMeta>
               <CommentText>{comment.text}</CommentText>
             </CommentBubble>

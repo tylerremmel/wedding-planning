@@ -32,6 +32,11 @@ export default function AirtableInterface() {
   const [hoveredVenueId, setHoveredVenueId] = useState(null);
   const [pinHoveredVenueId, setPinHoveredVenueId] = useState(null);
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
+  // Populated progressively as each card's lazy comment fetch resolves —
+  // see handleCommentsLoaded below and useVenueFilters' filterUninteracted.
+  const [commentedRecordIds, setCommentedRecordIds] = useState(
+    () => new Set(),
+  );
 
   const {
     userToken,
@@ -49,10 +54,18 @@ export default function AirtableInterface() {
       if (saved.sortDir != null) setSortDir(saved.sortDir);
       if (saved.filterStates != null) setFilterStates(saved.filterStates);
       if (saved.filterOptions != null) setFilterOptions(saved.filterOptions);
+      if (saved.filterVenueTypes != null)
+        setFilterVenueTypes(saved.filterVenueTypes);
       if (saved.filterPetFriendly != null)
         setFilterPetFriendly(saved.filterPetFriendly);
-      if (saved.filterReactions != null)
-        setFilterReactions(saved.filterReactions);
+      if (saved.filterCeremony != null) setFilterCeremony(saved.filterCeremony);
+      if (saved.filterReception != null)
+        setFilterReception(saved.filterReception);
+      if (saved.filterLodging != null) setFilterLodging(saved.filterLodging);
+      if (saved.filterUninteracted != null)
+        setFilterUninteracted(saved.filterUninteracted);
+      if (saved.filterReactionsScoreRange != null)
+        setFilterReactionsScoreRange(saved.filterReactionsScoreRange);
       if (saved.openDrawerVenueId != null)
         setOpenDrawerVenueId(saved.openDrawerVenueId);
     },
@@ -72,28 +85,48 @@ export default function AirtableInterface() {
     setFilterStates,
     filterOptions,
     setFilterOptions,
+    filterVenueTypes,
+    setFilterVenueTypes,
     filterPetFriendly,
     setFilterPetFriendly,
-    filterReactions,
-    setFilterReactions,
+    filterCeremony,
+    setFilterCeremony,
+    filterReception,
+    setFilterReception,
+    filterLodging,
+    setFilterLodging,
+    filterUninteracted,
+    setFilterUninteracted,
+    filterReactionsScoreRange,
+    setFilterReactionsScoreRange,
+    reactionsScoreBounds,
+    isReactionsScoreFilterActive,
     mapBounds,
     setMapBounds,
     fitKey,
     setFitKey,
     availableStates,
+    availableVenueTypes,
     filteredRecords,
-  } = useVenueFilters(records);
+  } = useVenueFilters(records, userEmail, commentedRecordIds);
 
   // Stable callback identities so VenueCard's React.memo can actually skip
   // re-rendering cards whose own props didn't change (e.g. on hover).
   const filteredRecordsRef = useRef(filteredRecords);
   filteredRecordsRef.current = filteredRecords;
 
-  const handleCommentsLoaded = useCallback((recordId) => {
+  const handleCommentsLoaded = useCallback((recordId, comments) => {
     const idx = filteredRecordsRef.current.findIndex((r) => r.id === recordId);
-    if (idx === -1) return;
-    setNextCommentsIndex((prev) => Math.max(prev, idx + 1));
-  }, [setNextCommentsIndex]);
+    if (idx !== -1) {
+      setNextCommentsIndex((prev) => Math.max(prev, idx + 1));
+    }
+
+    if (userEmail && comments?.some((c) => c.author?.email === userEmail)) {
+      setCommentedRecordIds((prev) =>
+        prev.has(recordId) ? prev : new Set(prev).add(recordId),
+      );
+    }
+  }, [setNextCommentsIndex, userEmail]);
 
   const handleDrawerClose = useCallback(() => setOpenDrawerVenueId(null), []);
 
@@ -104,8 +137,13 @@ export default function AirtableInterface() {
       sortDir,
       filterStates,
       filterOptions,
+      filterVenueTypes,
       filterPetFriendly,
-      filterReactions,
+      filterCeremony,
+      filterReception,
+      filterLodging,
+      filterUninteracted,
+      filterReactionsScoreRange,
       openDrawerVenueId,
     });
   }
@@ -120,10 +158,24 @@ export default function AirtableInterface() {
             setFilterStates={setFilterStates}
             filterOptions={filterOptions}
             setFilterOptions={setFilterOptions}
-            filterReactions={filterReactions}
-            setFilterReactions={setFilterReactions}
+            availableVenueTypes={availableVenueTypes}
+            filterVenueTypes={filterVenueTypes}
+            setFilterVenueTypes={setFilterVenueTypes}
+            filterReactionsScoreRange={filterReactionsScoreRange}
+            setFilterReactionsScoreRange={setFilterReactionsScoreRange}
+            reactionsScoreBounds={reactionsScoreBounds}
+            isReactionsScoreFilterActive={isReactionsScoreFilterActive}
             filterPetFriendly={filterPetFriendly}
             setFilterPetFriendly={setFilterPetFriendly}
+            filterCeremony={filterCeremony}
+            setFilterCeremony={setFilterCeremony}
+            filterReception={filterReception}
+            setFilterReception={setFilterReception}
+            filterLodging={filterLodging}
+            setFilterLodging={setFilterLodging}
+            filterUninteracted={filterUninteracted}
+            setFilterUninteracted={setFilterUninteracted}
+            isLoggedIn={Boolean(userEmail)}
             sortKey={sortKey}
             setSortKey={setSortKey}
             sortDir={sortDir}

@@ -1,9 +1,9 @@
 import { createTheme } from "@mui/material/styles";
-import { FONT_BODY } from "./stitches";
+import { theme } from "./stitches";
 
 export const muiTheme = createTheme({
   typography: {
-    fontFamily: FONT_BODY,
+    fontFamily: `${theme.fonts.meta}`,
   },
   components: {
     MuiAutocomplete: {
