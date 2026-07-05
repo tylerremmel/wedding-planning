@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CommentsSection,
   DrawerCommentsSection,
@@ -7,13 +7,15 @@ import {
   CommentForm,
   CommentInputActions,
   CommentsStream,
+  CommentsListWrapper,
   CommentBubble,
   CommentMeta,
   CommentText,
+  CommentName,
   Button,
-  Icon,
   StatusMessage,
 } from "./VenueCard.stitches";
+import { Icon } from "./shared.stitches";
 import {
   MdOutlineAddComment,
   MdOutlineThumbDown,
@@ -49,10 +51,21 @@ export default function VenueComments({
   handleReactionClick,
   reactionStatus,
   commentsLoading,
+  commentsLoaded,
   comments,
 }) {
   const Wrapper =
     variant === "drawer" ? DrawerCommentsSection : CommentsSection;
+
+  const [expanded, setExpanded] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const commentsListRef = useRef(null);
+
+  useEffect(() => {
+    const el = commentsListRef.current;
+    if (!el) return;
+    setHasOverflow(el.scrollHeight > 100);
+  }, [comments]);
 
   return (
     <Wrapper>
@@ -75,6 +88,7 @@ export default function VenueComments({
             </Button>
             <Button
               variant="red"
+              highlighted={isReactionActive("heart")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -94,7 +108,8 @@ export default function VenueComments({
               {localCounts.heart}
             </Button>
             <Button
-              variant={isReactionActive("thumbs_up") ? "blue" : "gray"}
+              variant="gray"
+              highlighted={isReactionActive("thumbs_up")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -115,6 +130,7 @@ export default function VenueComments({
             </Button>
             <Button
               variant="gray"
+              highlighted={isReactionActive("thumbs_down")}
               size="compact"
               type="button"
               disabled={isReacting || !canReact}
@@ -180,27 +196,55 @@ export default function VenueComments({
       <CommentsStream>
         {commentsLoading ? (
           <StatusMessage>Comments loading...</StatusMessage>
-        ) : comments.length === 0 ? null : (
-          [...comments].reverse().map((comment, index) => (
-            <CommentBubble key={comment.id ?? index}>
-              <CommentMeta>
-                <Icon style={{ top: "-1px" }}>
-                  <img
-                    src={getAvatarSrc(comment.author?.name)}
-                    alt=""
-                    style={{
-                      width: "1em",
-                      height: "1em",
-                      objectFit: "cover",
-                      verticalAlign: "middle",
-                    }}
-                  />
-                </Icon>{" "}
-                {comment.author?.name?.split(" ")[0] || "User"}:
-              </CommentMeta>
-              <CommentText>{comment.text}</CommentText>
-            </CommentBubble>
-          ))
+        ) : commentsLoaded ? (
+          <StatusMessage>
+            {comments.length} comment{comments.length === 1 ? "" : "s"}
+          </StatusMessage>
+        ) : null}
+        {!commentsLoading && comments.length > 0 && (
+          <>
+            <CommentsListWrapper
+              ref={commentsListRef}
+              collapsed={hasOverflow && !expanded}
+            >
+              {[...comments].reverse().map((comment, index) => (
+                <CommentBubble key={comment.id ?? index}>
+                  <CommentMeta>
+                    <Icon size="100">
+                      <img
+                        src={getAvatarSrc(comment.author?.name)}
+                        alt=""
+                        style={{
+                          width: "1em",
+                          height: "1em",
+                          objectFit: "contain",
+                          verticalAlign: "middle",
+                        }}
+                      />
+                    </Icon>{" "}
+                    <CommentName>
+                      {comment.author?.name?.split(" ")[0] || "User"}:
+                    </CommentName>
+                  </CommentMeta>
+                  <CommentText>{comment.text}</CommentText>
+                </CommentBubble>
+              ))}
+            </CommentsListWrapper>
+            {hasOverflow && (
+              <Button
+                variant="white"
+                size="compact"
+                type="button"
+                style={{ marginTop: "8px", justifySelf: "flex-start" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded((v) => !v);
+                }}
+              >
+                {expanded ? "Collapse" : "See more"}
+              </Button>
+            )}
+          </>
         )}
       </CommentsStream>
     </Wrapper>

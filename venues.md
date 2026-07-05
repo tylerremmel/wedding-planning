@@ -31,7 +31,6 @@ permalink: /venues/
   #airtable-interface-root {
     max-width: 1200px;
     margin: 0 auto;
-    font-family: sans-serif;
   }
 </style>
 

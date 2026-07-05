@@ -1,5 +1,4 @@
 import { styled } from "../styles/stitches";
-export { Button } from "./shared.stitches";
 
 export const PageShell = styled("section", {
   maxWidth: "1240px",
@@ -8,6 +7,7 @@ export const PageShell = styled("section", {
 });
 
 export const HeaderPanel = styled("div", {
+  fontFamily: "$meta",
   display: "flex",
   flexDirection: "column",
   gap: "12px",
@@ -24,8 +24,8 @@ export const HeaderPanel = styled("div", {
 });
 
 export const StatusBlock = styled("div", {
-  color: "$gray500",
-  fontSize: "0.75rem",
+  color: "$gray600",
+  fontSize: "0.8rem",
   lineHeight: 1.4,
 });
 

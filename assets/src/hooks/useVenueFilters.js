@@ -1,16 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { hasUserReacted } from "../utils/reactions";
 
 // Owns filter/sort state plus the derived `availableStates` and
 // `filteredRecords` lists, and refits the map whenever filters change or
 // records first load.
-export function useVenueFilters(records) {
+//
+// `commentedRecordIds` is a Set of record IDs the current user has
+// commented on, populated progressively as VenueCard's lazy per-record
+// comment fetches resolve — see AirtableInterface's handleCommentsLoaded.
+// Until a record's comments have loaded, "have I commented?" is unknown,
+// so filterUninteracted optimistically includes it and lets it drop out
+// once its data arrives.
+export function useVenueFilters(records, userEmail, commentedRecordIds) {
   const [filterText, setFilterText] = useState("");
   const [sortKey, setSortKey] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
-  const [filterStates, setFilterStates] = useState([]);
-  const [filterOptions, setFilterOptions] = useState([]);
+  // null means "no filter applied" — every option is implicitly checked.
+  const [filterStates, setFilterStates] = useState(null);
+  const [filterOptions, setFilterOptions] = useState(null);
+  const [filterVenueTypes, setFilterVenueTypes] = useState(null);
   const [filterPetFriendly, setFilterPetFriendly] = useState(false);
-  const [filterReactions, setFilterReactions] = useState([]);
+  const [filterCeremony, setFilterCeremony] = useState(false);
+  const [filterReception, setFilterReception] = useState(false);
+  const [filterLodging, setFilterLodging] = useState(false);
+  const [filterUninteracted, setFilterUninteracted] = useState(false);
+  const [filterReactionsScoreRange, setFilterReactionsScoreRange] =
+    useState(null);
   const [mapBounds, setMapBounds] = useState(null);
   const [fitKey, setFitKey] = useState(0);
   const initialFitDone = useRef(false);
@@ -24,8 +39,13 @@ export function useVenueFilters(records) {
     sortKey,
     filterStates,
     filterOptions,
+    filterVenueTypes,
     filterPetFriendly,
-    filterReactions,
+    filterCeremony,
+    filterReception,
+    filterLodging,
+    filterUninteracted,
+    filterReactionsScoreRange,
   ]);
 
   // Refit map only on first records load — geocoding batch updates should not refit
@@ -43,6 +63,25 @@ export function useVenueFilters(records) {
     return Array.from(states).sort();
   }, [records]);
 
+  const availableVenueTypes = useMemo(() => {
+    const types = new Set();
+    records.forEach((r) => {
+      (r.fields["Profile"] || []).forEach((t) => types.add(t));
+    });
+    return Array.from(types).sort();
+  }, [records]);
+
+  const reactionsScoreBounds = useMemo(() => {
+    if (records.length === 0) return [0, 0];
+    const scores = records.map((r) => Number(r.fields["Reactions score"]) || 0);
+    return [Math.min(...scores), Math.max(...scores)];
+  }, [records]);
+
+  const isReactionsScoreFilterActive =
+    filterReactionsScoreRange != null &&
+    (filterReactionsScoreRange[0] !== reactionsScoreBounds[0] ||
+      filterReactionsScoreRange[1] !== reactionsScoreBounds[1]);
+
   const filteredRecords = useMemo(() => {
     const normalizedFilter = filterText.toLowerCase().trim();
     return records
@@ -56,28 +95,41 @@ export function useVenueFilters(records) {
         if (!matchesText) return false;
 
         if (
-          filterStates.length > 0 &&
+          filterStates != null &&
           !filterStates.includes(record.fields["State"])
         )
           return false;
 
-        if (filterOptions.length > 0) {
+        if (filterOptions != null) {
           const options = record.fields["Options included"] || [];
           if (!filterOptions.some((o) => options.includes(o))) return false;
         }
 
+        if (filterVenueTypes != null) {
+          const types = record.fields["Profile"] || [];
+          if (!filterVenueTypes.some((t) => types.includes(t))) return false;
+        }
+
         if (filterPetFriendly && !record.fields["Pet friendly?"]) return false;
 
-        if (filterReactions.length > 0) {
-          const allReactions = record.fields["All reactions"] || "";
-          const hasMatch = filterReactions.some((type) =>
-            allReactions
-              .split(",")
-              .some(
-                (entry) => entry.slice(entry.indexOf("|") + 1).trim() === type,
-              ),
-          );
-          if (!hasMatch) return false;
+        if (filterCeremony && !record.fields["Ceremony"]) return false;
+
+        if (filterReception && !record.fields["Reception"]) return false;
+
+        if (filterLodging && !record.fields["Lodging"]) return false;
+
+        if (filterUninteracted) {
+          if (hasUserReacted(record.fields, userEmail)) return false;
+          if (commentedRecordIds.has(record.id)) return false;
+        }
+
+        if (isReactionsScoreFilterActive) {
+          const score = Number(record.fields["Reactions score"]) || 0;
+          if (
+            score < filterReactionsScoreRange[0] ||
+            score > filterReactionsScoreRange[1]
+          )
+            return false;
         }
 
         if (mapBounds) {
@@ -134,8 +186,16 @@ export function useVenueFilters(records) {
     mapBounds,
     filterStates,
     filterOptions,
+    filterVenueTypes,
     filterPetFriendly,
-    filterReactions,
+    filterCeremony,
+    filterReception,
+    filterLodging,
+    filterUninteracted,
+    userEmail,
+    commentedRecordIds,
+    isReactionsScoreFilterActive,
+    filterReactionsScoreRange,
   ]);
 
   return {
@@ -149,15 +209,28 @@ export function useVenueFilters(records) {
     setFilterStates,
     filterOptions,
     setFilterOptions,
+    filterVenueTypes,
+    setFilterVenueTypes,
     filterPetFriendly,
     setFilterPetFriendly,
-    filterReactions,
-    setFilterReactions,
+    filterCeremony,
+    setFilterCeremony,
+    filterReception,
+    setFilterReception,
+    filterLodging,
+    setFilterLodging,
+    filterUninteracted,
+    setFilterUninteracted,
+    filterReactionsScoreRange,
+    setFilterReactionsScoreRange,
+    reactionsScoreBounds,
+    isReactionsScoreFilterActive,
     mapBounds,
     setMapBounds,
     fitKey,
     setFitKey,
     availableStates,
+    availableVenueTypes,
     filteredRecords,
   };
 }

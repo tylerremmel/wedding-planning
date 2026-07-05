@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -9,6 +9,8 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Button, ButtonGroup, Icon } from "./shared.stitches";
+import { MdOutlineAdd, MdOutlineRemove } from "react-icons/md";
 
 // Fix broken default marker icons in Vite builds
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -90,6 +92,46 @@ function MapController({ venues, fitKey, onBoundsChange }) {
   return null;
 }
 
+// Replaces Leaflet's default zoom control so it can share the app's Button
+// styling; mirrors the native control's position and disabled-at-limit behavior.
+function ZoomControl() {
+  const map = useMap();
+  const [zoom, setZoom] = useState(map.getZoom());
+
+  useMapEvents({
+    zoomend: () => setZoom(map.getZoom()),
+  });
+
+  return (
+    <ButtonGroup
+      style={{ position: "absolute", top: "12px", left: "12px", zIndex: 1000 }}
+    >
+      <Button
+        variant="white"
+        size="compact"
+        disabled={zoom >= map.getMaxZoom()}
+        onClick={() => map.zoomIn()}
+        aria-label="Zoom in"
+      >
+        <Icon size="125">
+          <MdOutlineAdd />
+        </Icon>
+      </Button>
+      <Button
+        variant="white"
+        size="compact"
+        disabled={zoom <= map.getMinZoom()}
+        onClick={() => map.zoomOut()}
+        aria-label="Zoom out"
+      >
+        <Icon size="125">
+          <MdOutlineRemove />
+        </Icon>
+      </Button>
+    </ButtonGroup>
+  );
+}
+
 export default function MapPanel({
   venues,
   hoveredVenueId,
@@ -111,11 +153,13 @@ export default function MapPanel({
         zoom={4}
         style={{ width: "100%", height: "100%" }}
         scrollWheelZoom
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <ZoomControl />
         <MapController
           venues={venuesWithCoords}
           fitKey={fitKey}
@@ -139,26 +183,19 @@ export default function MapPanel({
         ))}
       </MapContainer>
       {isBoundsFiltered && (
-        <button
+        <Button
+          variant="white"
+          size="compact"
           onClick={onShowAll}
           style={{
             position: "absolute",
             top: "12px",
             right: "12px",
             zIndex: 1000,
-            padding: "8px 12px",
-            backgroundColor: "white",
-            border: "2px solid #ccc",
-            borderRadius: "6px",
-            fontSize: "0.8rem",
-            fontWeight: 700,
-            cursor: "pointer",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-            lineHeight: 1,
           }}
         >
           Show all venues
-        </button>
+        </Button>
       )}
     </div>
   );

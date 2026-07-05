@@ -7,6 +7,11 @@ import {
 import { clearSession, getUserToken } from "../utils/airtableAuth";
 import { sleep } from "../utils/sleep";
 import {
+  getUserReactionTypes,
+  parseReactionEntries,
+  toggleUserReaction,
+} from "../utils/reactions";
+import {
   Card,
   CarouselWrapper,
   CarouselImage,
@@ -14,11 +19,9 @@ import {
   CarouselDots,
   CarouselDot,
   CardBody,
-  VenueTitleRow,
-  VenueTitleLink,
+  VenueTitle,
   VenueAddress,
   Button,
-  Icon,
   VenueVibe,
   InnerDrawer,
   DrawerCloseButton,
@@ -32,6 +35,7 @@ import {
   DrawerImageSkeleton,
   DrawerImageEl,
 } from "./VenueCard.stitches";
+import { Icon } from "./shared.stitches";
 import {
   MdOutlineLocationOn,
   MdOutlineLocalPhone,
@@ -79,6 +83,7 @@ function VenueCard({
   userEmail = null,
   shouldLoadComments = false,
   onCommentsLoaded = () => {},
+  onReactionUpdated = () => {},
   isHovered = false,
   scrollTo = false,
   openDrawer = false,
@@ -95,7 +100,7 @@ function VenueCard({
   const [isReacting, setIsReacting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [localReactions, setLocalReactions] = useState(() =>
-    deriveActiveReactions(record.fields, userEmail),
+    getUserReactionTypes(record.fields, userEmail),
   );
   const [localCounts, setLocalCounts] = useState(() =>
     deriveReactionCounts(record.fields),
@@ -119,7 +124,7 @@ function VenueCard({
   const [commentsLoaded, setCommentsLoaded] = useState(false);
 
   useEffect(() => {
-    setLocalReactions(deriveActiveReactions(record.fields, userEmail));
+    setLocalReactions(getUserReactionTypes(record.fields, userEmail));
     setLocalCounts(deriveReactionCounts(record.fields));
   }, [record.fields, userEmail]);
 
@@ -135,12 +140,14 @@ function VenueCard({
       const maxAttempts = 3;
       let attempt = 0;
       let lastError = null;
+      let loadedComments = [];
 
       while (attempt < maxAttempts && !cancelled) {
         try {
           const payload = await fetchRecordComments(record.id, token);
           if (!cancelled) {
-            setComments(payload.comments || []);
+            loadedComments = payload.comments || [];
+            setComments(loadedComments);
             loadSucceeded = true;
           }
           break;
@@ -174,13 +181,17 @@ function VenueCard({
 
       if (!cancelled) {
         setCommentsLoading(false);
-        if (loadSucceeded && !commentsLoaded) {
+        if (loadSucceeded) {
           setCommentsLoaded(true);
-          try {
-            onCommentsLoaded(record.id);
-          } catch (e) {
-            console.debug("onCommentsLoaded callback failed", e);
-          }
+        }
+        // Report the attempt as finished (success or exhausted retries) so
+        // the parent's load queue advances either way — otherwise a record
+        // whose comments fail to load would permanently stall it, the same
+        // way a stale index used to.
+        try {
+          onCommentsLoaded(record.id, loadedComments);
+        } catch (e) {
+          console.debug("onCommentsLoaded callback failed", e);
         }
       }
 
@@ -224,9 +235,22 @@ function VenueCard({
           try {
             await sleep(1000);
             const payload = await fetchRecordComments(record.id, token);
-            setComments(payload.comments || []);
+            const nextComments = payload.comments || [];
+            setComments(nextComments);
+            const commentsToReport = nextComments.some(
+              (comment) => comment.author?.email === userEmail,
+            )
+              ? nextComments
+              : [
+                  ...(nextComments || []),
+                  { author: { email: userEmail }, text: trimmedText },
+                ];
+            onCommentsLoaded(record.id, commentsToReport);
           } catch {
             // Comment posted — refresh failed, user will see it on next load
+            onCommentsLoaded(record.id, [
+              { author: { email: userEmail }, text: trimmedText },
+            ]);
           }
           setSubmitStatus("Success!");
           setTimeout(() => setSubmitStatus(""), 3000);
@@ -271,22 +295,30 @@ function VenueCard({
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
         try {
           const result = await submitReaction(record.id, reactionType, token);
+          const nextActive = result?.active !== false;
           setLocalReactions((current) => {
             const next = new Set(current);
-            if (result?.active === false) {
-              next.delete(reactionType);
-            } else {
+            if (nextActive) {
               next.add(reactionType);
+            } else {
+              next.delete(reactionType);
             }
             return next;
           });
           setLocalCounts((prev) => ({
             ...prev,
-            [reactionType]:
-              result?.active === false
-                ? Math.max(0, prev[reactionType] - 1)
-                : prev[reactionType] + 1,
+            [reactionType]: nextActive
+              ? prev[reactionType] + 1
+              : Math.max(0, prev[reactionType] - 1),
           }));
+          onReactionUpdated(record.id, {
+            "All reactions": toggleUserReaction(
+              record.fields["All reactions"],
+              userEmail,
+              reactionType,
+              nextActive,
+            ),
+          });
           setReactionStatus("Verified reaction recorded.");
           setTimeout(() => setReactionStatus(""), 3000);
           return;
@@ -354,35 +386,21 @@ function VenueCard({
 
   function deriveReactionCounts(fieldsToInspect) {
     const counts = { heart: 0, thumbs_up: 0, thumbs_down: 0 };
-    const allReactions = fieldsToInspect["All reactions"];
-    if (allReactions && typeof allReactions === "string") {
-      allReactions.split(",").forEach((entry) => {
-        const pipeIdx = entry.indexOf("|");
-        if (pipeIdx === -1) return;
-        const type = entry.slice(pipeIdx + 1).trim();
+    parseReactionEntries(fieldsToInspect["All reactions"]).forEach(
+      ({ type }) => {
         if (type in counts) counts[type]++;
-      });
-    }
+      },
+    );
     return counts;
   }
 
   function deriveActiveReactions(fieldsToInspect, currentUserEmail) {
-    const allReactions = fieldsToInspect["All reactions"];
-    if (allReactions && typeof allReactions === "string" && currentUserEmail) {
-      const active = new Set();
-      allReactions.split(",").forEach((entry) => {
-        const pipeIdx = entry.indexOf("|");
-        if (pipeIdx === -1) return;
-        const email = entry.slice(0, pipeIdx).trim();
-        const type = entry.slice(pipeIdx + 1).trim();
-        if (
-          email === currentUserEmail &&
-          ["heart", "thumbs_up", "thumbs_down"].includes(type)
-        ) {
-          active.add(type);
-        }
-      });
-      return active;
+    const directReactions = getUserReactionTypes(
+      fieldsToInspect,
+      currentUserEmail,
+    );
+    if (directReactions.size > 0) {
+      return directReactions;
     }
 
     const reactionFields = [
@@ -554,18 +572,14 @@ function VenueCard({
       </CarouselWrapper>
 
       <CardBody>
-        <VenueTitleRow>
-          <VenueTitleLink>
-            <h3>{fields["Venue name"]}</h3>
-          </VenueTitleLink>
-        </VenueTitleRow>
+        <VenueTitle>{fields["Venue name"]}</VenueTitle>
 
         {fields["Vibe check"] && (
           <VenueVibe>{fields["Vibe check"] || ""}</VenueVibe>
         )}
 
         <VenueAddress>
-          <Icon>
+          <Icon size="100">
             <MdOutlineLocationOn />
           </Icon>{" "}
           {fields["City"] || ""}
@@ -589,6 +603,7 @@ function VenueCard({
           handleReactionClick={handleReactionClick}
           reactionStatus={reactionStatus}
           commentsLoading={commentsLoading}
+          commentsLoaded={commentsLoaded}
           comments={comments}
         />
       </CardBody>
@@ -606,7 +621,7 @@ function VenueCard({
           <DrawerContactInfo>
             {fields["Full address"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocationOn />
                 </Icon>{" "}
                 {fields["Full address"]}
@@ -615,7 +630,7 @@ function VenueCard({
 
             {fields["Phone number"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocalPhone />
                 </Icon>{" "}
                 {formatPhone(fields["Phone number"])}
@@ -623,7 +638,7 @@ function VenueCard({
             )}
             {fields["Email"] && (
               <DrawerContactInfoRow>
-                <Icon>
+                <Icon size="150">
                   <MdOutlineLocalPostOffice />
                 </Icon>{" "}
                 <a href={`mailto:${fields["Email"]}`}>{fields["Email"]}</a>
@@ -670,7 +685,7 @@ function VenueCard({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Icon css={{ top: "1px" }}>
+              <Icon>
                 <SiAirtable />
               </Icon>{" "}
               Edit in Airtable
@@ -693,6 +708,7 @@ function VenueCard({
             handleReactionClick={handleReactionClick}
             reactionStatus={reactionStatus}
             commentsLoading={commentsLoading}
+            commentsLoaded={commentsLoaded}
             comments={comments}
           />
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchVenueRecords } from "../utils/airtableApi";
 import { getUserToken } from "../utils/airtableAuth";
 import { getCachedVenues, setCachedVenues } from "../utils/venueCache";
@@ -9,11 +9,15 @@ import { sleep } from "../utils/sleep";
 // and kicks off background geocoding for records missing coordinates.
 // `authEpoch` (from useAirtableAuth) triggers a load on fresh login/mount,
 // but not on a silent token refresh.
-export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken }) {
+export function useVenueRecords({
+  userToken,
+  authEpoch,
+  setStatusMessage,
+  invalidateAuthToken,
+}) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [nextCommentsIndex, setNextCommentsIndex] = useState(0);
 
   async function loadRecords(force = false) {
     setErrorMessage("");
@@ -22,7 +26,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
       const cached = getCachedVenues();
       if (cached) {
         setRecords(cached.records);
-        setNextCommentsIndex(0);
         const ageMinutes = Math.floor((Date.now() - cached.cachedAt) / 60000);
         const ageLabel = ageMinutes === 0 ? "just now" : `${ageMinutes}m ago`;
         setStatusMessage(`Venues loaded from cache · updated ${ageLabel}`);
@@ -44,7 +47,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
           if (data.records && data.records.length > 0) {
             setRecords(data.records);
             setCachedVenues(data.records);
-            setNextCommentsIndex(0);
             // Auto-geocode venues missing coordinates and write back to Airtable.
             // Uses a callback so pins appear progressively as each batch resolves.
             geocodeAndPersistMissingCoords(
@@ -135,6 +137,12 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
     }
   }
 
+  const updateRecord = useCallback((recordId, updater) => {
+    setRecords((prev) =>
+      prev.map((record) => (record.id === recordId ? updater(record) : record)),
+    );
+  }, []);
+
   useEffect(() => {
     if (userToken) loadRecords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,8 +152,7 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
     records,
     loading,
     errorMessage,
-    nextCommentsIndex,
-    setNextCommentsIndex,
     loadRecords,
+    updateRecord,
   };
 }

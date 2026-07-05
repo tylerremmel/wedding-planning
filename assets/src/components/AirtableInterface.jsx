@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import VenueCard from "./VenueCard";
 import MapPanel from "./MapPanel";
 import VenueFilterSortMenu from "./VenueFilterSortMenu";
@@ -17,13 +17,13 @@ import {
   StatusGroup,
   SessionWarning,
   ActionButtons,
-  Button,
   ControlPanel,
   LeftPanel,
   RightPanel,
   GridContainer,
   Notification,
 } from "./AirtableInterface.stitches";
+import { Button } from "./shared.stitches";
 
 export default function AirtableInterface() {
   const [statusMessage, setStatusMessage] = useState(
@@ -32,6 +32,15 @@ export default function AirtableInterface() {
   const [hoveredVenueId, setHoveredVenueId] = useState(null);
   const [pinHoveredVenueId, setPinHoveredVenueId] = useState(null);
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
+  // Populated progressively as each card's lazy comment fetch resolves —
+  // see handleCommentsLoaded below and useVenueFilters' filterUninteracted.
+  const [commentedRecordIds, setCommentedRecordIds] = useState(() => new Set());
+  // Tracks which records have finished a comments fetch (success or
+  // failure), by id rather than position — filteredRecords can reorder or
+  // shrink whenever filters/sort change, so an index-based "next to load"
+  // pointer would point at the wrong record (or one that's already loaded,
+  // permanently stalling the queue) the moment that happens.
+  const [loadedCommentIds, setLoadedCommentIds] = useState(() => new Set());
 
   const {
     userToken,
@@ -49,17 +58,30 @@ export default function AirtableInterface() {
       if (saved.sortDir != null) setSortDir(saved.sortDir);
       if (saved.filterStates != null) setFilterStates(saved.filterStates);
       if (saved.filterOptions != null) setFilterOptions(saved.filterOptions);
+      if (saved.filterVenueTypes != null)
+        setFilterVenueTypes(saved.filterVenueTypes);
       if (saved.filterPetFriendly != null)
         setFilterPetFriendly(saved.filterPetFriendly);
-      if (saved.filterReactions != null)
-        setFilterReactions(saved.filterReactions);
+      if (saved.filterCeremony != null) setFilterCeremony(saved.filterCeremony);
+      if (saved.filterReception != null)
+        setFilterReception(saved.filterReception);
+      if (saved.filterLodging != null) setFilterLodging(saved.filterLodging);
+      if (saved.filterUninteracted != null)
+        setFilterUninteracted(saved.filterUninteracted);
+      if (saved.filterReactionsScoreRange != null)
+        setFilterReactionsScoreRange(saved.filterReactionsScoreRange);
       if (saved.openDrawerVenueId != null)
         setOpenDrawerVenueId(saved.openDrawerVenueId);
     },
   });
 
-  const { records, loading, errorMessage, nextCommentsIndex, setNextCommentsIndex, loadRecords } =
-    useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken });
+  const { records, loading, errorMessage, loadRecords, updateRecord } =
+    useVenueRecords({
+      userToken,
+      authEpoch,
+      setStatusMessage,
+      invalidateAuthToken,
+    });
 
   const {
     filterText,
@@ -72,28 +94,83 @@ export default function AirtableInterface() {
     setFilterStates,
     filterOptions,
     setFilterOptions,
+    filterVenueTypes,
+    setFilterVenueTypes,
     filterPetFriendly,
     setFilterPetFriendly,
-    filterReactions,
-    setFilterReactions,
+    filterCeremony,
+    setFilterCeremony,
+    filterReception,
+    setFilterReception,
+    filterLodging,
+    setFilterLodging,
+    filterUninteracted,
+    setFilterUninteracted,
+    filterReactionsScoreRange,
+    setFilterReactionsScoreRange,
+    reactionsScoreBounds,
+    isReactionsScoreFilterActive,
     mapBounds,
     setMapBounds,
     fitKey,
     setFitKey,
     availableStates,
+    availableVenueTypes,
     filteredRecords,
-  } = useVenueFilters(records);
+  } = useVenueFilters(records, userEmail, commentedRecordIds);
 
-  // Stable callback identities so VenueCard's React.memo can actually skip
-  // re-rendering cards whose own props didn't change (e.g. on hover).
-  const filteredRecordsRef = useRef(filteredRecords);
-  filteredRecordsRef.current = filteredRecords;
+  // Comment prefetching waits until filteredRecords has been still for
+  // 1.5s (same debounce-after-settle pattern as the map's moveend handler)
+  // before picking up anything not yet loaded — otherwise rapid filter/sort
+  // changes would fire, cancel, and refire comment fetches against the
+  // rate-limited comments endpoint on every intermediate state.
+  const [settledFilteredRecords, setSettledFilteredRecords] =
+    useState(filteredRecords);
 
-  const handleCommentsLoaded = useCallback((recordId) => {
-    const idx = filteredRecordsRef.current.findIndex((r) => r.id === recordId);
-    if (idx === -1) return;
-    setNextCommentsIndex((prev) => Math.max(prev, idx + 1));
-  }, [setNextCommentsIndex]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSettledFilteredRecords(filteredRecords);
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [filteredRecords]);
+
+  // The one record (in the settled filtered/sorted order) whose comments
+  // should load next — always the first one not yet in loadedCommentIds, so
+  // this stays correct no matter how the list gets reordered or resized.
+  const nextCommentsRecordId = useMemo(() => {
+    const next = settledFilteredRecords.find(
+      (r) => !loadedCommentIds.has(r.id),
+    );
+    return next ? next.id : null;
+  }, [settledFilteredRecords, loadedCommentIds]);
+
+  const handleCommentsLoaded = useCallback(
+    (recordId, comments) => {
+      setLoadedCommentIds((prev) =>
+        prev.has(recordId) ? prev : new Set(prev).add(recordId),
+      );
+
+      if (userEmail && comments?.some((c) => c.author?.email === userEmail)) {
+        setCommentedRecordIds((prev) =>
+          prev.has(recordId) ? prev : new Set(prev).add(recordId),
+        );
+      }
+    },
+    [userEmail],
+  );
+
+  const handleReactionUpdated = useCallback(
+    (recordId, fieldsPatch) => {
+      updateRecord(recordId, (record) => ({
+        ...record,
+        fields: {
+          ...record.fields,
+          ...fieldsPatch,
+        },
+      }));
+    },
+    [updateRecord],
+  );
 
   const handleDrawerClose = useCallback(() => setOpenDrawerVenueId(null), []);
 
@@ -104,8 +181,13 @@ export default function AirtableInterface() {
       sortDir,
       filterStates,
       filterOptions,
+      filterVenueTypes,
       filterPetFriendly,
-      filterReactions,
+      filterCeremony,
+      filterReception,
+      filterLodging,
+      filterUninteracted,
+      filterReactionsScoreRange,
       openDrawerVenueId,
     });
   }
@@ -120,10 +202,24 @@ export default function AirtableInterface() {
             setFilterStates={setFilterStates}
             filterOptions={filterOptions}
             setFilterOptions={setFilterOptions}
-            filterReactions={filterReactions}
-            setFilterReactions={setFilterReactions}
+            availableVenueTypes={availableVenueTypes}
+            filterVenueTypes={filterVenueTypes}
+            setFilterVenueTypes={setFilterVenueTypes}
+            filterReactionsScoreRange={filterReactionsScoreRange}
+            setFilterReactionsScoreRange={setFilterReactionsScoreRange}
+            reactionsScoreBounds={reactionsScoreBounds}
+            isReactionsScoreFilterActive={isReactionsScoreFilterActive}
             filterPetFriendly={filterPetFriendly}
             setFilterPetFriendly={setFilterPetFriendly}
+            filterCeremony={filterCeremony}
+            setFilterCeremony={setFilterCeremony}
+            filterReception={filterReception}
+            setFilterReception={setFilterReception}
+            filterLodging={filterLodging}
+            setFilterLodging={setFilterLodging}
+            filterUninteracted={filterUninteracted}
+            setFilterUninteracted={setFilterUninteracted}
+            isLoggedIn={Boolean(userEmail)}
             sortKey={sortKey}
             setSortKey={setSortKey}
             sortDir={sortDir}
@@ -178,14 +274,15 @@ export default function AirtableInterface() {
             <Notification>Loading venue cards…</Notification>
           ) : filteredRecords.length > 0 ? (
             <GridContainer>
-              {filteredRecords.map((record, index) => (
+              {filteredRecords.map((record) => (
                 <VenueCard
                   key={record.id}
                   record={record}
                   userToken={userToken}
                   userEmail={userEmail}
-                  shouldLoadComments={index === nextCommentsIndex}
+                  shouldLoadComments={record.id === nextCommentsRecordId}
                   onCommentsLoaded={handleCommentsLoaded}
+                  onReactionUpdated={handleReactionUpdated}
                   isHovered={hoveredVenueId === record.id}
                   scrollTo={pinHoveredVenueId === record.id}
                   openDrawer={openDrawerVenueId === record.id}
