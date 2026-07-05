@@ -29,19 +29,31 @@ function toggleSelection(current, available, value) {
   return next.length === available.length ? null : next;
 }
 
-// MUI's MenuItem styles bake in a `.MuiListItemIcon-root { min-width: 36px }`
-// rule scoped to its own generated class, which beats a plain single-class
-// sx override on specificity. Repeating the class in the selector matches
-// that specificity so our override actually wins.
-const iconMinWidthSx = { "&.MuiListItemIcon-root": { minWidth: 16 } };
-
 function CheckIndicator({ checked }) {
   return checked ? (
-    <ListItemIcon sx={iconMinWidthSx}>
+    <ListItemIcon>
       <MdCheck />
     </ListItemIcon>
   ) : (
-    <ListItemIcon sx={iconMinWidthSx} />
+    <ListItemIcon />
+  );
+}
+
+function SelectableMenuItem({ checked, isRadio = false, children, ...props }) {
+  return (
+    <MenuItem
+      {...props}
+      role={
+        isRadio
+          ? "menuitemradio"
+          : checked !== undefined
+            ? "menuitemcheckbox"
+            : "menuitem"
+      }
+      aria-checked={checked !== undefined ? Boolean(checked) : undefined}
+    >
+      {children}
+    </MenuItem>
   );
 }
 
@@ -193,9 +205,10 @@ export default function VenueFilterSortMenu({
             <MdChevronRight />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={filterPetFriendly}
           onMouseEnter={() => openSubmenu(null, null)}
           onClick={() => setFilterPetFriendly((v) => !v)}
         >
@@ -203,7 +216,7 @@ export default function VenueFilterSortMenu({
           <ListItemIcon sx={{ "&.MuiListItemIcon-root": { minWidth: 0 } }}>
             {filterPetFriendly && <MdCheck />}
           </ListItemIcon>
-        </MenuItem>
+        </SelectableMenuItem>
 
         <Divider />
 
@@ -229,17 +242,16 @@ export default function VenueFilterSortMenu({
             Showing: {reactionsScoreValue[0]} to {reactionsScoreValue[1]}
           </Typography> */}
         </Box>
-        {isLoggedIn && (
-          <MenuItem
-            disableRipple
-            sx={{ gap: 2 }}
-            onMouseEnter={() => openSubmenu(null, null)}
-            onClick={() => setFilterUninteracted((v) => !v)}
-          >
-            <ListItemText>Hide ones I've seen</ListItemText>
-            <CheckIndicator checked={filterUninteracted} />
-          </MenuItem>
-        )}
+        <SelectableMenuItem
+          disableRipple
+          sx={{ gap: 2 }}
+          checked={filterUninteracted}
+          onMouseEnter={() => openSubmenu(null, null)}
+          onClick={() => setFilterUninteracted((v) => !v)}
+        >
+          <ListItemText>Hide ones I've seen</ListItemText>
+          <CheckIndicator checked={filterUninteracted} />
+        </SelectableMenuItem>
         {hasActiveFilters && (
           <>
             <Divider sx={{ my: 1 }} />
@@ -282,10 +294,11 @@ export default function VenueFilterSortMenu({
         }}
       >
         {availableStates.map((state) => (
-          <MenuItem
+          <SelectableMenuItem
             disableRipple
             sx={{ gap: 2 }}
             key={state}
+            checked={(filterStates ?? availableStates).includes(state)}
             onClick={() =>
               setFilterStates((prev) =>
                 toggleSelection(prev, availableStates, state),
@@ -296,7 +309,7 @@ export default function VenueFilterSortMenu({
               checked={(filterStates ?? availableStates).includes(state)}
             />
             {state}
-          </MenuItem>
+          </SelectableMenuItem>
         ))}
       </Menu>
 
@@ -313,10 +326,11 @@ export default function VenueFilterSortMenu({
         }}
       >
         {OPTIONS_INCLUDED.map((opt) => (
-          <MenuItem
+          <SelectableMenuItem
             disableRipple
             sx={{ gap: 2 }}
             key={opt}
+            checked={(filterOptions ?? OPTIONS_INCLUDED).includes(opt)}
             onClick={() =>
               setFilterOptions((prev) =>
                 toggleSelection(prev, OPTIONS_INCLUDED, opt),
@@ -327,7 +341,7 @@ export default function VenueFilterSortMenu({
               checked={(filterOptions ?? OPTIONS_INCLUDED).includes(opt)}
             />
             {opt}
-          </MenuItem>
+          </SelectableMenuItem>
         ))}
       </Menu>
 
@@ -344,10 +358,11 @@ export default function VenueFilterSortMenu({
         }}
       >
         {availableVenueTypes.map((type) => (
-          <MenuItem
+          <SelectableMenuItem
             disableRipple
             sx={{ gap: 2 }}
             key={type}
+            checked={(filterVenueTypes ?? availableVenueTypes).includes(type)}
             onClick={() =>
               setFilterVenueTypes((prev) =>
                 toggleSelection(prev, availableVenueTypes, type),
@@ -358,7 +373,7 @@ export default function VenueFilterSortMenu({
               checked={(filterVenueTypes ?? availableVenueTypes).includes(type)}
             />
             {type}
-          </MenuItem>
+          </SelectableMenuItem>
         ))}
       </Menu>
 
@@ -374,30 +389,33 @@ export default function VenueFilterSortMenu({
           paper: { sx: { pointerEvents: "auto" } },
         }}
       >
-        <MenuItem
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={filterCeremony}
           onClick={() => setFilterCeremony((v) => !v)}
         >
           <CheckIndicator checked={filterCeremony} />
           <ListItemText>Ceremony</ListItemText>
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={filterReception}
           onClick={() => setFilterReception((v) => !v)}
         >
           <CheckIndicator checked={filterReception} />
           <ListItemText>Reception</ListItemText>
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={filterLodging}
           onClick={() => setFilterLodging((v) => !v)}
         >
           <CheckIndicator checked={filterLodging} />
           <ListItemText>Lodging</ListItemText>
-        </MenuItem>
+        </SelectableMenuItem>
       </Menu>
 
       {/* Sort button */}
@@ -415,55 +433,67 @@ export default function VenueFilterSortMenu({
         open={Boolean(sortMenuAnchor)}
         onClose={() => setSortMenuAnchor(null)}
       >
-        <MenuItem
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortKey === "name"}
+          isRadio
           onClick={() => setSortKey("name")}
         >
           <CheckIndicator checked={sortKey === "name"} />
           Venue name
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortKey === "capacity"}
+          isRadio
           onClick={() => setSortKey("capacity")}
         >
           <CheckIndicator checked={sortKey === "capacity"} />
           Capacity
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortKey === "reactions"}
+          isRadio
           onClick={() => setSortKey("reactions")}
         >
           <CheckIndicator checked={sortKey === "reactions"} />
           Reactions
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortKey === "cost"}
+          isRadio
           onClick={() => setSortKey("cost")}
         >
           <CheckIndicator checked={sortKey === "cost"} />
           Estimated total cost
-        </MenuItem>
+        </SelectableMenuItem>
         <Divider />
-        <MenuItem
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortDir === "asc"}
+          isRadio
           onClick={() => setSortDir("asc")}
         >
           <CheckIndicator checked={sortDir === "asc"} />
           Ascending
-        </MenuItem>
-        <MenuItem
+        </SelectableMenuItem>
+        <SelectableMenuItem
           disableRipple
           sx={{ gap: 2 }}
+          checked={sortDir === "desc"}
+          isRadio
           onClick={() => setSortDir("desc")}
         >
           <CheckIndicator checked={sortDir === "desc"} />
           Descending
-        </MenuItem>
+        </SelectableMenuItem>
       </Menu>
     </>
   );

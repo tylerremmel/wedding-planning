@@ -210,7 +210,7 @@ export default function VenueComments({
               {[...comments].reverse().map((comment, index) => (
                 <CommentBubble key={comment.id ?? index}>
                   <CommentMeta>
-                    <Icon size="100" style={{ top: "2px" }}>
+                    <Icon size="100">
                       <img
                         src={getAvatarSrc(comment.author?.name)}
                         alt=""

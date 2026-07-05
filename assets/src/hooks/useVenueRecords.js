@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchVenueRecords } from "../utils/airtableApi";
 import { getUserToken } from "../utils/airtableAuth";
 import { getCachedVenues, setCachedVenues } from "../utils/venueCache";
@@ -9,7 +9,12 @@ import { sleep } from "../utils/sleep";
 // and kicks off background geocoding for records missing coordinates.
 // `authEpoch` (from useAirtableAuth) triggers a load on fresh login/mount,
 // but not on a silent token refresh.
-export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken }) {
+export function useVenueRecords({
+  userToken,
+  authEpoch,
+  setStatusMessage,
+  invalidateAuthToken,
+}) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -132,6 +137,12 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
     }
   }
 
+  const updateRecord = useCallback((recordId, updater) => {
+    setRecords((prev) =>
+      prev.map((record) => (record.id === recordId ? updater(record) : record)),
+    );
+  }, []);
+
   useEffect(() => {
     if (userToken) loadRecords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,5 +153,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
     loading,
     errorMessage,
     loadRecords,
+    updateRecord,
   };
 }

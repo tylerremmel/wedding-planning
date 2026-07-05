@@ -11,5 +11,12 @@ export const muiTheme = createTheme({
         size: "small",
       },
     },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: 16,
+        },
+      },
+    },
   },
 });

@@ -34,9 +34,7 @@ export default function AirtableInterface() {
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
   // Populated progressively as each card's lazy comment fetch resolves —
   // see handleCommentsLoaded below and useVenueFilters' filterUninteracted.
-  const [commentedRecordIds, setCommentedRecordIds] = useState(
-    () => new Set(),
-  );
+  const [commentedRecordIds, setCommentedRecordIds] = useState(() => new Set());
   // Tracks which records have finished a comments fetch (success or
   // failure), by id rather than position — filteredRecords can reorder or
   // shrink whenever filters/sort change, so an index-based "next to load"
@@ -77,12 +75,13 @@ export default function AirtableInterface() {
     },
   });
 
-  const { records, loading, errorMessage, loadRecords } = useVenueRecords({
-    userToken,
-    authEpoch,
-    setStatusMessage,
-    invalidateAuthToken,
-  });
+  const { records, loading, errorMessage, loadRecords, updateRecord } =
+    useVenueRecords({
+      userToken,
+      authEpoch,
+      setStatusMessage,
+      invalidateAuthToken,
+    });
 
   const {
     filterText,
@@ -145,17 +144,33 @@ export default function AirtableInterface() {
     return next ? next.id : null;
   }, [settledFilteredRecords, loadedCommentIds]);
 
-  const handleCommentsLoaded = useCallback((recordId, comments) => {
-    setLoadedCommentIds((prev) =>
-      prev.has(recordId) ? prev : new Set(prev).add(recordId),
-    );
-
-    if (userEmail && comments?.some((c) => c.author?.email === userEmail)) {
-      setCommentedRecordIds((prev) =>
+  const handleCommentsLoaded = useCallback(
+    (recordId, comments) => {
+      setLoadedCommentIds((prev) =>
         prev.has(recordId) ? prev : new Set(prev).add(recordId),
       );
-    }
-  }, [userEmail]);
+
+      if (userEmail && comments?.some((c) => c.author?.email === userEmail)) {
+        setCommentedRecordIds((prev) =>
+          prev.has(recordId) ? prev : new Set(prev).add(recordId),
+        );
+      }
+    },
+    [userEmail],
+  );
+
+  const handleReactionUpdated = useCallback(
+    (recordId, fieldsPatch) => {
+      updateRecord(recordId, (record) => ({
+        ...record,
+        fields: {
+          ...record.fields,
+          ...fieldsPatch,
+        },
+      }));
+    },
+    [updateRecord],
+  );
 
   const handleDrawerClose = useCallback(() => setOpenDrawerVenueId(null), []);
 
@@ -267,6 +282,7 @@ export default function AirtableInterface() {
                   userEmail={userEmail}
                   shouldLoadComments={record.id === nextCommentsRecordId}
                   onCommentsLoaded={handleCommentsLoaded}
+                  onReactionUpdated={handleReactionUpdated}
                   isHovered={hoveredVenueId === record.id}
                   scrollTo={pinHoveredVenueId === record.id}
                   openDrawer={openDrawerVenueId === record.id}

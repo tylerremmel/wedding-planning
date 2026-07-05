@@ -125,6 +125,7 @@ export const ButtonGroup = styled("div", {
 
 export const Icon = styled("span", {
   position: "relative",
+  top: "2px",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
