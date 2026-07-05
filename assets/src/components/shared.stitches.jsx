@@ -71,17 +71,24 @@ export const Button = styled("button", {
     {
       variant: "blue",
       highlighted: true,
-      css: { outline: "1px solid $blue800", outlineOffset: "-1px" },
+      css: {
+        backgroundColor: "$blue700",
+      },
     },
     {
       variant: "gray",
       highlighted: true,
-      css: { outline: "1px solid $gray600", outlineOffset: "-1px" },
+      css: {
+        backgroundColor: "$gray600",
+        color: "$white",
+      },
     },
     {
       variant: "red",
       highlighted: true,
-      css: { outline: "1px solid $red800", outlineOffset: "-1px" },
+      css: {
+        backgroundColor: "$red700",
+      },
     },
   ],
   defaultVariants: {

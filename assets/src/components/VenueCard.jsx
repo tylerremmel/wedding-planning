@@ -586,6 +586,7 @@ function VenueCard({
           handleReactionClick={handleReactionClick}
           reactionStatus={reactionStatus}
           commentsLoading={commentsLoading}
+          commentsLoaded={commentsLoaded}
           comments={comments}
         />
       </CardBody>
@@ -690,6 +691,7 @@ function VenueCard({
             handleReactionClick={handleReactionClick}
             reactionStatus={reactionStatus}
             commentsLoading={commentsLoading}
+            commentsLoaded={commentsLoaded}
             comments={comments}
           />
 

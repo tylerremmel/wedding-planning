@@ -145,6 +145,34 @@ export const CommentsStream = styled("div", {
   display: "grid",
 });
 
+export const CommentsListWrapper = styled("div", {
+  display: "grid",
+  position: "relative",
+  variants: {
+    collapsed: {
+      true: {
+        maxHeight: "80px",
+        overflow: "hidden",
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: "48px",
+          background:
+            "linear-gradient(to bottom, rgba(255, 255, 255, 0), $white)",
+          pointerEvents: "none",
+        },
+      },
+      false: {},
+    },
+  },
+  defaultVariants: {
+    collapsed: false,
+  },
+});
+
 export const CommentBubble = styled("div", {
   display: "inline",
   fontSize: "0.9rem",
@@ -207,6 +235,7 @@ export const CommentInputActions = styled("div", {
 export const StatusMessage = styled("div", {
   fontSize: "0.85rem",
   color: "$gray500",
+  paddingTop: "8px",
 });
 
 export const InnerDrawer = styled("div", {

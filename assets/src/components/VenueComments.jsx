@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CommentsSection,
   DrawerCommentsSection,
@@ -7,6 +7,7 @@ import {
   CommentForm,
   CommentInputActions,
   CommentsStream,
+  CommentsListWrapper,
   CommentBubble,
   CommentMeta,
   CommentText,
@@ -50,10 +51,21 @@ export default function VenueComments({
   handleReactionClick,
   reactionStatus,
   commentsLoading,
+  commentsLoaded,
   comments,
 }) {
   const Wrapper =
     variant === "drawer" ? DrawerCommentsSection : CommentsSection;
+
+  const [expanded, setExpanded] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const commentsListRef = useRef(null);
+
+  useEffect(() => {
+    const el = commentsListRef.current;
+    if (!el) return;
+    setHasOverflow(el.scrollHeight > 100);
+  }, [comments]);
 
   return (
     <Wrapper>
@@ -184,29 +196,55 @@ export default function VenueComments({
       <CommentsStream>
         {commentsLoading ? (
           <StatusMessage>Comments loading...</StatusMessage>
-        ) : comments.length === 0 ? null : (
-          [...comments].reverse().map((comment, index) => (
-            <CommentBubble key={comment.id ?? index}>
-              <CommentMeta>
-                <Icon size="100" style={{ top: "2px" }}>
-                  <img
-                    src={getAvatarSrc(comment.author?.name)}
-                    alt=""
-                    style={{
-                      width: "1em",
-                      height: "1em",
-                      objectFit: "contain",
-                      verticalAlign: "middle",
-                    }}
-                  />
-                </Icon>{" "}
-                <CommentName>
-                  {comment.author?.name?.split(" ")[0] || "User"}:
-                </CommentName>
-              </CommentMeta>
-              <CommentText>{comment.text}</CommentText>
-            </CommentBubble>
-          ))
+        ) : commentsLoaded ? (
+          <StatusMessage>
+            {comments.length} comment{comments.length === 1 ? "" : "s"}
+          </StatusMessage>
+        ) : null}
+        {!commentsLoading && comments.length > 0 && (
+          <>
+            <CommentsListWrapper
+              ref={commentsListRef}
+              collapsed={hasOverflow && !expanded}
+            >
+              {[...comments].reverse().map((comment, index) => (
+                <CommentBubble key={comment.id ?? index}>
+                  <CommentMeta>
+                    <Icon size="100" style={{ top: "2px" }}>
+                      <img
+                        src={getAvatarSrc(comment.author?.name)}
+                        alt=""
+                        style={{
+                          width: "1em",
+                          height: "1em",
+                          objectFit: "contain",
+                          verticalAlign: "middle",
+                        }}
+                      />
+                    </Icon>{" "}
+                    <CommentName>
+                      {comment.author?.name?.split(" ")[0] || "User"}:
+                    </CommentName>
+                  </CommentMeta>
+                  <CommentText>{comment.text}</CommentText>
+                </CommentBubble>
+              ))}
+            </CommentsListWrapper>
+            {hasOverflow && (
+              <Button
+                variant="white"
+                size="compact"
+                type="button"
+                style={{ marginTop: "8px", justifySelf: "flex-start" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded((v) => !v);
+                }}
+              >
+                {expanded ? "Collapse" : "See more"}
+              </Button>
+            )}
+          </>
         )}
       </CommentsStream>
     </Wrapper>
