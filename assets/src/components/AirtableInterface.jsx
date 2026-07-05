@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import VenueCard from "./VenueCard";
 import MapPanel from "./MapPanel";
 import VenueFilterSortMenu from "./VenueFilterSortMenu";
@@ -37,6 +37,12 @@ export default function AirtableInterface() {
   const [commentedRecordIds, setCommentedRecordIds] = useState(
     () => new Set(),
   );
+  // Tracks which records have finished a comments fetch (success or
+  // failure), by id rather than position — filteredRecords can reorder or
+  // shrink whenever filters/sort change, so an index-based "next to load"
+  // pointer would point at the wrong record (or one that's already loaded,
+  // permanently stalling the queue) the moment that happens.
+  const [loadedCommentIds, setLoadedCommentIds] = useState(() => new Set());
 
   const {
     userToken,
@@ -71,8 +77,12 @@ export default function AirtableInterface() {
     },
   });
 
-  const { records, loading, errorMessage, nextCommentsIndex, setNextCommentsIndex, loadRecords } =
-    useVenueRecords({ userToken, authEpoch, setStatusMessage, invalidateAuthToken });
+  const { records, loading, errorMessage, loadRecords } = useVenueRecords({
+    userToken,
+    authEpoch,
+    setStatusMessage,
+    invalidateAuthToken,
+  });
 
   const {
     filterText,
@@ -110,23 +120,42 @@ export default function AirtableInterface() {
     filteredRecords,
   } = useVenueFilters(records, userEmail, commentedRecordIds);
 
-  // Stable callback identities so VenueCard's React.memo can actually skip
-  // re-rendering cards whose own props didn't change (e.g. on hover).
-  const filteredRecordsRef = useRef(filteredRecords);
-  filteredRecordsRef.current = filteredRecords;
+  // Comment prefetching waits until filteredRecords has been still for
+  // 1.5s (same debounce-after-settle pattern as the map's moveend handler)
+  // before picking up anything not yet loaded — otherwise rapid filter/sort
+  // changes would fire, cancel, and refire comment fetches against the
+  // rate-limited comments endpoint on every intermediate state.
+  const [settledFilteredRecords, setSettledFilteredRecords] =
+    useState(filteredRecords);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSettledFilteredRecords(filteredRecords);
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [filteredRecords]);
+
+  // The one record (in the settled filtered/sorted order) whose comments
+  // should load next — always the first one not yet in loadedCommentIds, so
+  // this stays correct no matter how the list gets reordered or resized.
+  const nextCommentsRecordId = useMemo(() => {
+    const next = settledFilteredRecords.find(
+      (r) => !loadedCommentIds.has(r.id),
+    );
+    return next ? next.id : null;
+  }, [settledFilteredRecords, loadedCommentIds]);
 
   const handleCommentsLoaded = useCallback((recordId, comments) => {
-    const idx = filteredRecordsRef.current.findIndex((r) => r.id === recordId);
-    if (idx !== -1) {
-      setNextCommentsIndex((prev) => Math.max(prev, idx + 1));
-    }
+    setLoadedCommentIds((prev) =>
+      prev.has(recordId) ? prev : new Set(prev).add(recordId),
+    );
 
     if (userEmail && comments?.some((c) => c.author?.email === userEmail)) {
       setCommentedRecordIds((prev) =>
         prev.has(recordId) ? prev : new Set(prev).add(recordId),
       );
     }
-  }, [setNextCommentsIndex, userEmail]);
+  }, [userEmail]);
 
   const handleDrawerClose = useCallback(() => setOpenDrawerVenueId(null), []);
 
@@ -230,13 +259,13 @@ export default function AirtableInterface() {
             <Notification>Loading venue cards…</Notification>
           ) : filteredRecords.length > 0 ? (
             <GridContainer>
-              {filteredRecords.map((record, index) => (
+              {filteredRecords.map((record) => (
                 <VenueCard
                   key={record.id}
                   record={record}
                   userToken={userToken}
                   userEmail={userEmail}
-                  shouldLoadComments={index === nextCommentsIndex}
+                  shouldLoadComments={record.id === nextCommentsRecordId}
                   onCommentsLoaded={handleCommentsLoaded}
                   isHovered={hoveredVenueId === record.id}
                   scrollTo={pinHoveredVenueId === record.id}

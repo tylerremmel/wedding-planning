@@ -175,13 +175,17 @@ function VenueCard({
 
       if (!cancelled) {
         setCommentsLoading(false);
-        if (loadSucceeded && !commentsLoaded) {
+        if (loadSucceeded) {
           setCommentsLoaded(true);
-          try {
-            onCommentsLoaded(record.id, loadedComments);
-          } catch (e) {
-            console.debug("onCommentsLoaded callback failed", e);
-          }
+        }
+        // Report the attempt as finished (success or exhausted retries) so
+        // the parent's load queue advances either way — otherwise a record
+        // whose comments fail to load would permanently stall it, the same
+        // way a stale index used to.
+        try {
+          onCommentsLoaded(record.id, loadedComments);
+        } catch (e) {
+          console.debug("onCommentsLoaded callback failed", e);
         }
       }
 

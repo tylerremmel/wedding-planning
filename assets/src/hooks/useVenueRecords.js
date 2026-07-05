@@ -13,7 +13,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [nextCommentsIndex, setNextCommentsIndex] = useState(0);
 
   async function loadRecords(force = false) {
     setErrorMessage("");
@@ -22,7 +21,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
       const cached = getCachedVenues();
       if (cached) {
         setRecords(cached.records);
-        setNextCommentsIndex(0);
         const ageMinutes = Math.floor((Date.now() - cached.cachedAt) / 60000);
         const ageLabel = ageMinutes === 0 ? "just now" : `${ageMinutes}m ago`;
         setStatusMessage(`Venues loaded from cache · updated ${ageLabel}`);
@@ -44,7 +42,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
           if (data.records && data.records.length > 0) {
             setRecords(data.records);
             setCachedVenues(data.records);
-            setNextCommentsIndex(0);
             // Auto-geocode venues missing coordinates and write back to Airtable.
             // Uses a callback so pins appear progressively as each batch resolves.
             geocodeAndPersistMissingCoords(
@@ -144,8 +141,6 @@ export function useVenueRecords({ userToken, authEpoch, setStatusMessage, invali
     records,
     loading,
     errorMessage,
-    nextCommentsIndex,
-    setNextCommentsIndex,
     loadRecords,
   };
 }
