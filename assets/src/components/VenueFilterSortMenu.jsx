@@ -78,8 +78,8 @@ export default function VenueFilterSortMenu({
   setFilterReception,
   filterLodging,
   setFilterLodging,
-  filterUninteracted,
-  setFilterUninteracted,
+  sortUnseenFirst,
+  setSortUnseenFirst,
   isLoggedIn,
   sortKey,
   setSortKey,
@@ -108,8 +108,7 @@ export default function VenueFilterSortMenu({
     filterPetFriendly ||
     filterCeremony ||
     filterReception ||
-    filterLodging ||
-    filterUninteracted;
+    filterLodging;
 
   const [reactionsScoreMin, reactionsScoreMax] = reactionsScoreBounds;
   const reactionsScoreValue = filterReactionsScoreRange ?? reactionsScoreBounds;
@@ -126,7 +125,7 @@ export default function VenueFilterSortMenu({
         </Icon>
         Filters
         {hasActiveFilters &&
-          ` (${(filterStates != null ? 1 : 0) + (filterOptions != null ? 1 : 0) + (filterVenueTypes != null ? 1 : 0) + (isReactionsScoreFilterActive ? 1 : 0) + (filterPetFriendly ? 1 : 0) + (filterCeremony ? 1 : 0) + (filterReception ? 1 : 0) + (filterLodging ? 1 : 0) + (filterUninteracted ? 1 : 0)})`}
+          ` (${(filterStates != null ? 1 : 0) + (filterOptions != null ? 1 : 0) + (filterVenueTypes != null ? 1 : 0) + (isReactionsScoreFilterActive ? 1 : 0) + (filterPetFriendly ? 1 : 0) + (filterCeremony ? 1 : 0) + (filterReception ? 1 : 0) + (filterLodging ? 1 : 0)})`}
       </Button>
       <Menu
         anchorEl={filterMenuAnchor}
@@ -242,16 +241,6 @@ export default function VenueFilterSortMenu({
             Showing: {reactionsScoreValue[0]} to {reactionsScoreValue[1]}
           </Typography> */}
         </Box>
-        <SelectableMenuItem
-          disableRipple
-          sx={{ gap: 2 }}
-          checked={filterUninteracted}
-          onMouseEnter={() => openSubmenu(null, null)}
-          onClick={() => setFilterUninteracted((v) => !v)}
-        >
-          <ListItemText>Hide ones I've seen</ListItemText>
-          <CheckIndicator checked={filterUninteracted} />
-        </SelectableMenuItem>
         {hasActiveFilters && (
           <>
             <Divider sx={{ my: 1 }} />
@@ -267,7 +256,6 @@ export default function VenueFilterSortMenu({
                 setFilterCeremony(false);
                 setFilterReception(false);
                 setFilterLodging(false);
-                setFilterUninteracted(false);
                 setFilterMenuAnchor(null);
                 setStateSubmenuAnchor(null);
                 setOptionsSubmenuAnchor(null);
@@ -494,6 +482,20 @@ export default function VenueFilterSortMenu({
           <CheckIndicator checked={sortDir === "desc"} />
           Descending
         </SelectableMenuItem>
+        {isLoggedIn && (
+          <>
+            <Divider />
+            <SelectableMenuItem
+              disableRipple
+              sx={{ gap: 2 }}
+              checked={sortUnseenFirst}
+              onClick={() => setSortUnseenFirst((v) => !v)}
+            >
+              <CheckIndicator checked={sortUnseenFirst} />
+              Show unseen first
+            </SelectableMenuItem>
+          </>
+        )}
       </Menu>
     </>
   );
