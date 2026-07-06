@@ -8,6 +8,7 @@ import {
   CommentInputActions,
   CommentsStream,
   CommentsListWrapper,
+  CommentBubbleWrapper,
   CommentBubble,
   CommentMeta,
   CommentText,
@@ -220,26 +221,26 @@ export default function VenueComments({
               collapsed={hasOverflow && !expanded}
             >
               {[...comments].reverse().map((comment, index) => (
-                <CommentBubble key={comment.id ?? index}>
-                  <CommentMeta>
-                    <Icon size="100">
-                      <img
-                        src={getAvatarSrc(comment.author?.name)}
-                        alt=""
-                        style={{
-                          width: "1em",
-                          height: "1em",
-                          objectFit: "contain",
-                          verticalAlign: "middle",
-                        }}
-                      />
-                    </Icon>{" "}
-                    <CommentName>
-                      {comment.author?.name?.split(" ")[0] || "User"}:
-                    </CommentName>
-                  </CommentMeta>
-                  <CommentText>{comment.text}</CommentText>
-                </CommentBubble>
+                <CommentBubbleWrapper key={comment.id ?? index}>
+                  <Icon size="200" style={{ marginTop: "4px" }}>
+                    <img
+                      src={getAvatarSrc(comment.author?.name)}
+                      alt=""
+                      style={{
+                        objectFit: "contain",
+                        verticalAlign: "middle",
+                      }}
+                    />
+                  </Icon>
+                  <CommentBubble>
+                    <CommentMeta>
+                      <CommentName>
+                        {comment.author?.name?.split(" ")[0] || "User"}:
+                      </CommentName>
+                    </CommentMeta>
+                    <CommentText>{comment.text}</CommentText>
+                  </CommentBubble>
+                </CommentBubbleWrapper>
               ))}
             </CommentsListWrapper>
             {hasOverflow && (
