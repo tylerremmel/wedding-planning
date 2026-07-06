@@ -8,10 +8,18 @@ import { hasUserReacted } from "../utils/reactions";
 // `commentedRecordIds` is a Set of record IDs the current user has
 // commented on, populated progressively as VenueCard's lazy per-record
 // comment fetches resolve — see AirtableInterface's handleCommentsLoaded.
-// Until a record's comments have loaded, "have I commented?" is unknown,
-// so filterUninteracted optimistically includes it and lets it drop out
-// once its data arrives.
-export function useVenueFilters(records, userEmail, commentedRecordIds) {
+//
+// sortUnseenFirst is a sort modifier, not a filter — it used to remove
+// already-reacted/commented venues outright, but that yanked the card out
+// from under a user mid-interaction (react, then comment — the card would
+// vanish after the reaction, before they could also leave a comment).
+// Sinking it to the bottom instead keeps it visible. It's also a frozen
+// snapshot rather than a live value: reacting/commenting during the
+// session must not reshuffle the grid under the user's cursor, so "seen"
+// status is captured once (on enabling it, or on an actual records
+// refresh) and held still until the next refresh — see the snapshot
+// effect below.
+export function useVenueFilters(records, userEmail, commentedRecordIds, loadGeneration) {
   const [filterText, setFilterText] = useState("");
   const [sortKey, setSortKey] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
@@ -23,7 +31,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
   const [filterCeremony, setFilterCeremony] = useState(false);
   const [filterReception, setFilterReception] = useState(false);
   const [filterLodging, setFilterLodging] = useState(false);
-  const [filterUninteracted, setFilterUninteracted] = useState(false);
+  const [sortUnseenFirst, setSortUnseenFirst] = useState(false);
   const [filterReactionsScoreRange, setFilterReactionsScoreRange] =
     useState(null);
   const [mapBounds, setMapBounds] = useState(null);
@@ -44,7 +52,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
     filterCeremony,
     filterReception,
     filterLodging,
-    filterUninteracted,
+    sortUnseenFirst,
     filterReactionsScoreRange,
   ]);
 
@@ -82,6 +90,32 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
     (filterReactionsScoreRange[0] !== reactionsScoreBounds[0] ||
       filterReactionsScoreRange[1] !== reactionsScoreBounds[1]);
 
+  // Frozen "seen" snapshot for sortUnseenFirst — recomputed only when a
+  // real refresh happens (loadGeneration bumps) or when the toggle is
+  // switched on, never in response to a live reaction/comment.
+  const seenSnapshotRef = useRef(new Set());
+  const [snapshotVersion, setSnapshotVersion] = useState(0);
+  const prevLoadGeneration = useRef(loadGeneration);
+  const prevSortUnseenFirst = useRef(sortUnseenFirst);
+
+  useEffect(() => {
+    const reloaded = loadGeneration !== prevLoadGeneration.current;
+    const justEnabled = sortUnseenFirst && !prevSortUnseenFirst.current;
+    prevLoadGeneration.current = loadGeneration;
+    prevSortUnseenFirst.current = sortUnseenFirst;
+
+    if (sortUnseenFirst && (reloaded || justEnabled)) {
+      const snapshot = new Set();
+      records.forEach((r) => {
+        if (hasUserReacted(r.fields, userEmail) || commentedRecordIds.has(r.id)) {
+          snapshot.add(r.id);
+        }
+      });
+      seenSnapshotRef.current = snapshot;
+      setSnapshotVersion((v) => v + 1);
+    }
+  }, [loadGeneration, sortUnseenFirst, records, userEmail, commentedRecordIds]);
+
   const filteredRecords = useMemo(() => {
     const normalizedFilter = filterText.toLowerCase().trim();
     return records
@@ -118,11 +152,6 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
 
         if (filterLodging && !record.fields["Lodging"]) return false;
 
-        if (filterUninteracted) {
-          if (hasUserReacted(record.fields, userEmail)) return false;
-          if (commentedRecordIds.has(record.id)) return false;
-        }
-
         if (isReactionsScoreFilterActive) {
           const score = Number(record.fields["Reactions score"]) || 0;
           if (
@@ -149,6 +178,12 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
         return true;
       })
       .sort((a, b) => {
+        if (sortUnseenFirst) {
+          const aSeen = seenSnapshotRef.current.has(a.id);
+          const bSeen = seenSnapshotRef.current.has(b.id);
+          if (aSeen !== bSeen) return aSeen ? 1 : -1;
+        }
+
         const dir = sortDir === "asc" ? 1 : -1;
         if (sortKey === "name") {
           return (
@@ -191,9 +226,8 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
     filterCeremony,
     filterReception,
     filterLodging,
-    filterUninteracted,
-    userEmail,
-    commentedRecordIds,
+    sortUnseenFirst,
+    snapshotVersion,
     isReactionsScoreFilterActive,
     filterReactionsScoreRange,
   ]);
@@ -219,8 +253,8 @@ export function useVenueFilters(records, userEmail, commentedRecordIds) {
     setFilterReception,
     filterLodging,
     setFilterLodging,
-    filterUninteracted,
-    setFilterUninteracted,
+    sortUnseenFirst,
+    setSortUnseenFirst,
     filterReactionsScoreRange,
     setFilterReactionsScoreRange,
     reactionsScoreBounds,

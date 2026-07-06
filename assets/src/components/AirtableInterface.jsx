@@ -33,7 +33,7 @@ export default function AirtableInterface() {
   const [pinHoveredVenueId, setPinHoveredVenueId] = useState(null);
   const [openDrawerVenueId, setOpenDrawerVenueId] = useState(null);
   // Populated progressively as each card's lazy comment fetch resolves —
-  // see handleCommentsLoaded below and useVenueFilters' filterUninteracted.
+  // see handleCommentsLoaded below and useVenueFilters' sortUnseenFirst.
   const [commentedRecordIds, setCommentedRecordIds] = useState(() => new Set());
   // Tracks which records have finished a comments fetch (success or
   // failure), by id rather than position — filteredRecords can reorder or
@@ -66,8 +66,8 @@ export default function AirtableInterface() {
       if (saved.filterReception != null)
         setFilterReception(saved.filterReception);
       if (saved.filterLodging != null) setFilterLodging(saved.filterLodging);
-      if (saved.filterUninteracted != null)
-        setFilterUninteracted(saved.filterUninteracted);
+      if (saved.sortUnseenFirst != null)
+        setSortUnseenFirst(saved.sortUnseenFirst);
       if (saved.filterReactionsScoreRange != null)
         setFilterReactionsScoreRange(saved.filterReactionsScoreRange);
       if (saved.openDrawerVenueId != null)
@@ -75,13 +75,19 @@ export default function AirtableInterface() {
     },
   });
 
-  const { records, loading, errorMessage, loadRecords, updateRecord } =
-    useVenueRecords({
-      userToken,
-      authEpoch,
-      setStatusMessage,
-      invalidateAuthToken,
-    });
+  const {
+    records,
+    loading,
+    errorMessage,
+    loadGeneration,
+    loadRecords,
+    updateRecord,
+  } = useVenueRecords({
+    userToken,
+    authEpoch,
+    setStatusMessage,
+    invalidateAuthToken,
+  });
 
   const {
     filterText,
@@ -104,8 +110,8 @@ export default function AirtableInterface() {
     setFilterReception,
     filterLodging,
     setFilterLodging,
-    filterUninteracted,
-    setFilterUninteracted,
+    sortUnseenFirst,
+    setSortUnseenFirst,
     filterReactionsScoreRange,
     setFilterReactionsScoreRange,
     reactionsScoreBounds,
@@ -117,7 +123,7 @@ export default function AirtableInterface() {
     availableStates,
     availableVenueTypes,
     filteredRecords,
-  } = useVenueFilters(records, userEmail, commentedRecordIds);
+  } = useVenueFilters(records, userEmail, commentedRecordIds, loadGeneration);
 
   // Comment prefetching waits until filteredRecords has been still for
   // 1.5s (same debounce-after-settle pattern as the map's moveend handler)
@@ -186,7 +192,7 @@ export default function AirtableInterface() {
       filterCeremony,
       filterReception,
       filterLodging,
-      filterUninteracted,
+      sortUnseenFirst,
       filterReactionsScoreRange,
       openDrawerVenueId,
     });
@@ -217,8 +223,8 @@ export default function AirtableInterface() {
             setFilterReception={setFilterReception}
             filterLodging={filterLodging}
             setFilterLodging={setFilterLodging}
-            filterUninteracted={filterUninteracted}
-            setFilterUninteracted={setFilterUninteracted}
+            sortUnseenFirst={sortUnseenFirst}
+            setSortUnseenFirst={setSortUnseenFirst}
             isLoggedIn={Boolean(userEmail)}
             sortKey={sortKey}
             setSortKey={setSortKey}

@@ -127,11 +127,13 @@ export const Icon = styled("span", {
   position: "relative",
   top: "2px",
   display: "inline-flex",
+  flexShrink: 0,
   alignItems: "center",
   justifyContent: "center",
   // react-icons renders its <svg> with explicit width/height="1em"
   // attributes, which beat the span's own box size unless overridden here.
-  "& svg": {
+  // Avatar <img> children need the same override to fit the size variant.
+  "& svg, & img": {
     width: "100%",
     height: "100%",
     display: "block",

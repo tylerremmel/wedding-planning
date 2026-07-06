@@ -146,7 +146,9 @@ export const CommentsStream = styled("div", {
 });
 
 export const CommentsListWrapper = styled("div", {
+  marginTop: "12px",
   display: "grid",
+  gap: "12px",
   position: "relative",
   variants: {
     collapsed: {
@@ -173,8 +175,13 @@ export const CommentsListWrapper = styled("div", {
   },
 });
 
+export const CommentBubbleWrapper = styled("div", {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: "8px",
+});
+
 export const CommentBubble = styled("div", {
-  display: "inline",
   fontSize: "0.9rem",
   fontWeight: 400,
   lineHeight: 1.4,
@@ -183,7 +190,6 @@ export const CommentBubble = styled("div", {
   marginRight: "auto",
   borderRadius: "0 $sm $sm $sm",
   color: "$gray600",
-  marginTop: "12px",
 });
 
 export const CommentMeta = styled("span", {
@@ -232,10 +238,22 @@ export const CommentInputActions = styled("div", {
   gap: "8px",
 });
 
-export const StatusMessage = styled("div", {
+export const StatusLine = styled("div", {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "baseline",
+  gap: "6px",
+  paddingTop: "8px",
+});
+
+export const StatusMessage = styled("span", {
   fontSize: "0.85rem",
   color: "$gray500",
-  paddingTop: "8px",
+});
+
+export const StatusSeparator = styled("span", {
+  fontSize: "0.85rem",
+  color: "$gray400",
 });
 
 export const InnerDrawer = styled("div", {

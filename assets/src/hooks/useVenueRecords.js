@@ -18,6 +18,11 @@ export function useVenueRecords({
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  // Bumped only when loadRecords replaces the whole records array (a real
+  // refresh), not when a single record gets patched in place (a reaction,
+  // a comment, or a geocoding batch) — see useVenueFilters' sortUnseenFirst
+  // snapshot, which should only reset on an actual refresh.
+  const [loadGeneration, setLoadGeneration] = useState(0);
 
   async function loadRecords(force = false) {
     setErrorMessage("");
@@ -26,6 +31,7 @@ export function useVenueRecords({
       const cached = getCachedVenues();
       if (cached) {
         setRecords(cached.records);
+        setLoadGeneration((g) => g + 1);
         const ageMinutes = Math.floor((Date.now() - cached.cachedAt) / 60000);
         const ageLabel = ageMinutes === 0 ? "just now" : `${ageMinutes}m ago`;
         setStatusMessage(`Venues loaded from cache · updated ${ageLabel}`);
@@ -46,6 +52,7 @@ export function useVenueRecords({
           const data = await fetchVenueRecords(token);
           if (data.records && data.records.length > 0) {
             setRecords(data.records);
+            setLoadGeneration((g) => g + 1);
             setCachedVenues(data.records);
             // Auto-geocode venues missing coordinates and write back to Airtable.
             // Uses a callback so pins appear progressively as each batch resolves.
@@ -152,6 +159,7 @@ export function useVenueRecords({
     records,
     loading,
     errorMessage,
+    loadGeneration,
     loadRecords,
     updateRecord,
   };
