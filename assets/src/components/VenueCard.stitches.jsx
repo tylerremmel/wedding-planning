@@ -232,10 +232,22 @@ export const CommentInputActions = styled("div", {
   gap: "8px",
 });
 
-export const StatusMessage = styled("div", {
+export const StatusLine = styled("div", {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "baseline",
+  gap: "6px",
+  paddingTop: "8px",
+});
+
+export const StatusMessage = styled("span", {
   fontSize: "0.85rem",
   color: "$gray500",
-  paddingTop: "8px",
+});
+
+export const StatusSeparator = styled("span", {
+  fontSize: "0.85rem",
+  color: "$gray400",
 });
 
 export const InnerDrawer = styled("div", {

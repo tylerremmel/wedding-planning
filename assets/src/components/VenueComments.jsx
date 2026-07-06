@@ -13,7 +13,9 @@ import {
   CommentText,
   CommentName,
   Button,
+  StatusLine,
   StatusMessage,
+  StatusSeparator,
 } from "./VenueCard.stitches";
 import { Icon } from "./shared.stitches";
 import {
@@ -60,6 +62,15 @@ export default function VenueComments({
   const [expanded, setExpanded] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
   const commentsListRef = useRef(null);
+
+  const commentsStatus = commentsLoading
+    ? "Comments loading..."
+    : commentsLoaded
+      ? `${comments.length} comment${comments.length === 1 ? "" : "s"}`
+      : null;
+  const statusParts = [submitStatus, reactionStatus, commentsStatus].filter(
+    Boolean,
+  );
 
   useEffect(() => {
     const el = commentsListRef.current;
@@ -190,17 +201,18 @@ export default function VenueComments({
             </CommentInputActions>
           </CommentForm>
         )}
-        {submitStatus && <StatusMessage>{submitStatus}</StatusMessage>}
-        {reactionStatus && <StatusMessage>{reactionStatus}</StatusMessage>}
+        {statusParts.length > 0 && (
+          <StatusLine>
+            {statusParts.map((part, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <StatusSeparator>·</StatusSeparator>}
+                <StatusMessage>{part}</StatusMessage>
+              </React.Fragment>
+            ))}
+          </StatusLine>
+        )}
       </CommentPortal>
       <CommentsStream>
-        {commentsLoading ? (
-          <StatusMessage>Comments loading...</StatusMessage>
-        ) : commentsLoaded ? (
-          <StatusMessage>
-            {comments.length} comment{comments.length === 1 ? "" : "s"}
-          </StatusMessage>
-        ) : null}
         {!commentsLoading && comments.length > 0 && (
           <>
             <CommentsListWrapper
