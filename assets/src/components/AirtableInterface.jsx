@@ -276,7 +276,7 @@ export default function AirtableInterface() {
 
       <ControlPanel>
         <LeftPanel>
-          {loading ? (
+          {loading && records.length === 0 ? (
             <Notification>Loading venue cards…</Notification>
           ) : filteredRecords.length > 0 ? (
             <GridContainer>
