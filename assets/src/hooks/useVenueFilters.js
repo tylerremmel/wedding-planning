@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { hasUserReacted } from "../utils/reactions";
+import { isEliminated } from "../utils/preFilters";
 
 // Reads filter/sort state out of the URL's query string on first load, so a
 // shared link or a plain page refresh reproduces the same view. Absent keys
@@ -90,6 +91,15 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
   const [fitKey, setFitKey] = useState(0);
   const initialFitDone = useRef(false);
 
+  // Pre-filtered out entirely, ahead of every other filter/sort/derived
+  // value below — an eliminated venue shouldn't populate the state/type
+  // dropdown options, count toward reactions-score bounds, or appear on
+  // the map, not just get hidden from the card list.
+  const activeRecords = useMemo(
+    () => records.filter((record) => !isEliminated(record.fields)),
+    [records],
+  );
+
   // Keep the URL's query string in sync with filter/sort state so a page
   // refresh (or a shared link) reproduces the same view. Only the filter
   // keys are touched — any other query params (e.g. a lingering OAuth
@@ -158,32 +168,34 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
 
   // Refit map only on first records load — geocoding batch updates should not refit
   useEffect(() => {
-    if (records.length > 0 && !initialFitDone.current) {
+    if (activeRecords.length > 0 && !initialFitDone.current) {
       initialFitDone.current = true;
       setFitKey((k) => k + 1);
     }
-  }, [records]);
+  }, [activeRecords]);
 
   const availableStates = useMemo(() => {
     const states = new Set(
-      records.map((r) => r.fields["State"]).filter(Boolean),
+      activeRecords.map((r) => r.fields["State"]).filter(Boolean),
     );
     return Array.from(states).sort();
-  }, [records]);
+  }, [activeRecords]);
 
   const availableVenueTypes = useMemo(() => {
     const types = new Set();
-    records.forEach((r) => {
+    activeRecords.forEach((r) => {
       (r.fields["Profile"] || []).forEach((t) => types.add(t));
     });
     return Array.from(types).sort();
-  }, [records]);
+  }, [activeRecords]);
 
   const reactionsScoreBounds = useMemo(() => {
-    if (records.length === 0) return [0, 0];
-    const scores = records.map((r) => Number(r.fields["Reactions score"]) || 0);
+    if (activeRecords.length === 0) return [0, 0];
+    const scores = activeRecords.map(
+      (r) => Number(r.fields["Reactions score"]) || 0,
+    );
     return [Math.min(...scores), Math.max(...scores)];
-  }, [records]);
+  }, [activeRecords]);
 
   const isReactionsScoreFilterActive =
     filterReactionsScoreRange != null &&
@@ -206,7 +218,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
 
     if (sortUnseenFirst && (reloaded || justEnabled)) {
       const snapshot = new Set();
-      records.forEach((r) => {
+      activeRecords.forEach((r) => {
         if (hasUserReacted(r.fields, userEmail) || commentedRecordIds.has(r.id)) {
           snapshot.add(r.id);
         }
@@ -214,11 +226,17 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
       seenSnapshotRef.current = snapshot;
       setSnapshotVersion((v) => v + 1);
     }
-  }, [loadGeneration, sortUnseenFirst, records, userEmail, commentedRecordIds]);
+  }, [
+    loadGeneration,
+    sortUnseenFirst,
+    activeRecords,
+    userEmail,
+    commentedRecordIds,
+  ]);
 
   const filteredRecords = useMemo(() => {
     const normalizedFilter = filterText.toLowerCase().trim();
-    return records
+    return activeRecords
       .filter((record) => {
         const name = record.fields["Venue name"] || "";
         const address = record.fields["Full address"] || "";
@@ -314,7 +332,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
         return 0;
       });
   }, [
-    records,
+    activeRecords,
     filterText,
     sortKey,
     sortDir,
