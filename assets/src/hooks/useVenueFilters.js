@@ -1,6 +1,39 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { hasUserReacted } from "../utils/reactions";
 
+// Reads filter/sort state out of the URL's query string on first load, so a
+// shared link or a plain page refresh reproduces the same view. Absent keys
+// fall back to the same defaults the state would otherwise start with.
+function readFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const list = (key) => {
+    const raw = params.get(key);
+    return raw ? raw.split(",").filter(Boolean) : null;
+  };
+  // "~"-delimited (not "-") since Reactions score can itself be negative.
+  const range = (key) => {
+    const raw = params.get(key);
+    if (!raw) return null;
+    const [min, max] = raw.split("~").map(Number);
+    return Number.isFinite(min) && Number.isFinite(max) ? [min, max] : null;
+  };
+
+  return {
+    filterText: params.get("q") || "",
+    sortKey: params.get("sort") || "name",
+    sortDir: params.get("dir") || "asc",
+    filterStates: list("states"),
+    filterOptions: list("options"),
+    filterVenueTypes: list("types"),
+    filterPetFriendly: params.get("pet") === "1",
+    filterCeremony: params.get("ceremony") === "1",
+    filterReception: params.get("reception") === "1",
+    filterLodging: params.get("lodging") === "1",
+    sortUnseenFirst: params.get("unseen") === "1",
+    filterReactionsScoreRange: range("score"),
+  };
+}
+
 // Owns filter/sort state plus the derived `availableStates` and
 // `filteredRecords` lists, and refits the map whenever filters change or
 // records first load.
@@ -20,23 +53,90 @@ import { hasUserReacted } from "../utils/reactions";
 // refresh) and held still until the next refresh — see the snapshot
 // effect below.
 export function useVenueFilters(records, userEmail, commentedRecordIds, loadGeneration) {
-  const [filterText, setFilterText] = useState("");
-  const [sortKey, setSortKey] = useState("name");
-  const [sortDir, setSortDir] = useState("asc");
+  // Parsed once on mount — later renders should never re-read the URL,
+  // only write to it (see the sync effect below), otherwise a user's edits
+  // would get clobbered by re-parsing their own just-written state.
+  const [urlDefaults] = useState(readFiltersFromUrl);
+  const [filterText, setFilterText] = useState(urlDefaults.filterText);
+  const [sortKey, setSortKey] = useState(urlDefaults.sortKey);
+  const [sortDir, setSortDir] = useState(urlDefaults.sortDir);
   // null means "no filter applied" — every option is implicitly checked.
-  const [filterStates, setFilterStates] = useState(null);
-  const [filterOptions, setFilterOptions] = useState(null);
-  const [filterVenueTypes, setFilterVenueTypes] = useState(null);
-  const [filterPetFriendly, setFilterPetFriendly] = useState(false);
-  const [filterCeremony, setFilterCeremony] = useState(false);
-  const [filterReception, setFilterReception] = useState(false);
-  const [filterLodging, setFilterLodging] = useState(false);
-  const [sortUnseenFirst, setSortUnseenFirst] = useState(false);
-  const [filterReactionsScoreRange, setFilterReactionsScoreRange] =
-    useState(null);
+  const [filterStates, setFilterStates] = useState(urlDefaults.filterStates);
+  const [filterOptions, setFilterOptions] = useState(
+    urlDefaults.filterOptions,
+  );
+  const [filterVenueTypes, setFilterVenueTypes] = useState(
+    urlDefaults.filterVenueTypes,
+  );
+  const [filterPetFriendly, setFilterPetFriendly] = useState(
+    urlDefaults.filterPetFriendly,
+  );
+  const [filterCeremony, setFilterCeremony] = useState(
+    urlDefaults.filterCeremony,
+  );
+  const [filterReception, setFilterReception] = useState(
+    urlDefaults.filterReception,
+  );
+  const [filterLodging, setFilterLodging] = useState(
+    urlDefaults.filterLodging,
+  );
+  const [sortUnseenFirst, setSortUnseenFirst] = useState(
+    urlDefaults.sortUnseenFirst,
+  );
+  const [filterReactionsScoreRange, setFilterReactionsScoreRange] = useState(
+    urlDefaults.filterReactionsScoreRange,
+  );
   const [mapBounds, setMapBounds] = useState(null);
   const [fitKey, setFitKey] = useState(0);
   const initialFitDone = useRef(false);
+
+  // Keep the URL's query string in sync with filter/sort state so a page
+  // refresh (or a shared link) reproduces the same view. Only the filter
+  // keys are touched — any other query params (e.g. a lingering OAuth
+  // `code`) are preserved as-is.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const set = (key, value) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    };
+
+    set("q", filterText || null);
+    set("sort", sortKey !== "name" ? sortKey : null);
+    set("dir", sortDir !== "asc" ? sortDir : null);
+    set("states", filterStates?.length ? filterStates.join(",") : null);
+    set("options", filterOptions?.length ? filterOptions.join(",") : null);
+    set("types", filterVenueTypes?.length ? filterVenueTypes.join(",") : null);
+    set("pet", filterPetFriendly ? "1" : null);
+    set("ceremony", filterCeremony ? "1" : null);
+    set("reception", filterReception ? "1" : null);
+    set("lodging", filterLodging ? "1" : null);
+    set("unseen", sortUnseenFirst ? "1" : null);
+    set(
+      "score",
+      filterReactionsScoreRange
+        ? `${filterReactionsScoreRange[0]}~${filterReactionsScoreRange[1]}`
+        : null,
+    );
+
+    const query = params.toString();
+    const url = new URL(window.location.href);
+    url.search = query ? `?${query}` : "";
+    window.history.replaceState({}, "", url.toString());
+  }, [
+    filterText,
+    sortKey,
+    sortDir,
+    filterStates,
+    filterOptions,
+    filterVenueTypes,
+    filterPetFriendly,
+    filterCeremony,
+    filterReception,
+    filterLodging,
+    sortUnseenFirst,
+    filterReactionsScoreRange,
+  ]);
 
   // Clear bounds and refit map when filters or sort changes
   useEffect(() => {
