@@ -3,7 +3,7 @@
 // eliminated from consideration shouldn't show up at all. To wire up
 // another elimination round later, just add its column name here; nothing
 // else needs to change.
-const ELIMINATION_FIELDS = ["Eliminated (first round)"];
+const ELIMINATION_FIELDS = ["Eliminated"];
 
 export function isEliminated(fields) {
   return ELIMINATION_FIELDS.some((field) => Boolean(fields[field]));
