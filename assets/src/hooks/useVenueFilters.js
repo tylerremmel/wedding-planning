@@ -1,5 +1,56 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { hasUserReacted } from "../utils/reactions";
+import { isEliminated } from "../utils/preFilters";
+
+const SORT_KEYS = ["name", "capacity", "reactions", "cost"];
+
+// Reads filter/sort state out of the URL's query string on first load, so a
+// shared link or a plain page refresh reproduces the same view. Absent keys
+// fall back to the same defaults the state would otherwise start with.
+function readFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  // A param that's present but empty ("?states=") means "nothing
+  // selected" — a real, distinct filter state (matches zero venues) —
+  // which must round-trip as [], not collapse to null ("no filter",
+  // matches every venue) the way an absent param does.
+  const list = (key) => {
+    if (!params.has(key)) return null;
+    const raw = params.get(key);
+    return raw
+      ? raw.split(",").map(decodeURIComponent).filter(Boolean)
+      : [];
+  };
+  // "~"-delimited (not "-") since Reactions score can itself be negative.
+  // Requires both halves present and numeric; a malformed/truncated value
+  // (e.g. a stray "?score=~15") is treated as absent rather than [0, 15].
+  const range = (key) => {
+    const raw = params.get(key);
+    if (!raw) return null;
+    const parts = raw.split("~");
+    if (parts.length !== 2 || parts[0] === "" || parts[1] === "") return null;
+    const [min, max] = parts.map(Number);
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+    return min <= max ? [min, max] : [max, min];
+  };
+
+  const sortKey = params.get("sort");
+  const sortDir = params.get("dir");
+
+  return {
+    filterText: params.get("q") || "",
+    sortKey: SORT_KEYS.includes(sortKey) ? sortKey : "name",
+    sortDir: sortDir === "desc" ? "desc" : "asc",
+    filterStates: list("states"),
+    filterOptions: list("options"),
+    filterVenueTypes: list("types"),
+    filterPetFriendly: params.get("pet") === "1",
+    filterCeremony: params.get("ceremony") === "1",
+    filterReception: params.get("reception") === "1",
+    filterLodging: params.get("lodging") === "1",
+    sortUnseenFirst: params.get("unseen") === "1",
+    filterReactionsScoreRange: range("score"),
+  };
+}
 
 // Owns filter/sort state plus the derived `availableStates` and
 // `filteredRecords` lists, and refits the map whenever filters change or
@@ -20,23 +71,116 @@ import { hasUserReacted } from "../utils/reactions";
 // refresh) and held still until the next refresh — see the snapshot
 // effect below.
 export function useVenueFilters(records, userEmail, commentedRecordIds, loadGeneration) {
-  const [filterText, setFilterText] = useState("");
-  const [sortKey, setSortKey] = useState("name");
-  const [sortDir, setSortDir] = useState("asc");
+  // Parsed once on mount — later renders should never re-read the URL,
+  // only write to it (see the sync effect below), otherwise a user's edits
+  // would get clobbered by re-parsing their own just-written state.
+  const [urlDefaults] = useState(readFiltersFromUrl);
+  const [filterText, setFilterText] = useState(urlDefaults.filterText);
+  const [sortKey, setSortKey] = useState(urlDefaults.sortKey);
+  const [sortDir, setSortDir] = useState(urlDefaults.sortDir);
   // null means "no filter applied" — every option is implicitly checked.
-  const [filterStates, setFilterStates] = useState(null);
-  const [filterOptions, setFilterOptions] = useState(null);
-  const [filterVenueTypes, setFilterVenueTypes] = useState(null);
-  const [filterPetFriendly, setFilterPetFriendly] = useState(false);
-  const [filterCeremony, setFilterCeremony] = useState(false);
-  const [filterReception, setFilterReception] = useState(false);
-  const [filterLodging, setFilterLodging] = useState(false);
-  const [sortUnseenFirst, setSortUnseenFirst] = useState(false);
-  const [filterReactionsScoreRange, setFilterReactionsScoreRange] =
-    useState(null);
+  const [filterStates, setFilterStates] = useState(urlDefaults.filterStates);
+  const [filterOptions, setFilterOptions] = useState(
+    urlDefaults.filterOptions,
+  );
+  const [filterVenueTypes, setFilterVenueTypes] = useState(
+    urlDefaults.filterVenueTypes,
+  );
+  const [filterPetFriendly, setFilterPetFriendly] = useState(
+    urlDefaults.filterPetFriendly,
+  );
+  const [filterCeremony, setFilterCeremony] = useState(
+    urlDefaults.filterCeremony,
+  );
+  const [filterReception, setFilterReception] = useState(
+    urlDefaults.filterReception,
+  );
+  const [filterLodging, setFilterLodging] = useState(
+    urlDefaults.filterLodging,
+  );
+  const [sortUnseenFirst, setSortUnseenFirst] = useState(
+    urlDefaults.sortUnseenFirst,
+  );
+  const [filterReactionsScoreRange, setFilterReactionsScoreRange] = useState(
+    urlDefaults.filterReactionsScoreRange,
+  );
   const [mapBounds, setMapBounds] = useState(null);
   const [fitKey, setFitKey] = useState(0);
   const initialFitDone = useRef(false);
+
+  // Pre-filtered out entirely, ahead of every other filter/sort/derived
+  // value below — an eliminated venue shouldn't populate the state/type
+  // dropdown options, count toward reactions-score bounds, or appear on
+  // the map, not just get hidden from the card list.
+  const activeRecords = useMemo(
+    () => records.filter((record) => !isEliminated(record.fields)),
+    [records],
+  );
+
+  // Keep the URL's query string in sync with filter/sort state so a page
+  // refresh (or a shared link) reproduces the same view. Only the filter
+  // keys are touched — any other query params (e.g. a lingering OAuth
+  // `code`) are preserved as-is. Debounced: filterReactionsScoreRange is
+  // driven by a slider's onChange (fires continuously mid-drag, not just
+  // on release) and filterText updates on every keystroke, so writing on
+  // every change would spam history.replaceState well past what the
+  // History API is meant to absorb.
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const set = (key, value) => {
+        if (value === null || value === undefined) params.delete(key);
+        else params.set(key, value);
+      };
+      // null ("no filter") must stay distinct from [] ("nothing
+      // selected", a real filter matching zero venues) — an empty list
+      // still needs to be written, not treated as "delete". Values are
+      // percent-encoded individually so a label containing a literal
+      // comma round-trips correctly.
+      const setList = (key, list) => {
+        if (list == null) params.delete(key);
+        else params.set(key, list.map(encodeURIComponent).join(","));
+      };
+
+      set("q", filterText || null);
+      set("sort", sortKey !== "name" ? sortKey : null);
+      set("dir", sortDir !== "asc" ? sortDir : null);
+      setList("states", filterStates);
+      setList("options", filterOptions);
+      setList("types", filterVenueTypes);
+      set("pet", filterPetFriendly ? "1" : null);
+      set("ceremony", filterCeremony ? "1" : null);
+      set("reception", filterReception ? "1" : null);
+      set("lodging", filterLodging ? "1" : null);
+      set("unseen", sortUnseenFirst ? "1" : null);
+      set(
+        "score",
+        filterReactionsScoreRange
+          ? `${filterReactionsScoreRange[0]}~${filterReactionsScoreRange[1]}`
+          : null,
+      );
+
+      const query = params.toString();
+      const url = new URL(window.location.href);
+      url.search = query ? `?${query}` : "";
+      window.history.replaceState({}, "", url.toString());
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    filterText,
+    sortKey,
+    sortDir,
+    filterStates,
+    filterOptions,
+    filterVenueTypes,
+    filterPetFriendly,
+    filterCeremony,
+    filterReception,
+    filterLodging,
+    sortUnseenFirst,
+    filterReactionsScoreRange,
+  ]);
 
   // Clear bounds and refit map when filters or sort changes
   useEffect(() => {
@@ -58,32 +202,34 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
 
   // Refit map only on first records load — geocoding batch updates should not refit
   useEffect(() => {
-    if (records.length > 0 && !initialFitDone.current) {
+    if (activeRecords.length > 0 && !initialFitDone.current) {
       initialFitDone.current = true;
       setFitKey((k) => k + 1);
     }
-  }, [records]);
+  }, [activeRecords]);
 
   const availableStates = useMemo(() => {
     const states = new Set(
-      records.map((r) => r.fields["State"]).filter(Boolean),
+      activeRecords.map((r) => r.fields["State"]).filter(Boolean),
     );
     return Array.from(states).sort();
-  }, [records]);
+  }, [activeRecords]);
 
   const availableVenueTypes = useMemo(() => {
     const types = new Set();
-    records.forEach((r) => {
+    activeRecords.forEach((r) => {
       (r.fields["Profile"] || []).forEach((t) => types.add(t));
     });
     return Array.from(types).sort();
-  }, [records]);
+  }, [activeRecords]);
 
   const reactionsScoreBounds = useMemo(() => {
-    if (records.length === 0) return [0, 0];
-    const scores = records.map((r) => Number(r.fields["Reactions score"]) || 0);
+    if (activeRecords.length === 0) return [0, 0];
+    const scores = activeRecords.map(
+      (r) => Number(r.fields["Reactions score"]) || 0,
+    );
     return [Math.min(...scores), Math.max(...scores)];
-  }, [records]);
+  }, [activeRecords]);
 
   const isReactionsScoreFilterActive =
     filterReactionsScoreRange != null &&
@@ -106,7 +252,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
 
     if (sortUnseenFirst && (reloaded || justEnabled)) {
       const snapshot = new Set();
-      records.forEach((r) => {
+      activeRecords.forEach((r) => {
         if (hasUserReacted(r.fields, userEmail) || commentedRecordIds.has(r.id)) {
           snapshot.add(r.id);
         }
@@ -114,11 +260,17 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
       seenSnapshotRef.current = snapshot;
       setSnapshotVersion((v) => v + 1);
     }
-  }, [loadGeneration, sortUnseenFirst, records, userEmail, commentedRecordIds]);
+  }, [
+    loadGeneration,
+    sortUnseenFirst,
+    activeRecords,
+    userEmail,
+    commentedRecordIds,
+  ]);
 
   const filteredRecords = useMemo(() => {
     const normalizedFilter = filterText.toLowerCase().trim();
-    return records
+    return activeRecords
       .filter((record) => {
         const name = record.fields["Venue name"] || "";
         const address = record.fields["Full address"] || "";
@@ -214,7 +366,7 @@ export function useVenueFilters(records, userEmail, commentedRecordIds, loadGene
         return 0;
       });
   }, [
-    records,
+    activeRecords,
     filterText,
     sortKey,
     sortDir,

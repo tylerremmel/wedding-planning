@@ -39,8 +39,13 @@ export function useAirtableAuth({ setStatusMessage, onRestoreState }) {
         const ok = await exchangeCodeForToken(oauthCode);
         if (ok) {
           setUserToken(getUserToken());
+          // Remove only the OAuth params, not the whole query string —
+          // useVenueFilters syncs filter/sort state into other query
+          // params, and wiping search wholesale here would silently
+          // discard whatever it had just written.
           const u = new URL(window.location.href);
-          u.search = "";
+          u.searchParams.delete("code");
+          u.searchParams.delete("state");
           window.history.replaceState({}, document.title, u.toString());
           const saved = restorePreAuthState();
           if (saved) onRestoreState(saved);
