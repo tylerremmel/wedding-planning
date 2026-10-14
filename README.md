@@ -2,7 +2,7 @@
 
 A Jekyll wedding website with a React-powered venue explorer, backed by Airtable and deployed to GitHub Pages.
 
-**Live site:** https://tylerremmel.github.io/wedding-planning/
+**Live site:** https://www.jennaandtyleraregettingmarried.com/ (previously https://tylerremmel.github.io/wedding-planning/)
 
 ---
 
@@ -183,4 +183,4 @@ Starts Vite in watch mode and Jekyll together:
 npm run preview
 ```
 
-The site is available at `http://127.0.0.1:4001/wedding-planning/`. The React bundle at `assets/js/airtable-interface.bundle.js` rebuilds automatically on source changes.
+The site is available at `http://127.0.0.1:4001/`. The React bundle at `assets/js/airtable-interface.bundle.js` rebuilds automatically on source changes.
