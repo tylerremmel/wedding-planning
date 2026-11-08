@@ -118,7 +118,6 @@ h3,
 .site-footer__title {
   font-family: var(--headline-family);
   font-stretch: var(--headline-stretch);
-  font-variation-settings: "wdth" var(--headline-wdth); /* WebKit ignores font-stretch on this font */
   font-weight: var(--w-headline);
   letter-spacing: var(--headline-tracking);
   text-transform: var(--headline-case);
@@ -143,7 +142,6 @@ blockquote,
 .lead {
   font-family: var(--body-family);
   font-stretch: var(--body-stretch);
-  font-variation-settings: "wdth" var(--body-wdth);
   font-weight: var(--w-body);
   letter-spacing: var(--body-tracking);
   text-transform: var(--body-case);

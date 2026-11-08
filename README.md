@@ -52,6 +52,21 @@ should stay out of search engines set `noindex: true` in their front matter.
 - `assets/js/edit-mode.js`: the `?edit` shortcut (below).
 - `assets/favicons/`: favicon PNGs, apple-touch icon and `site.webmanifest`; `favicon.ico` stays at the site root. `theme-color` in `_includes/head.html` copies the header color for light and dark; update it there if `--header-bg` changes.
 
+### Fonts
+
+Roboto Serif and Roboto Flex are self-hosted variable fonts in `assets/fonts/`, declared in `tokens.css`. Both files **must contain a `STAT` table**. Without it, iOS Safari ignores `font-weight` and `font-stretch` for them and renders everything at the lightest weight and narrowest width (Chrome looks fine either way). Subsetting drops the table, so after re-subsetting or replacing either font, run:
+
+```sh
+pip install fonttools brotli
+python3 scripts/add-stat-table.py
+```
+
+Check changes to type in WebKit (Safari, or Playwright's WebKit) as well as Chrome. Don't work around a mismatch with `font-variation-settings`: it is inherited, so it overrides `font-weight` on child elements (`<strong>`, the venues app's Quicksand text).
+
+### iOS Safari chrome color
+
+Safari 26 ignores `theme-color` and tints the status bar, bottom toolbar and overscroll area from the page background. `html` is painted with `--header-bg` (the header and footer share it) and `body` paints `--surface` over it, so the top and bottom of the page read as part of the header and footer. Safari also tints from a `position: fixed` or sticky element at the top edge, so the sticky Our Story nav recolors the status bar while it is visible. Keep `theme-color` in `_includes/head.html` for older iOS and other browsers.
+
 ### Styleguide page
 
 `/styleguide/` (source: `styleguide.md`) is a living reference rendered from the real tokens and components. It

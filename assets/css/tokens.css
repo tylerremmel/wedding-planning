@@ -83,7 +83,6 @@
      which matches Figma's automatic optical sizing. Pinning it made text look heavier than the design. */
   --headline-family: var(--font-serif);
   --headline-stretch: 150%;
-  --headline-wdth: 150; /* same value, for font-variation-settings (see base.css) */
   --headline-tracking: -0.05em;
   --headline-case: uppercase;
   --headline-leading: 1;
@@ -95,7 +94,6 @@
 
   --body-family: var(--font-serif);
   --body-stretch: 120%;
-  --body-wdth: 120;
   --body-tracking: 0;
   --body-case: none;
   --body-leading: 1.5; /* 24px at step 100; large steps override below */
