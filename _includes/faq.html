@@ -1,0 +1,9 @@
+{%- comment -%} Questions and answers from _data/faqs.yml. {%- endcomment -%}
+<div class="faq">
+  {%- for item in site.data.faqs %}
+  <section class="faq__item" {% include edit-attr.html path="_data/faqs.yml" %}>
+    <h2 class="s-150">{{ item.question }}</h2>
+    {% include md.html text=item.answer %}
+  </section>
+  {%- endfor %}
+</div>

@@ -1,4 +1,4 @@
-# The Grande-Remmel Wedding
+# The Wedding of Jenna Grande and Tyler Remmel
 
 A Jekyll wedding website with a React-powered venue explorer, backed by Airtable and deployed to GitHub Pages.
 
@@ -82,6 +82,7 @@ A React-Leaflet map panel rendered in the right column.
 #### `airtableAuth.js`
 
 Handles the Airtable OAuth 2.0 PKCE flow and session lifecycle:
+
 - Generates and stores a `code_verifier` / `code_challenge` pair in `localStorage`
 - Redirects to Airtable's OAuth authorization endpoint
 - On callback, POSTs the code + verifier to the Vercel proxy's `/api/auth` endpoint and stores the returned access token, expiry, and `refresh_token` in `localStorage`
@@ -91,6 +92,7 @@ Handles the Airtable OAuth 2.0 PKCE flow and session lifecycle:
 #### `airtableApi.js`
 
 All Airtable API calls are routed through the Vercel proxy to avoid CORS and keep the OAuth token off the client in transit:
+
 - `fetchVenueRecords` — fetches all records from the venues table
 - `fetchRecordComments` — fetches comments for a single record
 - `submitComment` — posts a new comment
@@ -119,33 +121,33 @@ Auto-geocodes venues that are missing `Latitude` / `Longitude` fields:
 
 A separate Vercel project at `https://airtable-proxy-olive.vercel.app` provides the following serverless endpoints. All of them keep the Airtable API key server-side; the client only ever holds its own OAuth user token.
 
-| Endpoint | Purpose |
-|---|---|
-| `/api/auth` | Exchanges an OAuth authorization code (+ PKCE verifier) for an Airtable access/refresh token |
-| `/api/refresh` | Exchanges a stored `refresh_token` for a new access token |
-| `/api/records` | Fetches all records from the venues table |
-| `/api/comments` | Fetches comments for a single record |
-| `/api/submit` | Posts a new comment |
-| `/api/reactions` | Toggles a reaction and returns its new active state |
-| `/api/profile` | Fetches the logged-in user's Airtable profile |
-| `/api/geocode` | Accepts address batches, calls Nominatim, writes coordinates back to Airtable |
+| Endpoint         | Purpose                                                                                      |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| `/api/auth`      | Exchanges an OAuth authorization code (+ PKCE verifier) for an Airtable access/refresh token |
+| `/api/refresh`   | Exchanges a stored `refresh_token` for a new access token                                    |
+| `/api/records`   | Fetches all records from the venues table                                                    |
+| `/api/comments`  | Fetches comments for a single record                                                         |
+| `/api/submit`    | Posts a new comment                                                                          |
+| `/api/reactions` | Toggles a reaction and returns its new active state                                          |
+| `/api/profile`   | Fetches the logged-in user's Airtable profile                                                |
+| `/api/geocode`   | Accepts address batches, calls Nominatim, writes coordinates back to Airtable                |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Static site | Jekyll + Minima theme, GitHub Pages |
-| UI framework | React 18 |
-| Styling | Stitches (`@stitches/react`) |
+| Layer             | Technology                                                               |
+| ----------------- | ------------------------------------------------------------------------ |
+| Static site       | Jekyll + Minima theme, GitHub Pages                                      |
+| UI framework      | React 18                                                                 |
+| Styling           | Stitches (`@stitches/react`)                                             |
 | Component library | MUI (`@mui/material`) for the Drawer, filter/sort menus, and form inputs |
-| Map | React-Leaflet + Leaflet |
-| Icons | `react-icons` |
-| Build tool | Vite (IIFE output, single bundle) |
-| Backend | Vercel serverless functions |
-| Data source | Airtable (OAuth 2.0 PKCE) |
-| Geocoding | OpenStreetMap Nominatim (via proxy) |
+| Map               | React-Leaflet + Leaflet                                                  |
+| Icons             | `react-icons`                                                            |
+| Build tool        | Vite (IIFE output, single bundle)                                        |
+| Backend           | Vercel serverless functions                                              |
+| Data source       | Airtable (OAuth 2.0 PKCE)                                                |
+| Geocoding         | OpenStreetMap Nominatim (via proxy)                                      |
 
 ---
 

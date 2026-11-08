@@ -1,0 +1,18 @@
+{%- comment -%}
+  1-3 images with an optional caption. Params: group (images: [{src, alt, width, height}], caption),
+  edit_path (the data file the group lives in, for ?edit). Used standalone and inside timeline items.
+  A lone portrait image is narrower than a lone landscape one; pairs sit side by side and stack when narrow.
+{%- endcomment -%}
+{%- assign images = include.group.images -%}
+{%- assign count = images | size -%}
+{%- assign first = images | first -%}
+<figure class="image-group image-group--{{ count }}{% if count == 1 and first.height > first.width %} image-group--portrait{% endif %}" {% if include.edit_path %}{% include edit-attr.html path=include.edit_path %}{% endif %}>
+  <div class="image-group__images">
+    {%- for image in images %}
+    {%- include image.html src=image.src alt=image.alt width=image.width height=image.height class="image-group__img" %}
+    {%- endfor %}
+  </div>
+  {%- if include.group.caption %}
+  <figcaption>{% include md.html text=include.group.caption inline=true %}</figcaption>
+  {%- endif %}
+</figure>

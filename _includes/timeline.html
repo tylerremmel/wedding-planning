@@ -1,0 +1,18 @@
+{%- comment -%} Relationship timeline from _data/milestones.yml. {%- endcomment -%}
+<ol class="timeline" role="list">
+  {%- for m in site.data.milestones %}
+  <li class="timeline__item" {% include edit-attr.html path="_data/milestones.yml" %}>
+    {%- if m.iso %}
+    <time class="timeline__date label s-100" datetime="{{ m.iso }}">{{ m.date }}</time>
+    {%- else %}
+    <span class="timeline__date label s-100">{{ m.date }}</span>
+    {%- endif %}
+    <div class="timeline__body">
+      <p class="meta s-100">{% include md.html text=m.text inline=true %}</p>
+      {%- if m.images %}
+      {%- include image-group.html group=m %}
+      {%- endif %}
+    </div>
+  </li>
+  {%- endfor %}
+</ol>

@@ -1,0 +1,12 @@
+{%- comment -%} Hotel blocks from _data/hotels.yml. {%- endcomment -%}
+<div class="hotels">
+  {%- for hotel in site.data.hotels %}
+  <section class="hotels__item" {% include edit-attr.html path="_data/hotels.yml" %}>
+    <h3>
+      {%- if hotel.url %}<a href="{{ hotel.url }}">{% include md.html text=hotel.name inline=true %}</a>
+      {%- else %}{% include md.html text=hotel.name inline=true %}{% endif -%}
+    </h3>
+    <p>Booking code: {% include md.html text=hotel.code inline=true %}. Reserve by: {% include md.html text=hotel.deadline inline=true %}.</p>
+  </section>
+  {%- endfor %}
+</div>

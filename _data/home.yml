@@ -1,0 +1,26 @@
+# Home page content. Edit the text between the quotes; leave the keys (left side) alone.
+# "TK" = still to come: it shows as a yellow marker on the page.
+
+lead:
+  - "We know — you can’t believe that Jenna Grande and Tyler Remmel aren’t married yet."
+  - "Do you believe us now?"
+
+body: "We figured that it was about time that we tied the knot. TK (more of a cheeky welcome message here)"
+
+date_line: "Saturday, July 31, 2027 in Waterford, Maine"
+
+# The four tiles, in order. `image` is optional; without it a grey placeholder shows.
+# Photos go in assets/img/ (run scripts/prep-image.sh first). `alt` must be written by a person.
+tiles:
+  - title: "Our story"
+    url: /our-story/
+    text: "How we met, our first impressions of one another, major milestones in our relationship, the proposal story … and the Pig of it all."
+  - title: "The wedding"
+    url: /the-wedding/
+    text: "TK"
+  - title: "Getting there"
+    url: /getting-there/
+    text: "TK"
+  - title: "What to know"
+    url: /what-to-know/
+    text: "TK"

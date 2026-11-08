@@ -1,0 +1,9 @@
+---
+layout: default
+---
+{%- include hero.html hero=page.hero %}
+{%- include section-nav.html page_content=content %}
+<div class="story content" {% include edit-attr.html path=page.path %}>
+  {{ content }}
+</div>
+<script src="{{ '/assets/js/sticky-nav.js' | relative_url }}" defer></script>

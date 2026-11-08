@@ -1,0 +1,6 @@
+# Hotel blocks for the Getting there page. Add one entry per hotel.
+# `url` is the booking link (leave it out until you have it). TK = still to come.
+- name: "TK (hotel block name)"
+  code: "TK"
+  deadline: "TK"
+  url: ""

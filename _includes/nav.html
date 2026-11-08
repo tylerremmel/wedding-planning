@@ -1,0 +1,8 @@
+{%- comment -%} Site nav. Params: label (aria-label), class. Items come from _data/navigation.yml. {%- endcomment -%}
+<nav class="site-nav {{ include.class }}" aria-label="{{ include.label | default: 'Main' }}" {% include edit-attr.html path="_data/navigation.yml" %}>
+  <ul role="list">
+    {%- for item in site.data.navigation %}
+    <li><a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+    {%- endfor %}
+  </ul>
+</nav>

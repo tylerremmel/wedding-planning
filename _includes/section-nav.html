@@ -1,0 +1,40 @@
+{%- comment -%}
+  Sticky section nav, generated from the page's own <h2> headings, so it can never drift from the page.
+  Params: page_content (the page's rendered HTML, i.e. `content` from the layout). For the styleguide,
+  static=true with demo="First,Second" renders an inert copy.
+  Each heading's id is the one kramdown gives it (## How we met -> #how-we-met), and its link text is the
+  heading text. Wide screens: a row of links. Narrow screens: the current section with a chevron; opening it lists
+  the other sections. Behavior (jump to the section's top, scroll-spy, fade-in): assets/js/sticky-nav.js.
+  The last item, "Back to top", is not a section: its label lives here.
+{%- endcomment -%}
+{%- assign nav_ids = "" | split: "" -%}
+{%- assign nav_labels = "" | split: "" -%}
+{%- if include.demo -%}
+  {%- assign demo_labels = include.demo | split: "," -%}
+  {%- for label in demo_labels -%}
+    {%- assign nav_labels = nav_labels | push: label -%}
+    {%- assign slug = label | slugify -%}
+    {%- assign nav_ids = nav_ids | push: slug -%}
+  {%- endfor -%}
+{%- else -%}
+  {%- assign parts = include.page_content | split: '<h2 id="' -%}
+  {%- for part in parts offset: 1 -%}
+    {%- assign head = part | split: "</h2>" | first -%}
+    {%- assign pieces = head | split: '">' -%}
+    {%- assign nav_ids = nav_ids | push: pieces[0] -%}
+    {%- assign label = pieces[1] | strip_html | strip -%}
+    {%- assign nav_labels = nav_labels | push: label -%}
+  {%- endfor -%}
+{%- endif -%}
+<nav class="section-nav{% if include.static %} section-nav--static{% endif %}" aria-label="Sections on this page"{% unless include.static %} data-section-nav{% endunless %}>
+  <button class="section-nav__toggle s-100" type="button" aria-expanded="false" aria-controls="section-nav-list">
+    <span data-section-current>{{ nav_labels | first }}</span>
+    <svg class="section-nav__chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
+  </button>
+  <ul class="section-nav__list" id="section-nav-list" role="list">
+    {%- for label in nav_labels %}
+    <li data-section-link="{{ nav_ids[forloop.index0] }}"><a class="s-100" href="#{{ nav_ids[forloop.index0] }}">{{ label }}</a></li>
+    {%- endfor %}
+    <li><a class="s-100" href="#top">Back to top</a></li>
+  </ul>
+</nav>
