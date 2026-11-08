@@ -14,6 +14,10 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* The canvas behind the page: iOS Safari tints the status bar, the bottom toolbar and the rubber-band
+     overscroll from this. The header and footer share a color, so it reads as one continuous band.
+     body paints --surface over it for the content. */
+  background: var(--header-bg);
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -22,6 +26,8 @@ html {
 }
 body {
   margin: 0;
+  min-height: 100vh; /* html is not --surface, so body must cover a short page itself */
+  min-height: 100dvh;
   background: var(--surface);
   color: var(--text);
 }
@@ -112,6 +118,7 @@ h3,
 .site-footer__title {
   font-family: var(--headline-family);
   font-stretch: var(--headline-stretch);
+  font-variation-settings: "wdth" var(--headline-wdth); /* WebKit ignores font-stretch on this font */
   font-weight: var(--w-headline);
   letter-spacing: var(--headline-tracking);
   text-transform: var(--headline-case);
@@ -136,6 +143,7 @@ blockquote,
 .lead {
   font-family: var(--body-family);
   font-stretch: var(--body-stretch);
+  font-variation-settings: "wdth" var(--body-wdth);
   font-weight: var(--w-body);
   letter-spacing: var(--body-tracking);
   text-transform: var(--body-case);
