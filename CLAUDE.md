@@ -16,3 +16,15 @@ Jekyll site (see README.md for structure). Two rules that are easy to break:
 ## Formatting
 
 Tyler's editor runs Prettier defaults on save. Write files Prettier-formatted (`npx prettier --check <files>`).
+
+## Deploys
+
+- `.github/workflows/deploy-pages.yml` is the only Pages deploy workflow. Don't add a second one that also runs on push to `main`; two deploys compete for the `pages` concurrency group.
+- After a push to `main`, confirm exactly one "Deploy Jekyll site to Pages" run starts and goes green (`gh run list --limit 4`).
+
+## Git workflow
+
+- Default to a branch and PR. Tyler may choose to push straight to `main` for smaller changes that need immediate testing (e.g. deploy workflow fixes); decide case by case, and only when he says so.
+- If the working tree is on a feature branch with uncommitted changes, commit to `main` from a temporary worktree (`git worktree add <scratchpad>/main-wt main`) instead of switching branches, then remove it.
+- Put `Closes #N` in the commit message to close the issue.
+- `gh issue view N` can print nothing here; use `gh issue view N --json title,body,state,comments`. Issue numbers don't show under the Pull requests tab.
