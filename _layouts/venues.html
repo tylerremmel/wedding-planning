@@ -1,0 +1,12 @@
+---
+layout: default
+scheme: light
+---
+{%- comment -%}
+  Minimal wrapper for the legacy Venues React app: the new header/footer, light scheme only,
+  and the wide page container the bundle expects. Content comes from venues.md.
+{%- endcomment -%}
+<div class="page page--wide">
+  <h1 class="page__title headline s-200">{{ page.title }}</h1>
+  {{ content }}
+</div>

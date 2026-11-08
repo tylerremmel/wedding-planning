@@ -1,0 +1,12 @@
+# Site navigation (header and footer). Order here = order on the site.
+# `url` must match the page's permalink.
+- label: our story
+  url: /our-story/
+- label: the wedding
+  url: /the-wedding/
+- label: getting there
+  url: /getting-there/
+- label: what to know
+  url: /what-to-know/
+- label: photos
+  url: /photos/

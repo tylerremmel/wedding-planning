@@ -1,0 +1,362 @@
+/* ==========================================================================
+   Design tokens: the single source of truth for color, type, spacing.
+   Edit values here; nothing else in the site hard-codes them.
+   Reviewed visually at /styleguide/.
+
+   Layer 1 = primitives (--sapphire-N, type steps)   never used directly in components
+   Layer 2 = semantic   (--surface, --text, ...)     remapped for light and dark
+   ========================================================================== */
+
+/* ---------- Fonts (self-hosted, Latin subset, see assets/fonts/ROBOTO-LICENSE.txt) ---------- */
+@font-face {
+  font-family: "Roboto Serif Site";
+  src: url("../fonts/roboto-serif-latin.woff2") format("woff2");
+  font-weight: 300 700;
+  font-stretch: 120% 150%;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roboto Flex Site";
+  src: url("../fonts/roboto-flex-latin.woff2") format("woff2");
+  font-weight: 100 500;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Color primitives: sapphire ----------
+     600 is the brand sea-glass (#007776). The other steps are generated in OKLCH at one hue (194),
+     with lightness stepping evenly around 600 and chroma tapering toward both ends.
+
+     Two ramps:
+       --sapphire-N-static  fixed values; the same in light and dark. Use when a color must not change.
+       --sapphire-N         follows the user's scheme. Light = the static values. Dark = the ramp mirrored
+                            (100 <-> 950, 200 <-> 900, 300 <-> 800, 400 <-> 700, 500 <-> 600), so a
+                            "lightest" or "brand" role keeps its relative place in either scheme. */
+  --sapphire-100-static: #ebf8f8;
+  --sapphire-200-static: #d2efee;
+  --sapphire-300-static: #a7dddb;
+  --sapphire-400-static: #75c4c3;
+  --sapphire-500-static: #339e9d;
+  --sapphire-600-static: #007776;
+  --sapphire-700-static: #006160;
+  --sapphire-800-static: #004c4b;
+  --sapphire-900-static: #003737;
+  --sapphire-950-static: #002424;
+
+  --sapphire-100: var(--sapphire-100-static);
+  --sapphire-200: var(--sapphire-200-static);
+  --sapphire-300: var(--sapphire-300-static);
+  --sapphire-400: var(--sapphire-400-static);
+  --sapphire-500: var(--sapphire-500-static);
+  --sapphire-600: var(--sapphire-600-static);
+  --sapphire-700: var(--sapphire-700-static);
+  --sapphire-800: var(--sapphire-800-static);
+  --sapphire-900: var(--sapphire-900-static);
+  --sapphire-950: var(--sapphire-950-static);
+  --white: #ffffff;
+
+  /* ---------- Type primitives ---------- */
+  --font-serif:
+    "Roboto Serif Site", "Roboto Serif", Georgia, "Times New Roman", serif;
+  --font-flex:
+    "Roboto Flex Site", "Roboto Flex", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+
+  /* Step N = N% of the base size, in rem (so sizes never compound). 100 = 1rem. */
+  --step-050: 0.5rem;
+  --step-075: 0.75rem;
+  --step-087: 0.875rem;
+  --step-100: 1rem;
+  --step-112: 1.125rem;
+  --step-125: 1.25rem;
+  --step-150: 1.5rem;
+  --step-175: 1.75rem;
+  --step-200: 2rem;
+  --step-225: 2.25rem;
+  --step-250: 2.5rem;
+  --step-300: 3rem;
+  --step-400: 4rem;
+
+  /* Roles. headline/body = Roboto Serif, subhead/meta = Roboto Flex.
+     Roboto Serif width: headline 150, body 120. Roboto Flex is pinned to width 151 and grade 150 in the font file; Roboto Serif to grade -50.
+     Optical size (opsz) is left free: browsers set it from font size (font-optical-sizing: auto),
+     which matches Figma's automatic optical sizing. Pinning it made text look heavier than the design. */
+  --headline-family: var(--font-serif);
+  --headline-stretch: 150%;
+  --headline-tracking: -0.05em;
+  --headline-case: uppercase;
+  --headline-leading: 1;
+
+  --subhead-family: var(--font-flex);
+  --subhead-tracking: 0.1em;
+  --subhead-case: uppercase;
+  --subhead-leading: normal;
+
+  --body-family: var(--font-serif);
+  --body-stretch: 120%;
+  --body-tracking: 0;
+  --body-case: none;
+  --body-leading: 1.5; /* 24px at step 100; large steps override below */
+  --body-leading-large: normal;
+
+  --meta-family: var(--font-flex);
+  --meta-tracking: 0;
+  --meta-case: none;
+  --meta-leading: normal;
+
+  /* Weight per role per step (from the Figma type specimen).
+     body 450 up to step 175, 500 from step 200.
+     headline, subhead and meta ramp lighter as size grows: weight rises smoothly toward small sizes
+     to stay legible (meta most, then subhead; headline least: 480 at step 050 down to 370 at step 400, 440 at step 100)
+     and settles at 100 (subhead from step 200, meta from step 300). */
+  --headline-wght-050: 480;
+  --headline-wght-075: 460;
+  --headline-wght-087: 450;
+  --headline-wght-100: 440;
+  --headline-wght-112: 436;
+  --headline-wght-125: 432;
+  --headline-wght-150: 425;
+  --headline-wght-175: 415;
+  --headline-wght-200: 405;
+  --headline-wght-225: 400;
+  --headline-wght-250: 395;
+  --headline-wght-300: 385;
+  --headline-wght-400: 370;
+
+  --subhead-wght-050: 190;
+  --subhead-wght-075: 165;
+  --subhead-wght-087: 150;
+  --subhead-wght-100: 135;
+  --subhead-wght-112: 125;
+  --subhead-wght-125: 120;
+  --subhead-wght-150: 110;
+  --subhead-wght-175: 105;
+  --subhead-wght-200: 100;
+  --subhead-wght-225: 100;
+  --subhead-wght-250: 100;
+  --subhead-wght-300: 100;
+  --subhead-wght-400: 100;
+
+  --body-wght-050: 450;
+  --body-wght-075: 450;
+  --body-wght-087: 450;
+  --body-wght-100: 450;
+  --body-wght-112: 450;
+  --body-wght-125: 450;
+  --body-wght-150: 450;
+  --body-wght-175: 450;
+  --body-wght-200: 500;
+  --body-wght-225: 500;
+  --body-wght-250: 500;
+  --body-wght-300: 500;
+  --body-wght-400: 500;
+
+  --meta-wght-050: 220;
+  --meta-wght-075: 185;
+  --meta-wght-087: 170;
+  --meta-wght-100: 155;
+  --meta-wght-112: 150;
+  --meta-wght-125: 145;
+  --meta-wght-150: 135;
+  --meta-wght-175: 125;
+  --meta-wght-200: 115;
+  --meta-wght-225: 110;
+  --meta-wght-250: 105;
+  --meta-wght-300: 100;
+  --meta-wght-400: 100;
+
+  /* Strong weight for Roboto Flex labels (the font file's maximum is 500). */
+  --meta-wght-strong: 500;
+
+  /* ---------- Spacing ----------
+     Same naming as the type steps: N = N% of 1rem (100 = 16px). Use these for every margin, padding and gap
+     above 8px; 8px and below may be written as plain values. */
+  --space-025: 0.25rem; /* 4px */
+  --space-050: 0.5rem; /* 8px */
+  --space-075: 0.75rem; /* 12px */
+  --space-100: 1rem; /* 16px */
+  --space-150: 1.5rem; /* 24px */
+  --space-200: 2rem; /* 32px */
+  --space-225: 2.25rem; /* 36px */
+  --space-300: 3rem; /* 48px */
+  --space-400: 4rem; /* 64px */
+  --space-500: 5rem; /* 80px */
+  --space-600: 6rem; /* 96px */
+
+  /* Roles for the scale. */
+  --paragraph-spacing: var(
+    --space-150
+  ); /* between paragraphs and lists everywhere */
+  --section-gap: var(
+    --space-225
+  ); /* between blocks on a long page (Our Story) */
+  --divider-space: var(--space-400); /* above and below a section divider */
+
+  /* Content column: every block is at most --measure of content plus a --space-150 gutter each side. */
+  --block-max: calc(var(--measure) + var(--space-150) * 2); /* 688px */
+  /* Blocks carry their own padding-bottom (--paragraph-spacing). Headings and block components add the
+     difference up to --section-gap on top; dividers add the difference up to --divider-space. */
+  --block-pad-top: calc(var(--section-gap) - var(--paragraph-spacing));
+  --divider-pad-top: calc(var(--divider-space) - var(--paragraph-spacing));
+  --page-bottom: calc(
+    var(--space-500) - var(--paragraph-spacing)
+  ); /* + the last block's padding = 80px */
+
+  /* ---------- Layout ---------- */
+  --gutter: var(--space-150);
+  --measure: 640px; /* reading column */
+  --page-max: 1280px;
+  --header-pad-top: var(--space-600);
+  --bp-nav: 640px; /* documentation only; media queries can't read custom properties */
+
+  /* ---------- Ornament divider ----------
+     Set the ornament HEIGHT (42px on desktop, per Figma); width follows the SVG's 25.42 x 11.29 ratio.
+     The side rules are SVGs of the same height, so their stroke weight scales with the ornament. */
+  --divider-ornament-height: 32px;
+  --divider-ornament-width: calc(
+    var(--divider-ornament-height) * 25.42 / 11.29
+  );
+  /* A plain rule matches the ornament's stroke weight (0.25 of 11.29 units tall). */
+  --divider-rule-weight: calc(var(--divider-ornament-height) * 0.25 / 11.29);
+
+  /* ---------- Sticky section nav ---------- */
+  --sticky-nav-height: 51px;
+  --sticky-nav-menu-bg: var(--sapphire-100);
+  --sticky-nav-menu-text: var(--sapphire-600);
+
+  /* ---------- Timeline ---------- */
+  --timeline-dot: 13px;
+  --timeline-indent: var(--space-150); /* dot width + 11px gap */
+  --timeline-gap: var(--section-gap);
+
+  /* ---------- Image group ---------- */
+  --image-gap: var(--space-150);
+  --image-radius: 0;
+  --image-ratio-pair: 3 / 4;
+  --image-ratio-single: 4 / 3;
+
+  /* ---------- Motion ---------- */
+  --fade-duration: 300ms;
+
+  /* ---------- Nav hover rule ---------- */
+  --nav-rule-weight: 1px;
+  --nav-rule-offset: 4px; /* distance from the text box down to the rule */
+
+  /* ---------- Semantic color: LIGHT (default) ---------- */
+  color-scheme: light;
+  --surface: var(--white);
+  --text: var(--sapphire-600);
+  --text-on-header: var(--white);
+  --accent: var(--sapphire-600);
+  --header-bg: var(--sapphire-600);
+  --footer-bg: var(--sapphire-600);
+  --rule: var(--sapphire-600);
+  --tab-bg: var(--sapphire-500);
+  --tab-bg-hover: var(--sapphire-800-static); /* darker than the header */
+  --placeholder: #d9d9d9;
+  --focus: var(--sapphire-800);
+  --link-hover: var(--sapphire-800-static);
+  --tk-bg: #fff3bf;
+  --tk-text: #5c4500;
+}
+
+/* ---------- Dark scheme (follows the OS; there is no toggle) ----------
+   Remaps the --sapphire-N ramp and the semantic tokens. --sapphire-N-static never changes. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-scheme="light"]) {
+    --sapphire-100: var(--sapphire-950-static);
+    --sapphire-200: var(--sapphire-900-static);
+    --sapphire-300: var(--sapphire-800-static);
+    --sapphire-400: var(--sapphire-700-static);
+    --sapphire-500: var(--sapphire-600-static);
+    --sapphire-600: var(--sapphire-500-static);
+    --sapphire-700: var(--sapphire-400-static);
+    --sapphire-800: var(--sapphire-300-static);
+    --sapphire-900: var(--sapphire-200-static);
+    --sapphire-950: var(--sapphire-100-static);
+    color-scheme: dark;
+    --surface: var(--sapphire-950-static);
+    --text: var(--white);
+    --text-on-header: var(--white);
+    --accent: var(--sapphire-300-static);
+    --header-bg: var(--sapphire-800-static);
+    --footer-bg: var(--sapphire-800-static);
+    --rule: var(--sapphire-300-static);
+    --tab-bg: var(--sapphire-500);
+    --tab-bg-hover: var(--sapphire-950-static); /* darker than the header */
+    --placeholder: var(--sapphire-900-static);
+    --focus: var(--sapphire-300-static);
+    --link-hover: var(--sapphire-300-static);
+    --tk-bg: #4a3b00;
+    --tk-text: #ffe9a3;
+  }
+}
+
+/* Force a scheme on a region regardless of the OS (styleguide previews, light-only pages). */
+.scheme-dark {
+  --sapphire-100: var(--sapphire-950-static);
+  --sapphire-200: var(--sapphire-900-static);
+  --sapphire-300: var(--sapphire-800-static);
+  --sapphire-400: var(--sapphire-700-static);
+  --sapphire-500: var(--sapphire-600-static);
+  --sapphire-600: var(--sapphire-500-static);
+  --sapphire-700: var(--sapphire-400-static);
+  --sapphire-800: var(--sapphire-300-static);
+  --sapphire-900: var(--sapphire-200-static);
+  --sapphire-950: var(--sapphire-100-static);
+  color-scheme: dark;
+  --surface: var(--sapphire-950-static);
+  --text: var(--white);
+  --text-on-header: var(--white);
+  --accent: var(--sapphire-300-static);
+  --header-bg: var(--sapphire-800-static);
+  --footer-bg: var(--sapphire-800-static);
+  --rule: var(--sapphire-300-static);
+  --tab-bg: var(--sapphire-500);
+  --tab-bg-hover: var(--sapphire-950-static); /* darker than the header */
+  --placeholder: var(--sapphire-900-static);
+  --focus: var(--sapphire-300-static);
+  --link-hover: var(--sapphire-300-static);
+  --tk-bg: #4a3b00;
+  --tk-text: #ffe9a3;
+  background: var(--surface);
+  color: var(--text);
+}
+.scheme-light {
+  --sapphire-100: var(--sapphire-100-static);
+  --sapphire-200: var(--sapphire-200-static);
+  --sapphire-300: var(--sapphire-300-static);
+  --sapphire-400: var(--sapphire-400-static);
+  --sapphire-500: var(--sapphire-500-static);
+  --sapphire-600: var(--sapphire-600-static);
+  --sapphire-700: var(--sapphire-700-static);
+  --sapphire-800: var(--sapphire-800-static);
+  --sapphire-900: var(--sapphire-900-static);
+  --sapphire-950: var(--sapphire-950-static);
+  color-scheme: light;
+  --surface: var(--white);
+  --text: var(--sapphire-600-static);
+  --text-on-header: var(--white);
+  --accent: var(--sapphire-600-static);
+  --header-bg: var(--sapphire-600-static);
+  --footer-bg: var(--sapphire-600-static);
+  --rule: var(--sapphire-600-static);
+  --tab-bg: var(--sapphire-500);
+  --tab-bg-hover: var(--sapphire-800-static); /* darker than the header */
+  --placeholder: #d9d9d9;
+  --focus: var(--sapphire-800-static);
+  --link-hover: var(--sapphire-800-static);
+  --tk-bg: #fff3bf;
+  --tk-text: #5c4500;
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Pages that must stay light (e.g. /venues/, whose React bundle sets its own colors) set
+   <html data-scheme="light"> and keep the light values above. */
+
+@media (min-width: 640px) {
+  :root {
+    --divider-ornament-height: 42px;
+  }
+}

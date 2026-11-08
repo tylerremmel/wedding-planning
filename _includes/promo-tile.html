@@ -1,0 +1,14 @@
+{%- comment -%} One promo tile. Param: tile (an item from _data/home.yml). The <a> is inside the <li> so ?edit pencils (also links) are not nested in it. {%- endcomment -%}
+<li class="promo-tile" {% include edit-attr.html path="_data/home.yml" %}>
+  <a class="promo-tile__link" href="{{ include.tile.url | relative_url }}">
+    <div class="promo-tile__media">
+      {%- if include.tile.image %}
+      {%- include image.html src=include.tile.image.src alt=include.tile.image.alt width=include.tile.image.width height=include.tile.image.height class="promo-tile__img" %}
+      {%- endif %}
+    </div>
+    <div class="promo-tile__text">
+      <h2 class="tile-title">{{ include.tile.title }}</h2>
+      <p>{% include md.html text=include.tile.text inline=true %}</p>
+    </div>
+  </a>
+</li>

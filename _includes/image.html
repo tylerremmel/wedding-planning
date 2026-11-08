@@ -1,0 +1,13 @@
+{%- comment -%}
+  One <img> for the whole site. Params: src (path under /assets/img/), alt (REQUIRED; written by a human),
+  width, height, eager (true for above-the-fold), class.
+  alt "TK" means not written yet: dev builds outline the image with a dashed yellow marker, production renders alt="" so
+  screen readers skip it rather than read "TK".
+{%- endcomment -%}
+{%- assign alt = include.alt -%}
+{%- assign missing = false -%}
+{%- if alt == nil or alt == 'TK' -%}
+  {%- if jekyll.environment != 'production' -%}{%- assign missing = true -%}{%- endif -%}
+  {%- assign alt = '' -%}
+{%- endif -%}
+<img class="{{ include.class }}"{% if missing %} data-alt-missing{% endif %} src="{{ include.src | prepend: '/assets/img/' | relative_url }}" alt="{{ alt | escape }}" width="{{ include.width }}" height="{{ include.height }}"{% if include.eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">

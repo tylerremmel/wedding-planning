@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: The Grande-Remmel Wedding
+title: The Wedding of Jenna Grande and Tyler Remmel
 email: tyler@tylerremmel.com
 description: >- # this means to ignore newlines until "baseurl:"
   Tyler and Jenna are getting married! This is our wedding website, where you can find all the details about our big day.
@@ -28,9 +28,8 @@ url: "https://www.jennaandtyleraregettingmarried.com" # the base hostname & prot
 github_username: tylerremmel
 
 # Build settings
-theme: minima
 plugins:
-  - jekyll-feed
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -66,3 +65,19 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   - docs/
+  - scripts/
+  - EDITING.md
+  - README.md
+  - package.json
+  - package-lock.json
+  - vite.config.js
+  - assets/src/
+
+# The headline shown in the header of every page: two lines on wide screens, wrapping freely on narrow ones
+header_title:
+  - Jenna and Tyler
+  - are getting married
+
+# Edit links (used by ?edit mode and data-edit-src attributes; see EDITING.md)
+github_repo: tylerremmel/wedding-planning
+edit_branch: main

@@ -1,0 +1,9 @@
+{%- comment -%} Side-by-side first impressions from _data/first_impressions.yml. {%- endcomment -%}
+<div class="impressions">
+  {%- for item in site.data.first_impressions %}
+  <div class="impressions__item" {% include edit-attr.html path="_data/first_impressions.yml" %}>
+    <h3 class="label s-100">{{ item.title }}</h3>
+    <p class="meta s-100">{% include md.html text=item.quote inline=true %}</p>
+  </div>
+  {%- endfor %}
+</div>

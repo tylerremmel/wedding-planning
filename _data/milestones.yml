@@ -1,0 +1,70 @@
+# Relationship milestones, in order. One entry per item: `date`, `text`, and optional `images` (+ `caption`).
+# `iso` (optional) is the machine-readable date: 2021-05-07, or 2021-08 for a month. Leave it off for
+# vague dates like "Thanksgiving 2021".
+# `text` can use **markdown**. TK = still to come. Photos: see scripts/prep-image.sh; `alt` must be written by a person.
+
+- date: "May 7, 2021"
+  iso: "2021-05-07"
+  text: "Jenna messages Tyler on Bumble"
+- date: "May 17, 2021"
+  iso: "2021-05-17"
+  text: "Jenna and Tyler’s first date. They meet in Lincoln Park to grab coffee and tea at Wine and Butter, a cafe on the park. They walk around the neighborhood, ending up at the Congressional Cemetery. Jenna and Tyler find a bench and talk until the sun goes down. Soon, they make their way back to Stanton Park, where they share a first kiss…that lasted two hours. Jenna’s friends think she has been kidnapped because she has not responded to their texts asking how the date has gone. She also goes home and journals that she sees herself marrying Tyler."
+- date: "June 6, 2021"
+  iso: "2021-06-06"
+  text: "Jenna and Tyler become “officially official,” AKA: declare each other to become exclusively boyfriend/girlfriend."
+  images:
+    - src: official-dating-jenna.jpg
+      alt: TK
+      width: 1200
+      height: 1600
+    - src: official-dating-tyler.jpg
+      alt: TK
+      width: 1199
+      height: 1600
+- date: "Sometime at the end of June 2021"
+  text: "Jenna and Tyler officially\\* say “I love you.”"
+- date: "July 4-6, 2021"
+  text: "Tyler invites Jenna to join him on a trip to Pittsburgh and New York City to watch the Brewers play the Pirates and the Mets. This will be the first two games out of MANY the couple watches together, both on TV and in person."
+- date: "July 25, 2021"
+  iso: "2021-07-25"
+  text: "Tyler comes to Connecticut for the first time and meets the parents, Mary and Bob Grande. TBH Jenna cannot remember when her brothers and sisters-in-law met Tyler."
+- date: "August 2021"
+  iso: "2021-08"
+  text: "Tyler and Jenna go to Glacier National Park for their first big hiking/camping trip together. It’s also the month they decide to move in together when their respective leases are up in May/June 2022."
+- date: "Thanksgiving 2021"
+  text: "Jenna meets Roger, Davis, and Paige for the first time"
+- date: "May 31, 2022"
+  iso: "2022-05-31"
+  text: "Tyler and Jenna close on their apartment"
+- date: "June 26, 2022"
+  iso: "2022-06-26"
+  text: "Tyler and Jenna move into their apartment, affectionately named “33 Rock”"
+- date: "July 2023"
+  iso: "2023-07"
+  text: "Jenna and Tyler go on a road trip, where they end up spending a week in the Boundary Waters in Minnesota. On that trip, they discussed their life together so far and what else they imagined their future together would look like. While the couple always knew they’d get married, both Jenna and Tyler think of this trip as the one they really got “engaged” on."
+- date: "Thanksgiving 2023"
+  text: "Paige and Roger come to Connecticut to meet Jenna’s family. Jenna, Tyler, Paige, and Bob run the Manchester Road Race, and the families attend the Branford Holiday Tree Lighting and Parade together."
+- date: "November 28, 2023"
+  iso: "2023-11-28"
+  text: "Tyler and Jenna bring home their 3-month-old Pitbull mix puppy Pigs In A Blanket"
+- date: "July 2024"
+  iso: "2024-07"
+  text: "Mary and Bob fly out to Wisconsin to see the Remmel family, meet Davis, go to a Brewers game, and have custard for the first tim TK"
+- date: "August 26, 2024"
+  iso: "2024-08-26"
+  text: "Pigs In A Blanket turns one!"
+- date: "March 30, 2025"
+  iso: "2025-03-30"
+  text: "Tyler proposes to Jenna"
+- date: "June 6, 2025"
+  iso: "2025-06-06"
+  text: "Jenna proposes to Tyler"
+- date: "August 2026"
+  iso: "2026-08"
+  text: "Tyler and Jenna go to The Waterford Inne for the first time and know immediately it’s where they want to get married!"
+- date: "October 28, 2026"
+  iso: "2026-10-28"
+  text: "The Brewers win the World Series"
+- date: "July 31, 2027"
+  iso: "2027-07-31"
+  text: "Tyler and Jenna get married!"

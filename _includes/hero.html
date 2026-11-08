@@ -1,0 +1,22 @@
+{%- comment -%}
+  The topper under the header. Param: hero (front matter: src, width, height, alt). With no hero.src it
+  renders a placeholder in the same spot and shape, so every page has the slot. To fill it, add to the page's
+  front matter (alt text is written by a person; TK until then):
+    hero:
+      src: some-photo.jpg
+      width: 1600
+      height: 1067
+      alt: TK
+  Pass hero=false (front matter `hero: false`) for pages that shouldn't have one.
+{%- endcomment -%}
+{%- if include.hero != false -%}
+<div class="hero">
+  {%- if include.hero.src %}
+  {%- include image.html src=include.hero.src alt=include.hero.alt width=include.hero.width height=include.hero.height eager=true class="hero__img" %}
+  {%- else %}
+  <div class="hero__placeholder">
+    {%- if jekyll.environment != 'production' %}<span class="tk">topper image TK</span>{% endif %}
+  </div>
+  {%- endif %}
+</div>
+{%- endif -%}

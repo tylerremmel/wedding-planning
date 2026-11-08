@@ -1,0 +1,48 @@
+{%- comment -%}
+  Sticky section nav, generated from the page's own <h2> headings, so it can never drift from the page.
+  Params: page_content (the page's rendered HTML, i.e. `content` from the layout). For the styleguide,
+  static=true with demo="First,Second" renders an inert copy.
+  Each heading's id is the one kramdown gives it (## How we met -> #how-we-met), and its link text is the
+  heading text. Wide screens: a row of links. Narrow screens: the current section with a chevron; opening it lists
+  the other sections. Behavior (jump to the section's top, scroll-spy, fade-in): assets/js/sticky-nav.js.
+  The last item, "Back to top", is not a section: its label lives here.
+{%- endcomment -%}
+{%- assign nav_ids = "" | split: "" -%}
+{%- assign nav_labels = "" | split: "" -%}
+{%- if include.demo -%}
+  {%- assign demo_labels = include.demo | split: "," -%}
+  {%- for label in demo_labels -%}
+    {%- assign nav_labels = nav_labels | push: label -%}
+    {%- assign slug = label | slugify -%}
+    {%- assign nav_ids = nav_ids | push: slug -%}
+  {%- endfor -%}
+{%- else -%}
+  {%- comment -%}
+    For each <h2 ...>...</h2>: the id comes from the opening tag's id="..." attribute, the label from the
+    tag's inner text (already HTML-escaped by markdown, so it is output as-is). A heading with no id is skipped.
+  {%- endcomment -%}
+  {%- assign parts = include.page_content | split: '<h2' -%}
+  {%- for part in parts offset: 1 -%}
+    {%- assign whole = part | split: '</h2>' | first -%}
+    {%- assign open_tag = whole | split: '>' | first -%}
+    {%- assign id_parts = open_tag | split: 'id="' -%}
+    {%- if id_parts.size < 2 -%}{%- continue -%}{%- endif -%}
+    {%- assign heading_id = id_parts[1] | split: '"' | first -%}
+    {%- assign inner = whole | remove_first: open_tag | remove_first: '>' -%}
+    {%- assign label = inner | strip_html | strip -%}
+    {%- assign nav_ids = nav_ids | push: heading_id -%}
+    {%- assign nav_labels = nav_labels | push: label -%}
+  {%- endfor -%}
+{%- endif -%}
+<nav class="section-nav{% if include.static %} section-nav--static{% endif %}" aria-label="Sections on this page"{% unless include.static %} data-section-nav{% endunless %}>
+  <button class="section-nav__toggle s-100" type="button" aria-expanded="false" aria-controls="section-nav-list">
+    <span data-section-current>{{ nav_labels | first }}</span>
+    <svg class="section-nav__chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
+  </button>
+  <ul class="section-nav__list" id="section-nav-list" role="list">
+    {%- for label in nav_labels %}
+    <li data-section-link="{{ nav_ids[forloop.index0] }}"><a class="s-100" href="#{{ nav_ids[forloop.index0] }}">{{ label }}</a></li>
+    {%- endfor %}
+    <li><a class="s-100" href="#top">Back to top</a></li>
+  </ul>
+</nav>

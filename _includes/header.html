@@ -1,0 +1,18 @@
+{%- comment -%}
+  The headline is a site-wide banner, repeated on every page, so it is only the <h1> on Home. Every other page
+  gets its own (visually hidden) <h1> with the page title from default.html, so each page has one h1 that names it.
+{%- endcomment -%}
+<header class="site-header">
+  <a class="site-header__tab" href="{{ '/' | relative_url }}" aria-label="Home: Jenna and Tyler">
+    <svg class="site-header__tab-shape" viewBox="0 0 2082.15 400" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2082.15,0l-451.59,377.51c-17.38,14.53-39.32,22.49-61.98,22.49H513.57c-22.66,0-44.59-7.96-61.98-22.49L0,0h2082.15Z" fill="currentColor"/></svg>
+    <img class="site-header__logo" src="{{ '/assets/img/jt27-pigbronco-small.svg' | relative_url }}" alt="" width="129" height="40">
+  </a>
+  <div class="site-header__inner">
+    {%- assign headline_tag = "p" -%}
+    {%- if page.layout == "home" %}{% assign headline_tag = "h1" %}{% endif %}
+    <{{ headline_tag }} class="site-header__title">
+      {%- for line in site.header_title %}<span class="site-header__line">{{ line }}</span> {% endfor -%}
+    </{{ headline_tag }}>
+    {%- include nav.html label="Main" class="site-nav--header" %}
+  </div>
+</header>

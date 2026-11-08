@@ -1,0 +1,15 @@
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches-ignore: ["main"]
+
+jobs:
+  alt-text:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Warning only for now so placeholder alt text doesn't block merging. Add `--strict` to make it fail.
+      - name: Check for alt text still set to TK
+        run: scripts/check-alt.sh

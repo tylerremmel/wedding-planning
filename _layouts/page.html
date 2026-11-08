@@ -1,0 +1,9 @@
+---
+layout: default
+---
+{%- include hero.html hero=page.hero %}
+<div class="page">
+  <div class="page__content content" {% include edit-attr.html path=page.path %}>
+    {{ content }}
+  </div>
+</div>
