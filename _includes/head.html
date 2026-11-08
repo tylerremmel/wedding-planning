@@ -10,7 +10,18 @@
   {%- comment -%} The SEO tag appends the long site description to the Home title, so the <title> is written here: the site title on Home, "Page | Site title" elsewhere. {%- endcomment -%}
   <title>{% if page.url == '/' %}{{ site.title | escape }}{% else %}{{ page.title | escape }} | {{ site.title | escape }}{% endif %}</title>
   {%- seo title=false -%}
-  <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/favicons/favicon-32x32.png' | relative_url }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/favicons/favicon-16x16.png' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/favicons/apple-touch-icon.png' | relative_url }}">
+  <link rel="manifest" href="{{ '/assets/favicons/site.webmanifest' | relative_url }}">
+  {%- comment -%} Matches --header-bg: sapphire-600-static (#007776) in light, sapphire-800-static (#004c4b) in dark. {%- endcomment -%}
+  {%- if page.scheme == 'light' %}
+  <meta name="theme-color" content="#007776">
+  {%- else %}
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#007776">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#004c4b">
+  {%- endif %}
   <link rel="preload" href="{{ '/assets/fonts/roboto-serif-latin.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ '/assets/fonts/roboto-flex-latin.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ '/assets/css/tokens.css' | relative_url }}">
