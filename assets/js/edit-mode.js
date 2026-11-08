@@ -19,7 +19,7 @@
   document.documentElement.classList.add("edit-mode");
   var style = document.createElement("style");
   style.textContent =
-    ".edit-mode [data-edit-src]{position:relative;outline:1px dashed transparent;outline-offset:6px}" +
+    ".edit-mode [data-edit-src]{outline:1px dashed transparent;outline-offset:6px}" +
     ".edit-mode [data-edit-src]:hover{outline-color:currentColor}" +
     ".edit-pencil{position:absolute;top:-10px;right:-10px;z-index:50;width:28px;height:28px;border-radius:50%;" +
     "background:#fff;color:#003030;border:1px solid #003030;display:none;align-items:center;justify-content:center;" +
@@ -30,6 +30,9 @@
   document.head.appendChild(style);
 
   document.querySelectorAll("[data-edit-src]").forEach(function (el) {
+    /* The pencil is positioned against the block; only set this if the block has no positioning of its own. */
+    if (window.getComputedStyle(el).position === "static")
+      el.style.position = "relative";
     var a = document.createElement("a");
     a.className = "edit-pencil";
     a.href = el.getAttribute("data-edit-src");

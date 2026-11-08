@@ -1,16 +1,13 @@
 {%- comment -%}
-  Section divider. The FIRST divider on a page is the ornament; every later one on that page is a plain rule.
-  (Counted automatically per page, so editors never choose.) Params: sentinel=true marks the divider the sticky
-  nav watches; ornament=true forces the ornament (styleguide only).
+  Section divider. A plain rule by default; pass ornament=true for the ornament version (use it for the first
+  divider on a page). Params: ornament=true, sentinel=true (marks the divider the sticky nav watches).
 
   Ornament: cleaned from assets/img/divider-ornament.svg (source), with one change: each swoop's stroke path
   continues in a straight line far past the ornament's edge (3000 units, about 11,000px), so the rule and the
   swoop are ONE stroked path: no joint, identical weight and antialiasing at any zoom or pixel density. The SVG
   shows overflow and .divider clips it to the container width, so the rules always run edge to edge.
 {%- endcomment -%}
-{%- comment -%} divider_seen is set once the first divider on this page has rendered. {%- endcomment -%}
-{%- if divider_seen != true or include.ornament -%}
-{%- assign divider_seen = true -%}
+{%- if include.ornament -%}
 <div class="divider" role="separator"{% if include.sentinel %} data-sticky-sentinel{% endif %}>
   <div class="divider__line">
   <svg class="divider__ornament" viewBox="0 0 25.42 11.29" aria-hidden="true" focusable="false">

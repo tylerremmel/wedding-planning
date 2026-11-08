@@ -32,7 +32,7 @@ GitHub decides who is allowed to save.
 
 - **YAML files** (`.yml`): keep the indentation exactly (two spaces per level), keep the `-` at the start of each list item, and keep text in straight double quotes. To put a double quote inside text, use the curly ones “ ”. A stray tab or missing quote breaks the whole page build.
 - **Don't rename the left-hand keys** (`text:`, `date:`, `alt:`).
-- **On Our Story, a section runs from the divider above its `## Heading` to the next divider.** Add a section by adding a divider line, then a `## New heading`; the nav picks it up automatically.
+- **On Our Story, a section runs from the divider above its `## Heading` to the next divider.** Add a section by adding a divider line (`{% raw %}{% include divider.html %}{% endraw %}` is a plain rule; add `ornament=true` for the ornament, normally only the first), then a `## New heading`; the nav picks it up automatically.
 - **`TK` means "to come".** It shows as a yellow marker on the page. Search for `TK` to find unfinished content. Remove it when the real text is in.
 - **Never put private information** (phone numbers, addresses, RSVP details) in these files: the repository is public.
 

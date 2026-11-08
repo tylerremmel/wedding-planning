@@ -17,12 +17,20 @@
     {%- assign nav_ids = nav_ids | push: slug -%}
   {%- endfor -%}
 {%- else -%}
-  {%- assign parts = include.page_content | split: '<h2 id="' -%}
+  {%- comment -%}
+    For each <h2 ...>...</h2>: the id comes from the opening tag's id="..." attribute, the label from the
+    tag's inner text (already HTML-escaped by markdown, so it is output as-is). A heading with no id is skipped.
+  {%- endcomment -%}
+  {%- assign parts = include.page_content | split: '<h2' -%}
   {%- for part in parts offset: 1 -%}
-    {%- assign head = part | split: "</h2>" | first -%}
-    {%- assign pieces = head | split: '">' -%}
-    {%- assign nav_ids = nav_ids | push: pieces[0] -%}
-    {%- assign label = pieces[1] | strip_html | strip -%}
+    {%- assign whole = part | split: '</h2>' | first -%}
+    {%- assign open_tag = whole | split: '>' | first -%}
+    {%- assign id_parts = open_tag | split: 'id="' -%}
+    {%- if id_parts.size < 2 -%}{%- continue -%}{%- endif -%}
+    {%- assign heading_id = id_parts[1] | split: '"' | first -%}
+    {%- assign inner = whole | remove_first: open_tag | remove_first: '>' -%}
+    {%- assign label = inner | strip_html | strip -%}
+    {%- assign nav_ids = nav_ids | push: heading_id -%}
     {%- assign nav_labels = nav_labels | push: label -%}
   {%- endfor -%}
 {%- endif -%}

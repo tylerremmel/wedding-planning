@@ -11,7 +11,7 @@ layout: default
     <p>{% include md.html text=home.body inline=true %}</p>
     <p class="eyebrow">{{ home.date_line }}</p>
   </div>
-  {% include divider.html %}
+  {% include divider.html ornament=true %}
   <ul class="home__tiles" role="list">
     {%- for tile in home.tiles %}
     {%- include promo-tile.html tile=tile %}

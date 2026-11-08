@@ -114,7 +114,7 @@ noindex: true
 <p class="sg__note">Ornament height is a token (<code>--divider-ornament-height</code>: 42px at 640px and up, 32px below); the rules are drawn at the same scale so they match the ornament.</p>
 {% include divider.html ornament=true %}
 <div style="max-width:320px;margin: var(--space-150) auto 0">{% include divider.html ornament=true %}</div>
-<h3 class="subhead s-100">Plain rule (every divider after the first on a page)</h3>
+<h3 class="subhead s-100">Plain rule (the default; pass <code>ornament=true</code> for the ornament)</h3>
 {% include divider.html %}
 </section>
 

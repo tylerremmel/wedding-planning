@@ -69,15 +69,24 @@
       }
     });
   });
-  if (window.location.hash) {
-    var wanted = sections.filter(function (s) {
+  function sectionForHash() {
+    return sections.filter(function (s) {
       return "#" + s.heading.id === window.location.hash;
     })[0];
+  }
+  if (window.location.hash) {
+    var wanted = sectionForHash();
     if (wanted)
       window.requestAnimationFrame(function () {
         goTo(wanted, false);
       });
   }
+  /* Back/forward between the hashes pushed above: land on that section. With no matching section
+     (back to the page's original URL) the browser's own scroll restoration applies. */
+  window.addEventListener("popstate", function () {
+    var target = sectionForHash();
+    if (target) goTo(target, false);
+  });
 
   /* ---- Fade in after the first divider ---- */
   var sentinel = document.querySelector("[data-sticky-sentinel]");

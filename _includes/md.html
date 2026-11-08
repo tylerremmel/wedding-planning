@@ -1,6 +1,7 @@
 {%- comment -%}
   Renders editor-written text. Params: text (markdown), inline=true to drop the wrapping <p>.
-  Any "TK" (to come) in the text is highlighted so unwritten content can't slip through unnoticed.
+  Any "TK" (to come) in the text is highlighted so unwritten content can't slip through unnoticed
+  (highlight_tk only touches standalone TK in visible text, never URLs, attributes or words like "ATKins").
 {%- endcomment -%}
-{%- assign html = include.text | markdownify | replace: 'TK', '<mark class="tk">TK</mark>' -%}
-{%- if include.inline -%}{{ html | remove: '<p>' | remove: '</p>' | strip }}{%- else -%}{{ html }}{%- endif -%}
+{%- assign html = include.text | markdownify | highlight_tk -%}
+{%- if include.inline -%}{{ html | replace: '</p>', ' ' | remove: '<p>' | strip }}{%- else -%}{{ html }}{%- endif -%}

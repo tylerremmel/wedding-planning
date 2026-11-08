@@ -19,7 +19,7 @@ hero:
 
 <mark class="tk">TK</mark> (a short intro before the sections below)
 
-{% include divider.html sentinel=true %}
+{% include divider.html ornament=true sentinel=true %}
 
 {% include image-group.html group=site.data.story_images.first_kiss edit_path="_data/story_images.yml" %}
 
