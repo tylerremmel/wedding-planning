@@ -1,0 +1,46 @@
+---
+layout: null
+---
+{%- comment -%}
+  Everything the travel map script needs, built from _data/travel_map.yml (points and text) and
+  _data/travel_routes.json (route lines). Popover text is rendered here so markdown and TK work as everywhere else.
+{%- endcomment -%}
+{%- assign map = site.data.travel_map -%}
+{
+  "origins": [
+    {%- for o in map.origins %}
+    {%- capture details %}{% include md.html text=o.details %}{% endcapture %}
+    {
+      "id": {{ o.id | jsonify }},
+      "name": {{ o.name | jsonify }},
+      "label": {{ o.label | jsonify }},
+      "icon": {{ o.icon | jsonify }},
+      "latlng": [{{ o.lat }}, {{ o.lng }}],
+      "route": {{ o.route | jsonify }},
+      "nudge": {{ o.nudge | default: 0 }},
+      "html": {{ details | strip | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ],
+  "destination": {{ map.destination | jsonify }},
+  "through_routes": [
+    {%- for t in map.through_routes %}{{ t.route | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor -%}
+  ],
+  "places": [
+    {%- for p in map.places %}
+    {%- capture details %}{% include md.html text=p.details %}{% endcapture %}
+    {
+      "id": {{ p.id | jsonify }},
+      "name": {{ p.name | jsonify }},
+      "label": {{ p.label | jsonify }},
+      "icon": {{ p.icon | jsonify }},
+      "latlng": [{{ p.lat }}, {{ p.lng }}],
+      "address": {{ p.address | jsonify }},
+      "side": {{ p.side | default: "right" | jsonify }},
+      "nudge": {{ p.nudge | default: 0 }},
+      "html": {{ details | strip | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ],
+  "routes": {{ site.data.travel_routes | jsonify }}
+}

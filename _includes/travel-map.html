@@ -1,0 +1,33 @@
+{%- comment -%}
+  Travel map (assets/js/travel-map.js builds it with Leaflet; content is in _data/travel_map.yml).
+  Params:
+    mode    routes | local | toggle (both, with tabs; the map follows the reader's scroll until a tab is picked)
+    sticky  true to stay in view while its .map-split is on screen (wide screens)
+    show    narrow | wide to limit the map to one side of the 960px breakpoint (default: both)
+    local_from  (toggle maps) id of the heading where the map switches to the local view as the reader scrolls
+  Without JavaScript the map is hidden; the page text carries everything it shows.
+{%- endcomment -%}
+{%- assign tm_mode = include.mode | default: "routes" -%}
+{%- assign tm_class = "travel-map" -%}
+{%- if include.sticky %}{% assign tm_class = tm_class | append: " travel-map--sticky" %}{% endif -%}
+{%- if include.show %}{% assign tm_class = tm_class | append: " travel-map--" | append: include.show %}{% endif -%}
+{%- assign tm_label = "Map of driving routes to Waterford, Maine" -%}
+{%- if tm_mode == "local" %}{% assign tm_label = "Map of wedding locations near Waterford, Maine" %}{% endif -%}
+{%- if tm_mode == "toggle" %}{% assign tm_label = "Map of Waterford, Maine and the routes there" %}{% endif -%}
+<div class="{{ tm_class }}" data-travel-map="{{ tm_mode }}" data-src="{{ '/assets/data/travel-map.json' | relative_url }}" data-icons="{{ '/assets/icons/' | relative_url }}"{% if include.local_from %} data-local-from="{{ include.local_from }}"{% endif %} role="region" aria-label="{{ tm_label }}" {% include edit-attr.html path="_data/travel_map.yml" %}>
+  {%- if tm_mode == "toggle" %}
+  <fieldset class="travel-map__tabs">
+    <legend class="visually-hidden">Map view</legend>
+    {%- assign tm_tabs = "routes:Traveling there,local:Once you’re there" | split: "," -%}
+    {%- for tab in tm_tabs %}
+    {%- assign tm_tab = tab | split: ":" %}
+    <label class="travel-map__tab">
+      <input class="visually-hidden" type="radio" name="travel-map-view" value="{{ tm_tab[0] }}"{% if forloop.first %} checked{% endif %}>
+      <svg class="travel-map__tab-shape" viewBox="0 0 2082.15 400" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2082.15,0l-451.59,377.51c-17.38,14.53-39.32,22.49-61.98,22.49H513.57c-22.66,0-44.59-7.96-61.98-22.49L0,0h2082.15Z" fill="currentColor"/></svg>
+      <span class="travel-map__tab-text label s-087">{{ tm_tab[1] }}</span>
+    </label>
+    {%- endfor %}
+  </fieldset>
+  {%- endif %}
+  <div class="travel-map__canvas"></div>
+</div>

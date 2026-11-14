@@ -235,6 +235,25 @@
   --image-ratio-pair: 3 / 4;
   --image-ratio-single: 4 / 3;
 
+  /* ---------- Travel map ----------
+     Built from the scheme-following --sapphire-N ramp, so routes and markers flip with the basemap
+     (light Positron / dark Dark Matter). */
+  --bp-split: 960px; /* documentation only: where .map-split goes side by side */
+  --map-route-1: var(--sapphire-700);
+  --map-route-2: var(--sapphire-500);
+  --map-route-3: var(--sapphire-900);
+  --map-route-weight: 4px;
+  --map-casing: var(--surface); /* halo under each route line */
+  --map-casing-weight: 8px;
+  --map-marker-bg: var(--sapphire-600);
+  --map-marker-fg: var(--white);
+  --map-marker-size: 32px;
+  --map-destination-size: 40px;
+  --map-dimmed: 0.3; /* other routes and origins while a popover is open */
+  --map-active-scale: 1.5; /* icon on hover, focus and while its popover is open */
+  --map-scale-duration: 0.3s;
+  --map-min-height: 480px;
+
   /* ---------- Motion ---------- */
   --fade-duration: 300ms;
 

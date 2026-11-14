@@ -436,6 +436,282 @@ img[data-alt-missing] {
   }
 }
 
+/* ---------- Map split ----------
+   A map beside text: side by side from 960px (--bp-split), map stacked above the text below that.
+     <div class="map-split">
+     {% include travel-map.html … %}
+     <div class="map-split__text content" markdown="1"> …markdown… </div>
+     </div>
+   The split itself is full width; blocks in the text column follow the usual column rules within their half.
+   Without JavaScript the map is hidden and the text is an ordinary column. */
+.content > .map-split {
+  max-width: none;
+  padding: 0;
+}
+.map-split > .travel-map {
+  max-width: var(--block-max);
+  margin-inline: auto;
+  padding: 0 var(--space-150) var(--paragraph-spacing);
+}
+@media (min-width: 960px) {
+  .js .map-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .js .map-split > .travel-map {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .js .map-split > .travel-map .travel-map__canvas {
+    flex: 1;
+    aspect-ratio: auto;
+    min-height: var(--map-min-height);
+  }
+  /* Pinned while the split is on screen; it scrolls away with the split's last section. */
+  .js .map-split > .travel-map--sticky {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/* ---------- Travel map (see travel-map.js) ---------- */
+.travel-map {
+  position: relative;
+}
+html:not(.js) .travel-map {
+  display: none;
+}
+@media (max-width: 959px) {
+  .travel-map--wide {
+    display: none;
+  }
+}
+@media (min-width: 960px) {
+  .travel-map--narrow {
+    display: none;
+  }
+}
+.travel-map__canvas {
+  aspect-ratio: 4 / 5;
+  background: var(--placeholder);
+}
+.travel-map[data-travel-map="local"] .travel-map__canvas {
+  aspect-ratio: 1;
+}
+
+/* Tabs: the header tab's shape, hanging from the top edge of the map. */
+.travel-map__tabs {
+  position: absolute;
+  z-index: 1000; /* above Leaflet's panes and popups */
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.travel-map__tab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 240px;
+  height: 48px;
+  padding-bottom: 4px;
+  color: var(--tab-bg);
+  cursor: pointer;
+  transition: color var(--fade-duration) ease;
+}
+.travel-map__tab:hover {
+  color: var(--header-bg);
+}
+.travel-map__tab:has(input:checked) {
+  color: var(--tab-bg-hover);
+}
+.travel-map__tab:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.travel-map__tab-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.travel-map__tab-text {
+  position: relative;
+  color: var(--text-on-header);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Routes. Leaflet writes stroke attributes; these rules override them. */
+.travel-map__route,
+.travel-map__casing {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.travel-map__casing {
+  stroke: var(--map-casing);
+  stroke-width: var(--map-casing-weight);
+  stroke-opacity: 1;
+}
+.travel-map__route {
+  stroke-width: var(--map-route-weight);
+  stroke-opacity: 1;
+  transition: stroke-opacity var(--map-scale-duration) ease-in-out;
+}
+.travel-map__route--portland {
+  stroke: var(--map-route-1);
+}
+.travel-map__route--boston {
+  stroke: var(--map-route-2);
+}
+.travel-map__route--south {
+  stroke: var(--map-route-3);
+}
+.travel-map__route.is-dimmed {
+  stroke-opacity: var(--map-dimmed);
+}
+
+/* Markers: Leaflet places a zero-size element on the point; the badge is centered on it and the label sits
+   beside it. --nudge shifts icons that share a spot (PWM and PTC) apart. */
+.travel-map__marker {
+  --size: var(--map-marker-size);
+  width: 0;
+  height: 0;
+}
+.travel-map__marker--destination {
+  --size: var(--map-destination-size);
+}
+.travel-map__marker:focus-visible {
+  outline: none; /* drawn on the badge instead */
+}
+.travel-map__pin {
+  position: absolute;
+  top: 0;
+  left: var(--nudge, 0px);
+  transition: opacity var(--map-scale-duration) ease-in-out;
+}
+.travel-map__marker.is-dimmed .travel-map__pin {
+  opacity: var(--map-dimmed);
+}
+.travel-map__badge {
+  position: absolute;
+  top: calc(var(--size) / -2);
+  left: calc(var(--size) / -2);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--map-marker-bg);
+  box-shadow: 0 0 0 2px var(--map-casing);
+  transition: transform var(--map-scale-duration) ease-in-out;
+}
+.travel-map__glyph {
+  position: absolute;
+  inset: 22%;
+  background: var(--map-marker-fg);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+.travel-map__label {
+  position: absolute;
+  top: 0;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  white-space: nowrap;
+  transform: translateY(-50%);
+  transition: transform var(--map-scale-duration) ease-in-out;
+}
+.travel-map__label--right {
+  left: calc(var(--size) / 2 + 6px);
+}
+.travel-map__label--left {
+  right: calc(var(--size) / 2 + 6px);
+}
+.travel-map__marker:is(:hover, :focus-visible, .is-active) .travel-map__badge {
+  transform: scale(var(--map-active-scale));
+}
+/* Move the label out by the badge's growth so it isn't covered. */
+.travel-map__marker:is(:hover, :focus-visible, .is-active)
+  .travel-map__label--right {
+  transform: translate(
+    calc((var(--map-active-scale) - 1) * var(--size) / 2),
+    -50%
+  );
+}
+.travel-map__marker:is(:hover, :focus-visible, .is-active)
+  .travel-map__label--left {
+  transform: translate(
+    calc((var(--map-active-scale) - 1) * var(--size) / -2),
+    -50%
+  );
+}
+.travel-map__marker:focus-visible .travel-map__badge {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Popovers and Leaflet's controls, in the site's colors. */
+.travel-map .leaflet-popup-content-wrapper,
+.travel-map .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.3);
+}
+.travel-map .leaflet-popup-content-wrapper {
+  border-radius: 4px;
+}
+.travel-map .leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: var(--space-100) var(--space-200) var(--space-100) var(--space-100);
+}
+.travel-map .leaflet-popup-content p {
+  margin: 0;
+}
+.travel-map__popup-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* Popover text is a step below body size, so it fits a phone-sized map. */
+.travel-map__popup-details > * {
+  font-size: var(--step-087);
+}
+.travel-map .leaflet-popup-content a,
+.travel-map .leaflet-control-attribution a {
+  color: inherit;
+}
+.travel-map .leaflet-container a.leaflet-popup-close-button {
+  color: var(--text);
+}
+.travel-map .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-map__tab,
+  .travel-map__route,
+  .travel-map__pin,
+  .travel-map__badge,
+  .travel-map__label {
+    transition: none;
+  }
+}
+
 /* ---------- Styleguide ---------- */
 .sg {
   max-width: 1100px;
