@@ -4,10 +4,10 @@
 #
 #   ruby scripts/fetch-travel-routes.rb
 #
-# Reads the points in _data/travel_map.yml, asks the public OSRM demo server for a driving route from each
-# route's first origin (or each through route's `from` and its own `via` points) through the shared `via` points
-# to the destination, simplifies each line and writes _data/travel_routes.json. It also prints OSRM's distance and time for reference only:
-# the popovers use the figures from the page copy, so the map never disagrees with the text.
+# Reads `routes` in _data/travel_map.yml, asks the public OSRM demo server for a driving route from each route's
+# `from` through its own `via` points and the shared `via` points to the destination, and writes the simplified
+# lines to _data/travel_routes.json. A route with `joins` is cut off where it first meets that route, so the map
+# never draws two lines on top of each other. OSRM's distance and time are printed for reference only.
 
 require "json"
 require "net/http"
@@ -19,6 +19,7 @@ DATA = YAML.load_file(File.join(ROOT, "_data/travel_map.yml"))
 OUT = File.join(ROOT, "_data/travel_routes.json")
 OSRM = "https://router.project-osrm.org/route/v1/driving"
 TOLERANCE = 0.0004 # degrees (about 40 m); larger = fewer points
+JOIN_DISTANCE = 0.0003 # degrees (about 30 m): closer than this to the joined route counts as on it
 
 def route(*points)
   path = points.map { |p| "#{p['lng']},#{p['lat']}" }.join(";")
@@ -66,16 +67,26 @@ def to_latlngs(coords)
   simplify(coords, TOLERANCE).map { |lng, lat| [lat.round(5), lng.round(5)] }
 end
 
+# The first point of `coords` that lies on `other` (both [lng, lat]); everything after it is dropped.
+def cut_at_join(coords, other)
+  index = coords.index do |p|
+    other.each_cons(2).any? { |a, b| distance_to_segment(p, a, b) <= JOIN_DISTANCE }
+  end
+  abort "The route never meets the route it joins." unless index
+  coords[0..index]
+end
+
 destination = DATA["places"].find { |p| p["id"] == DATA["destination"] } or abort "No place matches `destination`."
+full = {}
 routes = {}
 
-starts = DATA["origins"].group_by { |o| o["route"] }.transform_values { |origins| [origins.first] }
-(DATA["through_routes"] || []).each { |t| starts[t["route"]] = [t["from"], *t["via"]] }
-
-starts.each do |name, points|
-  coords, meters, seconds = route(*points, *DATA["via"], destination)
+# Routes that others join go first, so they're there to cut against.
+DATA["routes"].sort_by { |_, r| r["joins"] ? 1 : 0 }.each do |name, r|
+  coords, meters, seconds = route(r["from"], *r["via"], *DATA["via"], destination)
+  full[name] = coords
+  coords = cut_at_join(coords, full.fetch(r["joins"])) if r["joins"]
   routes[name] = to_latlngs(coords)
-  puts format("%-10s %4d points  %5.1f mi  %d h %02d min (OSRM, for reference)",
+  puts format("%-10s %4d points  %5.1f mi  %d h %02d min to the Inne (OSRM, for reference)",
               name, routes[name].length, meters / 1609.344, seconds / 3600, (seconds % 3600) / 60)
   sleep 1 # be polite to the demo server
 end
