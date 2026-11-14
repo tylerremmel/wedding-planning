@@ -258,6 +258,11 @@
     --space-500
   ); /* around the map and the text beside it, side by side (80px) */
   --map-min-height: 400px;
+  --map-spinner-size: 32px;
+  --map-spinner-weight: 3px;
+  --map-spinner-speed: 0.9s;
+  --map-error-bg: var(--sapphire-800-static);
+  --map-error-ink: var(--white);
   --map-fade: var(
     --fade-duration
   ); /* labels, routes and icons fading between views */

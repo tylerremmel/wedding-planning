@@ -522,6 +522,52 @@ html:not(.js) .travel-map {
   flex: 1;
   background: var(--placeholder);
 }
+/* Loading: a spinner over the frame until the map is built. If its data fails to load, a message instead. */
+.travel-map__loading,
+.travel-map__error {
+  position: absolute;
+  inset: 0;
+}
+.travel-map__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.travel-map__spinner {
+  width: var(--map-spinner-size);
+  height: var(--map-spinner-size);
+  border: var(--map-spinner-weight) solid var(--map-ink);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: travel-map-spin var(--map-spinner-speed) linear infinite;
+}
+@keyframes travel-map-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.travel-map__error {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: var(--space-150);
+  background: var(--map-error-bg);
+  color: var(--map-error-ink);
+  text-align: center;
+}
+.travel-map.is-ready .travel-map__loading,
+.travel-map.is-failed .travel-map__loading {
+  display: none;
+}
+.travel-map.is-failed .travel-map__error {
+  display: flex;
+}
+@media (prefers-reduced-motion: reduce) {
+  .travel-map__spinner {
+    animation-duration: 3s;
+  }
+}
 .travel-map figcaption {
   margin-top: 6px;
 }
