@@ -5,7 +5,7 @@ first_kiss:
   caption: "Jenna and Tyler’s first documented kiss."
   images:
     - src: first-photo-kiss.jpg
-      alt: TK
+      alt: Jenna and Tyler kiss at the National Arboretum in Washington, D.C.
       width: 1200
       height: 1600
 
@@ -18,9 +18,9 @@ glacier:
       height: 1199
 
 proposal:
-  caption: TK
+  caption: null
   images:
     - src: engagement-moment.jpg
-      alt: TK
+      alt: Tyler gets down on one knee and presents the ring as he proposes to Jenna.
       width: 1600
       height: 1312

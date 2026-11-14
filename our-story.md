@@ -6,7 +6,7 @@ hero:
   src: engagement-steps.jpg
   width: 1600
   height: 1067
-  alt: TK
+  alt: Jenna, Tyler and Pigs sit on the steps outside Tyler's old apartment building after getting engaged on March 30, 2025.
 ---
 
 <!-- Editing guide: this page is plain text with a few "include" lines. Edit the sentences freely.
@@ -31,13 +31,57 @@ Bumble. Jenna thought Tyler was very hot and his profile made her laugh. It said
 
 {% include divider.html %}
 
-{% include image-group.html group=site.data.story_images.glacier edit_path="_data/story_images.yml" %}
+## The ring
 
-## Milestones
+The ring features two stones in the “_toi et moi_” style and is layered with symbolism.
 
-<mark class="tk">TK</mark> (a short note introducing the timeline)
+The stones are a mix of “old and new,” representing the love before them and the love that will continue to grow with them.
 
-{% include timeline.html %}
+<!-- `SCROLLYTELLING SEQUENCE` -->
+
+On the left is an heirloom round-cut diamond that was the gift of Jenna’s maternal grandparents, Anna and Frank Nesi.
+
+On the right is a pear-shaped Montana sapphire. This is an homage to the couple’s first big hiking trip together to Glacier National Park in August 2021.
+
+The two stones are set such that they rest on one another, just like Jenna and Tyler rely on each other for support.
+
+The sapphire is oriented outward and upward with a thick prong that points towards their future trajectory together.
+
+The gold band’s swooping form wraps around Jenna’s finger like a sweet and safe embrace from Tyler.
+
+<!-- `END OF SCROLLYTELLING SEQUENCE` -->
+
+The style inspiration goes back to 2022. Jenna is a huge fan of _The New York Times_’ Style section, especially their wedding content. She loves vows, mini vows, Modern Love stories, tiny love stories — you name it.
+
+One day, Jenna was reading about engagement ring trends and [saw a style she’d never seen before](https://www.nytimes.com/2022/11/10/style/two-stone-bauble-engagement-ring.html): “_toi et moi_,” French for “you and me.” Jenna and Tyler knew even then that they would someday get married, but they were still years away from their engagement.
+
+Nonetheless, she filed this knowledge away for the future, appreciating that it would give each partner a physical representation in the ring.
+
+Jenna and Tyler regularly visited Jenna’s maternal grandmother Anna Nesi whenever they returned to Connecticut, as Jenna and Anna were very close. Her name is actually a portmanteau of Genevieve, her paternal grandmother’s name, and Anna.
+
+Whenever they would visit, Anna asked the couple when they were getting married. She insisted upon giving Jenna her own engagement ring from her marriage of more than 60 years to Frank Nesi, who passed away in December 2020.
+
+In Anna’s words, the couple could “use it or sell it, whatever they wanted.” Jenna was in disbelief. Of course she would want to wear the diamond!
+
+Jenna and Tyler vacationed for a week in the woods of the Boundary Waters of northeastern Minnesota. Over the course of this trip — a road trip that began and ended in Washington, D.C. — they had deep conversations about their future as a couple. So much so that they came back with the giddiness of a newly-engaged couple.
+
+<!-- <mark class=”tk”>TK (photo of grumpy jenna?????)</mark> -->
+
+They were not, in fact, engaged yet.
+
+Jenna asked her mother, Mary Grande about the ring a few months later, at which point Mary retrieved it for them.
+
+She found it in an old Synthroid medicine bottle, where Anna had kept it for years. Jenna and Tyler laughed at the casualness of it.
+
+The ring stayed in that bottle for another year in Jenna’s nightstand while ideas for a wedding continued to percolate.
+
+Like all things in life, the couple knew they would design their engagement ring together.
+
+In September 2024, Jenna and Tyler met a new Jenna: their custom jewelry designer, [Jenna Jensen](https://www.lpriorijewelry.com/blogs/our-team/jenna-bio) at L.Priori in the Georgetown neighborhood of Washington, D.C.
+
+Over the course of four months, Jenna and Tyler worked with Jenna J. to learn about cuts, grades, colors and different types of stones, building around Anna’s diamond. The couple found purpose in each detail, ensuring that the final design told a story.
+
+They were able to show Anna renderings of the ring design in November 2025. She passed away two weeks before Tyler proposed to Jenna, but they take comfort in knowing that she still got to see a piece of their happily ever after.
 
 {% include divider.html %}
 
@@ -45,40 +89,50 @@ Bumble. Jenna thought Tyler was very hot and his profile made her laugh. It said
 
 ## The proposal
 
-After designing their ring together in the last few months of 2025, Jenna told Tyler not to tell her when the ring was ready, which was anticipated to be the end of December, early January. She did not want to know if the ring was in the apartment, because she would definitely be tempted to look for it. Jenna thought MAYBE Tyler would propose in Wisconsin when they were back for a bit in January 2025, but no such luck. Tyler soon began planting the seeds of spending some time on Capitol Hill, where the couple had met, shared their first kiss, and spent a lot of time the first year of their relationship.
+Jenna told Tyler not to tell her when the ring was ready in December 2025. She did not want to know if the ring was in the apartment — if she knew, she would be tempted to look for it.
 
-Then, one Sunday morning in March, during peak bloom of Cherry Blossom season, Tyler, Jenna, and Pigs In A Blanket took a drive across town to Capitol Hill. They strolled through their old neighborhood, and soon ended up in Stanton Park in front of the Nathaniel Greene statue. Tyler stopped Jenna and Pigs in the same spot where Jenna and Tyler shared their first kiss, and spoke lovingly of all that they’d done together through their relationship, and soon dropped to one knee. With a photographer snapping away (Tyler sneakily hired one!), Pigs chose to make the moment about himself and jumped into Tyler’s arms while he was down on one knee. Through the laughter, Tyler asked Jenna to marry him, and of course she said yes! Afterwards, they took some casual photos around Capitol Hill with Pigs, picked up breakfast from their favorite spot Jimmy T’s, and went home as an engaged couple!
+Jenna supposed that _maybe_ Tyler would propose in Wisconsin when they were visiting his family in January 2025, but he had other ideas.
 
-### Bonus content!
+In February, Tyler began pitching the idea of spending some time on Capitol Hill, where the couple had met, shared their first kiss, and spent a lot of time the first year of their relationship.
 
-This ring design goes further back than just one day in March 2025. Oh no, to properly set the scene, we need to go back to 2022.
+On a Sunday morning in March (coincidentally during the cherry blossom peak bloom), Tyler, Jenna, and Pigs In A Blanket took a drive across town. They strolled through their old neighborhood and made their way to Stanton Park.
 
-Jenna is a huge fan of the New York Times style section. Specifically, their wedding content. She loves vows, mini vows, Modern Love stories, tiny love stories—you name it. And one day, Jenna was [reading](https://www.nytimes.com/2022/11/10/style/two-stone-bauble-engagement-ring.html) about engagement ring trends, and saw a style she’d never seen before: “toi et moit,” which is French for “you and me.” And while Jenna and Tyler knew one day they’d get married, she filed away this style of ring as something she would want and to tell Tyler about when the time came, because in her view, it would give both Jenna and Tyler representation on the ring.
+Tyler stopped Jenna and Pigs in the same spot north of the Nathaniel Greene statue where the couple shared their first kiss. He spoke lovingly of all that they’d done together through their relationship, and dropped to one knee.
 
-Jenna and Tyler were visiting Jenna’s maternal grandmother Anna Nesi (1/2 of Jenna’s namesake: Genevieve + Anna = Jenna). Jenna and Tyler regularly visited Anna when they were back in Connecticut, as Jenna and Anna were very close. During these visits, Anna would ask Jenna and Tyler when they were getting married, and that when they decided to go forward with that, Jenna would be given Anna’s engagement ring from her 60+ year marriage to Jenna’s paternal grandfather Frank Nesi (who passed away in December 2020). In Anna’s words, the couple could “use it or sell it, whatever they wanted,” which was insane to Jenan because of course she would want to wear the diamond! Jenna told her mom, Mary, about this, and Mary retrieved the ring for Jenna and Tyler during one of their fall visits in 2023. It was given to her in an old Synthroid medicine bottle. Jenna and Tyler laughed at the casualness of it, and the ring stayed in that bottle, in Jenna’s nightstand, for another year.
+Pigs chose to make the moment about himself and jumped into Tyler’s arms while he was down on one knee, captured by a photographer that Tyler had hiding in plain sight.
 
-Then in September 2024, Jenna and Tyler met with a new Jenna: [Jenna Jensen](https://www.lpriorijewelry.com/blogs/our-team/jenna-bio) with L.Priorir in Georgetown, DC. Like pretty much all things in life, Jenna and Tyler knew they would design the future engagement ring together. And so, over the course of four months, Jenna and Tyler would meet with Jenna J., discussing what kind of stones and details would accompany Anna’s diamond on Jenna’s ring. It was a lot of decision making, but Jenna and Tyler found symbolism in every decision they made in designing the ring.
+Through the laughter, Tyler asked Jenna to marry him and of course she said yes!
 
-About the ring: The ring is unique with its two stones. The diamond makes up one half, with a Montana Sapphire as the second complimentary stone. This was the natural choice for the couple because their first big hiking trip was to Glacier National Park in Montana in August 2021
-
-- The stones are a mix of “old and new,” representing the love before them and the love that will continue to grow with them.
-- The two stones are resting on each other, just like Jenna and Tyler rely on each other for support
-- The Sapphire points outwards, pointing towards their future together
-- The gold band wraps around Jenna’s finger like a sweet and safe embrace from Tyler.
-- Unfortunately, Anna passed two weeks prior to Tyler proposing. While she never saw the physical ring, Jenna and Tyler showed her in November 2025 renderings of what the final ring would look like.
+Afterwards, they took some casual photos around Capitol Hill with Pigs, picked up breakfast from their favorite spot Jimmy T’s, and went home as an engaged couple.
 
 {% include divider.html %}
 
 ## The pig
 
-If you’re scrolling through this wedding website and wondering why there is a dog in so much of our materials, it’s because that’s not just any dog—that’s OUR BOY! Yes, we are the proud parents of three-year-old Pigs In A Blanket, our pitbull mix.
+If you’re scrolling through and wondering why a dog is everywhere — that’s not just any dog, THAT IS THE COUPLE’S BABY! Yes, Jenna and Tyler are the all-too-proud parents of three-year-old Pigs In A Blanket.
 
-After two years together, it finally seemed like the “right” time to adopt a dog. Pitbull mixes are Jenna’s FAVORITE type of dogs, and she spends a lot of free time looking up dogs in need of adoption or fostering.
+Pitbull mixes are Jenna’s favorite type of dogs, and she frequently spends her free time scrolling through dogs that need a home.
 
-One Saturday evening, while Tyler was working a late production shift, Jenna was scouring Wolf Trap Animal Rescue’s website, and saw Pigs In A Blanket. She was immediately smitten, and so was Tyler.
+While Tyler was working a late production shift one Saturday night, Jenna was scouring [Wolf Trap Animal Rescue’s website](https://wtarescue.com/our-mission/) and first saw a photo of then-puppy Pigs In A Blanket. She was immediately smitten, and so was Tyler.
 
-They reached out to the rescue and after a successful application and meet and greet with Foster Dad Joey, they brought Pigs home shortly after Thanksgiving!
+After two years together, it seemed like the right time to adopt a dog.
 
-Pigs is the silliest, loafiest, most loving dog. He accompanies Jenna to the office once or twice a week. He loves to play just as much as he loves to cuddle with Tyler and Jenna. He doesn’t like the rain and will try <mark class="tk">TK</mark>
+They reached out to the rescue right away and put in an application. After meeting in person with Pigs’ foster dad Joey, they brought him home in late November 2023.
 
-He is a protector and lover boy at heart, and it feels impossible to imagine our family without him now!
+Pigs is the silliest, loafiest, most loving dog.
+
+He accompanies Jenna to the office a few times each week.
+
+He loves to play just as much as he loves to cuddle with Tyler and Jenna.
+
+He doesn’t like the rain and will refuse to go outside in it, but will also spend all day out there getting wet while sniffing one particularly interesting blade of grass.
+
+But he is a protector and lover boy at heart, and Jenna and Tyler can’t imagine their family without him.
+
+{% include divider.html %}
+
+## Milestones
+
+Looking for a TLDR version of that narrative?
+
+{% include timeline.html %}

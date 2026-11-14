@@ -5,7 +5,7 @@ lead:
   - "We know — you can’t believe that Jenna Grande and Tyler Remmel aren’t married yet."
   - "Do you believe us now?"
 
-body: "We figured that it was about time that we tied the knot. TK (more of a cheeky welcome message here)"
+body: "They figured that it was about time that the couple tied the knot. TK (more of a cheeky welcome message here)"
 
 date_line: "Saturday, July 31, 2027 in Waterford, Maine"
 
@@ -14,13 +14,22 @@ date_line: "Saturday, July 31, 2027 in Waterford, Maine"
 tiles:
   - title: "Our story"
     url: /our-story/
-    text: "How we met, our first impressions of one another, major milestones in our relationship, the proposal story … and the Pig of it all."
+    image:
+      src: engagement-steps.jpg
+      alt: Jenna, Tyler and Pigs sit on the steps outside Tyler’s old apartment building after getting engaged on March 30, 2025.
+    text: "How we met, major milestones in our relationship, the proposal story … and the Pig of it all."
   - title: "The wedding"
     url: /the-wedding/
-    text: "TK"
+    image:
+      src: jt-at-waterford.jpg
+      alt: Jenna and Tyler paused for a selfie by the pond during their visit to The Waterford Inne in August 2026.
+    text: "Everything you need to know about the weekend programming, including key locations and timing."
   - title: "Getting there"
     url: /getting-there/
-    text: "TK"
+    image:
+      src: waterford-handout-1.jpg
+      alt: An aerial view of The Waterford Inne, set in a forest with mountains visible in the distance.
+    text: "Information and recommendations about booking your travel and accommodations."
   - title: "What to know"
     url: /what-to-know/
-    text: "TK"
+    text: "Learn more about the dress code and whether the wedding will be kid-friendly, along with other FAQs."

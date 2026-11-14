@@ -14,15 +14,15 @@
   text: "Jenna and Tyler become “officially official,” AKA: declare each other to become exclusively boyfriend/girlfriend."
   images:
     - src: official-dating-jenna.jpg
-      alt: TK
+      alt: Jenna beams with pride on one side of the table during breakfast at Jimmy T's Diner on June 6, 2021.
       width: 1200
       height: 1600
     - src: official-dating-tyler.jpg
-      alt: TK
+      alt: The mirrored view of Tyler on the other side of the table, doting over his newly-official girlfriend.
       width: 1199
       height: 1600
 - date: "Sometime at the end of June 2021"
-  text: "Jenna and Tyler officially\\* say “I love you.”"
+  text: 'Jenna and Tyler officially\* say "I love you."'
 - date: "July 4-6, 2021"
   text: "Tyler invites Jenna to join him on a trip to Pittsburgh and New York City to watch the Brewers play the Pirates and the Mets. This will be the first two games out of MANY the couple watches together, both on TV and in person."
 - date: "July 25, 2021"
@@ -31,6 +31,11 @@
 - date: "August 2021"
   iso: "2021-08"
   text: "Tyler and Jenna go to Glacier National Park for their first big hiking/camping trip together. It’s also the month they decide to move in together when their respective leases are up in May/June 2022."
+  images:
+    - src: milestone-glacier.jpg
+      alt: Jenna and Tyler alongside Swiftcurrent Lake at the start of a day-long hike up the Grinnell Glacier Trail.
+      width: 1600
+      height: 1199
 - date: "Thanksgiving 2021"
   text: "Jenna meets Roger, Davis, and Paige for the first time"
 - date: "May 31, 2022"
@@ -38,10 +43,10 @@
   text: "Tyler and Jenna close on their apartment"
 - date: "June 26, 2022"
   iso: "2022-06-26"
-  text: "Tyler and Jenna move into their apartment, affectionately named “33 Rock”"
+  text: 'Tyler and Jenna move into their apartment, affectionately named "33 Rock"'
 - date: "July 2023"
   iso: "2023-07"
-  text: "Jenna and Tyler go on a road trip, where they end up spending a week in the Boundary Waters in Minnesota. On that trip, they discussed their life together so far and what else they imagined their future together would look like. While the couple always knew they’d get married, both Jenna and Tyler think of this trip as the one they really got “engaged” on."
+  text: 'Jenna and Tyler go on a road trip, where they end up spending a week in the Boundary Waters in Minnesota. On that trip, they discussed their life together so far and what else they imagined their future together would look like. While the couple always knew they’’d get married, both Jenna and Tyler think of this trip as the one they really got "engaged" on.'
 - date: "Thanksgiving 2023"
   text: "Paige and Roger come to Connecticut to meet Jenna’s family. Jenna, Tyler, Paige, and Bob run the Manchester Road Race, and the families attend the Branford Holiday Tree Lighting and Parade together."
 - date: "November 28, 2023"
@@ -49,7 +54,7 @@
   text: "Tyler and Jenna bring home their 3-month-old Pitbull mix puppy Pigs In A Blanket"
 - date: "July 2024"
   iso: "2024-07"
-  text: "Mary and Bob fly out to Wisconsin to see the Remmel family, meet Davis, go to a Brewers game, and have custard for the first tim TK"
+  text: "Mary and Bob fly out to Wisconsin to see the Remmel family, meet Davis, go to a Brewers game, and have custard for the first time TK"
 - date: "August 26, 2024"
   iso: "2024-08-26"
   text: "Pigs In A Blanket turns one!"
