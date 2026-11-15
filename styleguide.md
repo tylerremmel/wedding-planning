@@ -148,7 +148,7 @@ noindex: true
 <div class="sg-table-wrap"><table class="sg-table">
 <thead><tr><th>Token</th><th>Value</th><th>Role</th></tr></thead>
 <tbody>
-<tr><td>--tab-rule-weight</td><td>4px</td><td>top rule thickness (stays 4px when the tab scales)</td></tr>
+<tr><td>--tab-rule-weight</td><td>5px</td><td>top rule thickness (stays 5px when the tab scales; at least 5px so the status bar tint element reaches it)</td></tr>
 <tr><td>--tab-logo-height, --tab-pad-y</td><td>30px, 5px (34px, 8px from 960px)</td><td>tab height = logo + 2 &times; pad</td></tr>
 <tr><td>--nav-height</td><td>the tab height (40px; 50px from 960px)</td><td>sticky blocks (the map) sit below it</td></tr>
 <tr><td>--tab-bg, --tab-bg-hover</td><td>see Color</td><td>tab fill, and on hover or focus</td></tr>

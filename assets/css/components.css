@@ -50,28 +50,28 @@
   left: 0;
   right: 0;
   z-index: 1;
-  /* The container covers the status bar strip and the whole tab (not just its in-flow bar, which the home page
-     doesn't have), so iOS Safari's fixed layer paints everything drawn in it: it doesn't paint children outside
-     the container's own box. Clicks pass through to the page except on the bar and the tab itself. */
-  padding-top: var(--safe-top);
-  height: calc(var(--safe-top) + var(--tab-h));
+  /* The container is as tall as the tab (not just its in-flow bar, which the home page doesn't have), so
+     iOS Safari's fixed layer paints everything drawn in it: it doesn't paint children outside the container's
+     own box. Clicks pass through to the page except on the bar and the tab itself. */
+  height: var(--tab-h);
   pointer-events: none;
 }
 .site-top > * {
   pointer-events: auto;
 }
-/* The page runs under the status bar (viewport-fit=cover, see head.html), so this strip fills it in the tab's
-   color, reading as the rule extended up. It is its own fixed element with a plain background-color, because
-   iOS Safari tints the status bar from the first fixed element at the top edge and ignores one that has no
-   background of its own, is see-through to clicks (pointer-events: none), or is only a pseudo-element. It
-   needs --safe-top to be more than 0, so it exists only where there's a status bar to paint. */
+/* Status bar tint (iOS Safari 26). The page runs under the status bar, but fixed elements start below it, so
+   nothing can be painted there. Safari tints the status bar from the first fixed element it finds about 4px
+   below the top edge, and skips one that is 10px thick or less, has no plain background-color, or is
+   see-through to clicks. The rule alone is a 4px SVG stroke, so this element stands in for it: 16px tall,
+   plain --tab-bg, and pulled up so only its bottom --tab-rule-weight shows (the rule's place). It sits over
+   the bar, which slides up behind it when hidden. */
 .site-status {
   position: fixed;
-  top: 0;
+  top: calc(var(--tab-rule-weight) - 16px);
   left: 0;
   right: 0;
-  z-index: 2; /* over the bar, which slides up behind it when hidden */
-  height: var(--safe-top);
+  z-index: 2;
+  height: 16px;
   background-color: var(--tab-bg);
 }
 .site-bar {
@@ -332,7 +332,7 @@
 .site-tab {
   --tab-fill: var(--tab-bg);
   position: absolute;
-  top: var(--safe-top);
+  top: 0;
   left: 0;
   right: 0;
   height: var(--tab-h);
@@ -472,8 +472,7 @@
 .site-footer {
   background: var(--footer-bg);
   color: var(--text-on-header);
-  padding: var(--space-225) var(--gutter)
-    calc(var(--space-225) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-225) var(--gutter);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -641,8 +640,7 @@ img[data-alt-missing] {
 /* Anything on the page can be a jump target; leave room for the fixed top bar above it (the tab is its tallest part). */
 .story > * {
   scroll-margin-top: calc(
-    var(--safe-top) + var(--tab-logo-height) + var(--tab-pad-y) * 2 +
-      var(--space-150)
+    var(--tab-logo-height) + var(--tab-pad-y) * 2 + var(--space-150)
   );
 }
 
@@ -786,10 +784,10 @@ img[data-alt-missing] {
   /* Pinned below the site nav while the split is on screen; it scrolls away with the split's last section. */
   .js .map-split > .travel-map--sticky {
     position: sticky;
-    top: calc(var(--safe-top) + var(--nav-height));
+    top: var(--nav-height);
     align-self: start;
-    height: calc(100vh - var(--safe-top) - var(--nav-height));
-    height: calc(100dvh - var(--safe-top) - var(--nav-height));
+    height: calc(100vh - var(--nav-height));
+    height: calc(100dvh - var(--nav-height));
   }
 }
 
