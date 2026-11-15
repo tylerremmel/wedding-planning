@@ -1,6 +1,6 @@
 /* ==========================================================================
    Components: header, footer, nav, page container, divider, styleguide helpers.
-   Uses tokens only. (Image group, timeline, sticky nav, promo tiles are added in later passes.)
+   Uses tokens only. (Image group, timeline, promo tiles are added in later passes.)
    ========================================================================== */
 
 /* ---------- Header ---------- */
@@ -23,7 +23,7 @@
   color: var(--text-on-header);
 }
 
-/* Everything in the page body (Leaflet's panes, the sticky section nav, timeline dots) keeps its own z-indexes
+/* Everything in the page body (Leaflet's panes, the top bar, timeline dots) keeps its own z-indexes
    inside this stacking context, so none of it can ever overlap the fixed top bar. */
 .site-main {
   isolation: isolate;
@@ -604,8 +604,8 @@ img[data-alt-missing] {
 .story {
   padding-block: var(--space-300) var(--page-bottom);
 }
-/* A block right after a divider starts its section: no extra padding above it, so the sticky-nav jump
-   (see sticky-nav.js) lands exactly on it. */
+/* A block right after a divider starts its section: no extra padding above it, so the top bar's section jump
+   (see top-bar.js) lands exactly on it. */
 .content > .divider + * {
   padding-top: 0;
 }
@@ -708,98 +708,6 @@ img[data-alt-missing] {
   display: flex;
   flex-direction: column;
   gap: var(--space-150);
-}
-
-/* ---------- Sticky section nav ---------- */
-.section-nav {
-  position: sticky; /* without JavaScript: a plain bar that stays in view */
-  top: 0;
-  z-index: 20;
-  background: var(--header-bg);
-  color: var(--text-on-header);
-}
-.section-nav__list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px var(--space-200);
-  min-height: var(--sticky-nav-height);
-  padding: 0 var(--gutter);
-}
-.section-nav a {
-  padding-block: 0;
-}
-.section-nav__toggle {
-  display: none;
-}
-
-/* With JavaScript: hidden until the first divider has scrolled away, then fades in. */
-.js .section-nav {
-  position: fixed;
-  inset: 0 0 auto 0;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--fade-duration) ease,
-    visibility 0s linear var(--fade-duration);
-}
-.js .section-nav.is-visible {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
-}
-
-@media (max-width: 639px) {
-  .js .section-nav__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-075);
-    width: 100%;
-    min-height: var(--sticky-nav-height);
-    padding: 0 var(--space-100);
-    border: 0;
-    background: none;
-    color: inherit;
-    cursor: pointer;
-  }
-  .section-nav__chevron {
-    transition: transform var(--fade-duration) ease;
-  }
-  .section-nav.is-open .section-nav__chevron {
-    transform: rotate(180deg);
-  }
-  .js .section-nav__list {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: var(--space-075);
-    padding: var(--space-075) var(--gutter) var(--space-100);
-    background: var(--sticky-nav-menu-bg);
-    color: var(--sticky-nav-menu-text);
-  }
-  .js .section-nav.is-open .section-nav__list {
-    display: flex;
-  }
-  .js .section-nav li[data-current] {
-    display: none;
-  }
-}
-
-/* Inert copy for the styleguide. */
-.js .section-nav.section-nav--static {
-  position: static;
-  opacity: 1;
-  visibility: visible;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js .section-nav,
-  .section-nav__chevron {
-    transition: none;
-  }
 }
 
 /* ---------- Map split ----------

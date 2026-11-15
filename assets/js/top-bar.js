@@ -6,7 +6,7 @@
    - On story pages the bar has a second set of links, the page's sections. Once the first divider
      ([data-sticky-sentinel]) has scrolled out of view above the viewport the bar shows the sections instead of
      the pages, with scroll-spy; scrolling back above it restores the pages. The section logic (jump to a
-     section's top, hash handling, scroll-spy) is carried over from sticky-nav.js. */
+     section's top, hash handling, scroll-spy) came from the old sticky section nav. */
 (function () {
   var nav = document.querySelector("[data-top-bar]");
   var toggle = nav && nav.querySelector(".site-bar__toggle");
@@ -143,6 +143,8 @@
     if (nav.getAttribute("data-mode") === mode) return;
     nav.setAttribute("data-mode", mode);
     nav.classList.add("is-swapped");
+    /* Both sets share is-open and the toggle's aria-expanded, so close the dropdown on every swap: it must
+       never be left open showing the other set's links. */
     setOpen(false);
     toggle.setAttribute(
       "aria-controls",

@@ -228,11 +228,6 @@
   /* A plain rule matches the ornament's stroke weight (0.25 of 11.29 units tall). */
   --divider-rule-weight: calc(var(--divider-ornament-height) * 0.25 / 11.29);
 
-  /* ---------- Sticky section nav ---------- */
-  --sticky-nav-height: 51px;
-  --sticky-nav-menu-bg: var(--sapphire-100);
-  --sticky-nav-menu-text: var(--sapphire-600);
-
   /* ---------- Timeline ---------- */
   --timeline-dot: 13px;
   --timeline-indent: var(--space-150); /* dot width + 11px gap */
@@ -247,10 +242,12 @@
 
   /* ---------- Travel map ----------
      Ink and paper swap between schemes: sapphire icons and text on white in light, white on sapphire in
-     dark. Routes (--map-route, set per scheme below) are sapphire-600 in light and the paler sapphire-400 in
+     dark. Routes (--map-route, set per scheme below) are sapphire-600 in light and the paler sapphire-300-static in
      dark. */
   --bp-split: 960px; /* documentation only: where .map-split goes side by side (landscape only) */
-  --nav-height: 50px; /* reserved for the coming sticky site nav; sticky blocks sit below it */
+  --nav-height: calc(
+    var(--tab-logo-height) + 2 * var(--tab-pad-y)
+  ); /* the top bar's height (the tab is its tallest part); sticky blocks sit below it */
   --map-tint: var(
     --sapphire-600-static
   ); /* the hue the gray map tiles take on */
@@ -433,13 +430,13 @@
 }
 
 /* Wide screens: the larger tab. Below this width the top bar uses its narrow layout (tab at the left, a dropdown),
-   which covers phones and portrait tablets. The split layout needs about 890px: the tab (312px) plus about 264px
+   which covers phones and portrait tablets. The split layout needs about 890px: the tab (260px) plus about 264px
    for the widest side (the two page links), plus gutters. 960px is also where the maps go side by side. */
 @media (min-width: 960px) {
   :root {
-    --tab-logo-height: 40px;
-    --tab-pad-y: 10px;
-    --tab-unit: 6.6667;
+    --tab-logo-height: 34px;
+    --tab-pad-y: 8px;
+    --tab-unit: 8;
   }
 }
 

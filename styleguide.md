@@ -49,7 +49,9 @@ noindex: true
 <tr><td>--text</td><td>sapphire-600 (5.4:1 on white)</td><td>white (16.4:1 on 950)</td></tr>
 <tr><td>--text-on-header</td><td>white (5.4:1 on 600)</td><td>white (9.8:1 on 800)</td></tr>
 <tr><td>--accent / --rule</td><td>sapphire-600</td><td>sapphire-300 (11.0:1 on 950)</td></tr>
-<tr><td>--header-bg / --footer-bg / --tab-bg</td><td>sapphire-600</td><td>sapphire-800</td></tr>
+<tr><td>--header-bg / --footer-bg</td><td>sapphire-600</td><td>sapphire-800</td></tr>
+<tr><td>--tab-bg (logo tab and top rule; also <code>theme-color</code>)</td><td>sapphire-500</td><td>sapphire-600</td></tr>
+<tr><td>--tab-bg-hover</td><td>sapphire-700-static</td><td>sapphire-800-static</td></tr>
 </tbody></table></div>
 </section>
 
@@ -90,7 +92,7 @@ noindex: true
 <tr><td>small</td><td>meta</td><td>087</td><td>087</td><td>provisional</td></tr>
 <tr><td>.label (dates, small titles)</td><td>meta, strong weight</td><td>100</td><td>100 (16px)</td><td>Figma 19:1187</td></tr>
 <tr><td>.meta s-100 (timeline text, quotes)</td><td>meta</td><td>100</td><td>100 (16px)</td><td>Figma 19:1187</td></tr>
-<tr><td>section nav links</td><td>meta (uppercase, +0.1em)</td><td>100</td><td>100 (16px)</td><td>Figma 19:1343, 76:1525</td></tr>
+<tr><td>top bar links</td><td>meta (uppercase, +0.1em)</td><td>100</td><td>100 (16px)</td><td>Figma 19:1343, 76:1525</td></tr>
 </tbody></table></div>
 <p class="sg__note" style="margin-top: var(--space-100)">Old Figma names → new steps: 100 → 100, 150 → 150, 200 → 200, 250 (48px) → 300; old 300 (64px) → 400.</p>
 </section>
@@ -141,9 +143,31 @@ noindex: true
 </section>
 
 <section>
-<h2 class="headline s-200">Sticky section nav</h2>
-<p class="sg__note">Desktop bar shown here (on the real page it is generated from the page's own <code>## headings</code>). On the real page it is hidden until the first divider scrolls out of view, then fades in. Below 640px it becomes the current section with a chevron; opening it lists the other sections. See it live on <a href="{{ '/our-story/' | relative_url }}">/our-story/</a>.</p>
-{% include section-nav.html static=true demo="How we met,Milestones,The proposal,The pig" %}
+<h2 class="headline s-200">Top bar and logo tab</h2>
+<p class="sg__note">Fixed to the top of every page (<code>_includes/top-bar.html</code>, <code>tab.html</code>), so it is not rendered here: see it live on <a href="{{ '/our-story/' | relative_url }}">/our-story/</a>. The tab and a 4px rule are one SVG, always visible. The page links (from <code>_data/navigation.yml</code>) appear once the hero has scrolled away: split around the tab from 960px wide, a dropdown below. On Our Story the links swap to the page's own sections after the first divider. The home page shows only the tab.</p>
+<div class="sg-table-wrap"><table class="sg-table">
+<thead><tr><th>Token</th><th>Value</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>--tab-rule-weight</td><td>4px</td><td>top rule thickness (stays 4px when the tab scales)</td></tr>
+<tr><td>--tab-logo-height, --tab-pad-y</td><td>30px, 5px (34px, 8px from 960px)</td><td>tab height = logo + 2 &times; pad</td></tr>
+<tr><td>--nav-height</td><td>the tab height (40px; 50px from 960px)</td><td>sticky blocks (the map) sit below it</td></tr>
+<tr><td>--tab-bg, --tab-bg-hover</td><td>see Color</td><td>tab fill, and on hover or focus</td></tr>
+<tr><td>--fade-duration, --bar-text-delay, --bar-reveal-delay</td><td>300ms, 250ms, 150ms</td><td>bar reveal timing</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2 class="headline s-200">Travel map</h2>
+<p class="sg__note">A static Leaflet picture on Getting there and The wedding (<code>_includes/travel-map.html</code>; see <code>docs/travel-routes-map.md</code>). Ink and paper swap between schemes: sapphire on white in light, white on sapphire in dark. Content is in <code>_data/travel_map.yml</code>.</p>
+<div class="sg-table-wrap"><table class="sg-table">
+<thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead>
+<tbody>
+<tr><td>--map-route</td><td>sapphire-600-static</td><td>sapphire-300-static</td></tr>
+<tr><td>--map-tab-bg / --map-tab-bg-hover</td><td>sapphire-200-static / 300-static</td><td>sapphire-800-static / 700-static</td></tr>
+<tr><td>--map-tab-active-bg / --map-tab-active-text</td><td colspan="2">sapphire-600-static / white</td></tr>
+<tr><td>--map-error-bg / --map-error-ink</td><td colspan="2">sapphire-800-static / white</td></tr>
+<tr><td>--map-pad, --map-min-height, --map-corner-inset</td><td colspan="2">80px, 400px, 20px</td></tr>
+</tbody></table></div>
 </section>
 
 </div>

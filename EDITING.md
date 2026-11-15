@@ -4,15 +4,16 @@ You only ever edit plain text files. Layout and styling are handled for you.
 
 ## Where things live
 
-| To change…                                  | Edit…                                                                 |
-| ------------------------------------------- | --------------------------------------------------------------------- |
-| Home page words, date line, tile text       | `_data/home.yml`                                                      |
-| Our Story prose                             | `our-story.md`                                                        |
-| Relationship milestones                     | `_data/milestones.yml`                                                |
-| First impressions                           | `_data/first_impressions.yml`                                         |
-| Our Story section names and the section nav | the `## Headings` in `our-story.md` (the nav builds itself from them) |
-| Photo groups and captions                   | `_data/story_images.yml`                                              |
-| Menu items                                  | `_data/navigation.yml`                                                |
+| To change…                                              | Edit…                                                                 |
+| ------------------------------------------------------- | --------------------------------------------------------------------- |
+| Home page words, date line, tile text                   | `_data/home.yml`                                                      |
+| Our Story prose                                         | `our-story.md`                                                        |
+| Relationship milestones                                 | `_data/milestones.yml`                                                |
+| First impressions                                       | `_data/first_impressions.yml`                                         |
+| Our Story section names and the top bar's section links | the `## Headings` in `our-story.md` (the nav builds itself from them) |
+| Photo groups and captions                               | `_data/story_images.yml`                                              |
+| Menu items (`disabled: true` hides one)                 | `_data/navigation.yml`                                                |
+| Travel map labels, icons and points                     | `_data/travel_map.yml` (routes: see `docs/travel-routes-map.md`)      |
 
 Colors, fonts and sizes live in `assets/css/tokens.css`. You shouldn't need to touch them.
 

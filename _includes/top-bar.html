@@ -7,8 +7,8 @@
   the tab paints over it.
   The home page is mostly a recirculation page, so it gets no links: just the tab and rule, centered at every size
   (.site-top--solo).
-  On story pages the bar holds a second set of links, the page's own sections (generated from its <h2> headings,
-  like section-nav.html). One set shows at a time, chosen by data-mode: the pages, until the story's first divider
+  On story pages the bar holds a second set of links, the page's own sections (generated from its <h2> headings
+  by section-headings.html). One set shows at a time, chosen by data-mode: the pages, until the story's first divider
   has scrolled away; then the sections, with scroll-spy. Same markup, same styling, different links.
 {%- endcomment -%}
 {%- assign bar_items = site.data.navigation | where_exp: "item", "item.disabled != true" -%}

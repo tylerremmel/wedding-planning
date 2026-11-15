@@ -2,12 +2,7 @@
 layout: default
 ---
 {%- include hero.html hero=page.hero %}
-{%- comment -%}
-  The sticky section nav is retired: the fixed top bar (top-bar.html) swaps its links for this page's sections
-  instead, and top-bar.js carries the logic. section-nav.html, sticky-nav.js and the .section-nav styles are
-  kept only for the styleguide demo and reference; to bring the old bar back:
-  {% include section-nav.html page_content=content %}
-{%- endcomment -%}
+{%- comment -%} The page's section links live in the fixed top bar (top-bar.html, top-bar.js). {%- endcomment -%}
 <div class="story content" {% include edit-attr.html path=page.path %}>
   {{ content }}
 </div>

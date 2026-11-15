@@ -1,32 +1,23 @@
 {%- comment -%}
   Reads a page's section headings into two arrays for the caller: nav_ids (each <h2>'s id) and nav_labels (its text).
-  Params: page_content (the page's rendered HTML), or demo="First,Second" for the styleguide. Used by
-  section-nav.html and top-bar.html. The arrays are reset here, since Liquid assigns leak across includes.
+  Params: page_content (the page's rendered HTML). Used by
+  top-bar.html. The arrays are reset here, since Liquid assigns leak across includes.
 {%- endcomment -%}
 {%- assign nav_ids = "" | split: "" -%}
 {%- assign nav_labels = "" | split: "" -%}
-{%- if include.demo -%}
-  {%- assign demo_labels = include.demo | split: "," -%}
-  {%- for label in demo_labels -%}
-    {%- assign nav_labels = nav_labels | push: label -%}
-    {%- assign slug = label | slugify -%}
-    {%- assign nav_ids = nav_ids | push: slug -%}
-  {%- endfor -%}
-{%- else -%}
-  {%- comment -%}
-    For each <h2 ...>...</h2>: the id comes from the opening tag's id="..." attribute, the label from the
-    tag's inner text (already HTML-escaped by markdown, so it is output as-is). A heading with no id is skipped.
-  {%- endcomment -%}
-  {%- assign parts = include.page_content | split: '<h2' -%}
-  {%- for part in parts offset: 1 -%}
-    {%- assign whole = part | split: '</h2>' | first -%}
-    {%- assign open_tag = whole | split: '>' | first -%}
-    {%- assign id_parts = open_tag | split: 'id="' -%}
-    {%- if id_parts.size < 2 -%}{%- continue -%}{%- endif -%}
-    {%- assign heading_id = id_parts[1] | split: '"' | first -%}
-    {%- assign inner = whole | remove_first: open_tag | remove_first: '>' -%}
-    {%- assign label = inner | strip_html | strip -%}
-    {%- assign nav_ids = nav_ids | push: heading_id -%}
-    {%- assign nav_labels = nav_labels | push: label -%}
-  {%- endfor -%}
-{%- endif -%}
+{%- comment -%}
+  For each <h2 ...>...</h2>: the id comes from the opening tag's id="..." attribute, the label from the
+  tag's inner text (already HTML-escaped by markdown, so it is output as-is). A heading with no id is skipped.
+{%- endcomment -%}
+{%- assign parts = include.page_content | split: '<h2' -%}
+{%- for part in parts offset: 1 -%}
+  {%- assign whole = part | split: '</h2>' | first -%}
+  {%- assign open_tag = whole | split: '>' | first -%}
+  {%- assign id_parts = open_tag | split: 'id="' -%}
+  {%- if id_parts.size < 2 -%}{%- continue -%}{%- endif -%}
+  {%- assign heading_id = id_parts[1] | split: '"' | first -%}
+  {%- assign inner = whole | remove_first: open_tag | remove_first: '>' -%}
+  {%- assign label = inner | strip_html | strip -%}
+  {%- assign nav_ids = nav_ids | push: heading_id -%}
+  {%- assign nav_labels = nav_labels | push: label -%}
+{%- endfor -%}
