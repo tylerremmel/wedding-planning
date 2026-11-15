@@ -204,10 +204,6 @@
 
   /* ---------- Layout ---------- */
   --gutter: var(--space-150);
-  --safe-top: env(
-    safe-area-inset-top,
-    0px
-  ); /* the status bar / notch; the page runs under it (viewport-fit=cover) */
   --measure: 640px; /* reading column */
   --page-max: 1280px;
   --header-pad-top: var(--space-600);
@@ -215,9 +211,9 @@
   --bp-bar: 960px; /* documentation only: the top bar goes from dropdown to split-around-the-tab */
 
   /* ---------- Logo tab ----------
-     The SVG is 5.2:1 and exactly as tall as logo + 2 x pad-y (the 4px rule is inside that height).
+     The SVG is 5.2:1 and exactly as tall as logo + 2 x pad-y (the rule is inside that height).
      --tab-unit is SVG units per px (400 / tab height), so the rule stays 4px when the tab scales. */
-  --tab-rule-weight: 4px;
+  --tab-rule-weight: 5px; /* at least 5px: the status bar tint element (.site-status) must reach 4px down */
   --tab-logo-height: 30px;
   --tab-pad-y: 5px;
   --tab-unit: 10;
