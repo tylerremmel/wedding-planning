@@ -183,6 +183,7 @@ nav button {
 
 .s-075,
 nav a,
+nav button,
 figcaption,
 h5,
 h6 {
@@ -333,6 +334,7 @@ h1,
   }
 
   nav a,
+  nav button,
   h4,
   .eyebrow {
     font-size: var(--step-100);

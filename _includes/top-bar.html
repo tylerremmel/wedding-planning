@@ -1,0 +1,66 @@
+{%- comment -%}
+  The fixed top bar: the logo tab and rule (tab.html) plus the page links on a translucent, blurred bar.
+  Params: page_content (the page's rendered HTML, to read section headings from on story pages).
+  Items come from _data/navigation.yml (disabled ones are skipped). Wide screens: the links split around the
+  tab, half on each side, built outward from the tab. Narrow screens: the current page with a chevron (just the
+  chevron on the home page); opening it lists the others (assets/js/top-bar.js). The nav comes before the tab so
+  the tab paints over it.
+  The home page is mostly a recirculation page, so it gets no links: just the tab and rule, centered at every size
+  (.site-top--solo).
+  On story pages the bar holds a second set of links, the page's own sections (generated from its <h2> headings,
+  like section-nav.html). One set shows at a time, chosen by data-mode: the pages, until the story's first divider
+  has scrolled away; then the sections, with scroll-spy. Same markup, same styling, different links.
+{%- endcomment -%}
+{%- assign bar_items = site.data.navigation | where_exp: "item", "item.disabled != true" -%}
+{%- assign bar_split = bar_items.size | plus: 1 | divided_by: 2 -%}
+{%- assign bar_current = "" -%}
+{%- for item in bar_items %}{% if page.url == item.url %}{% assign bar_current = item.label %}{% endif %}{% endfor -%}
+{%- assign bar_sections = false -%}
+{%- if page.layout == "story" -%}
+  {%- include section-headings.html page_content=include.page_content -%}
+  {%- if nav_ids.size > 0 %}{% assign bar_sections = true %}{% endif -%}
+  {%- assign sec_split = nav_ids.size | plus: 1 | divided_by: 2 -%}
+{%- endif -%}
+<div class="site-top{% if page.layout == "home" %} site-top--solo{% endif %}">
+  {%- unless page.layout == "home" %}
+  <nav class="site-nav site-bar" aria-label="Pages" data-top-bar data-mode="pages" {% include edit-attr.html path="_data/navigation.yml" %}>
+    <button class="site-bar__toggle" type="button" aria-expanded="false" aria-controls="site-bar-list">
+      <span{% if bar_current == "" %} class="visually-hidden"{% endif %}>{% if bar_current == "" %}Menu{% else %}{{ bar_current }}{% endif %}</span>
+      <svg class="site-bar__chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
+    </button>
+    <div class="site-bar__lists" id="site-bar-list" data-set="pages">
+      <div class="site-bar__lists-inner">
+        {%- assign bar_start = bar_items | slice: 0, bar_split -%}
+        {%- assign bar_end = bar_items | slice: bar_split, bar_items.size %}
+        <ul class="site-bar__list site-bar__list--start" role="list">
+          {%- for item in bar_start %}
+          <li{% if page.url == item.url %} data-current{% endif %}><a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+          {%- endfor %}
+        </ul>
+        <ul class="site-bar__list site-bar__list--end" role="list">
+          {%- for item in bar_end %}
+          <li{% if page.url == item.url %} data-current{% endif %}><a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+    {%- if bar_sections %}
+    <div class="site-bar__lists" id="site-bar-sections" data-set="sections">
+      <div class="site-bar__lists-inner">
+        <ul class="site-bar__list site-bar__list--start" role="list">
+          {%- for label in nav_labels %}{% if forloop.index0 < sec_split %}
+          <li data-section-link="{{ nav_ids[forloop.index0] }}"><a href="#{{ nav_ids[forloop.index0] }}">{{ label }}</a></li>
+          {%- endif %}{% endfor %}
+        </ul>
+        <ul class="site-bar__list site-bar__list--end" role="list">
+          {%- for label in nav_labels %}{% if forloop.index0 >= sec_split %}
+          <li data-section-link="{{ nav_ids[forloop.index0] }}"><a href="#{{ nav_ids[forloop.index0] }}">{{ label }}</a></li>
+          {%- endif %}{% endfor %}
+        </ul>
+      </div>
+    </div>
+    {%- endif %}
+  </nav>
+  {%- endunless %}
+  {%- include tab.html %}
+</div>

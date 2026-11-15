@@ -19,7 +19,7 @@ If you are interested in shared transportation options from Portland to the Wate
 {% include travel-map.html mode="toggle" sticky=true show="wide" local_from="where-to-stay" %}
 <div class="map-split__text content" markdown="1">
 
-{% include travel-map.html mode="routes" show="narrow" %}
+{% include travel-map.html mode="routes" show="narrow" portrait=true %}
 
 ## Arriving by air
 

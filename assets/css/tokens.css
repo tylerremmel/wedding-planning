@@ -208,6 +208,15 @@
   --page-max: 1280px;
   --header-pad-top: var(--space-600);
   --bp-nav: 640px; /* documentation only; media queries can't read custom properties */
+  --bp-bar: 960px; /* documentation only: the top bar goes from dropdown to split-around-the-tab */
+
+  /* ---------- Logo tab ----------
+     The SVG is 5.2:1 and exactly as tall as logo + 2 x pad-y (the 4px rule is inside that height).
+     --tab-unit is SVG units per px (400 / tab height), so the rule stays 4px when the tab scales. */
+  --tab-rule-weight: 4px;
+  --tab-logo-height: 30px;
+  --tab-pad-y: 5px;
+  --tab-unit: 10;
 
   /* ---------- Ornament divider ----------
      Set the ornament HEIGHT (42px on desktop, per Figma); width follows the SVG's 25.42 x 11.29 ratio.
@@ -233,13 +242,14 @@
   --image-gap: var(--space-150);
   --image-radius: 0;
   --image-ratio-pair: 3 / 4;
+  --portrait-max: 300px; /* widest a portrait photo (or a map sized to match) gets */
   --image-ratio-single: 4 / 3;
 
   /* ---------- Travel map ----------
      Ink and paper swap between schemes: sapphire icons and text on white in light, white on sapphire in
      dark. Routes (--map-route, set per scheme below) are sapphire-600 in light and the paler sapphire-400 in
      dark. */
-  --bp-split: 960px; /* documentation only: where .map-split goes side by side */
+  --bp-split: 960px; /* documentation only: where .map-split goes side by side (landscape only) */
   --nav-height: 50px; /* reserved for the coming sticky site nav; sticky blocks sit below it */
   --map-tint: var(
     --sapphire-600-static
@@ -270,6 +280,10 @@
 
   /* ---------- Motion ---------- */
   --fade-duration: 300ms;
+  --bar-text-delay: 250ms; /* top bar: the links fade in this long after its background starts pulling down */
+  --tab-slide-duration: var(--fade-duration); /* mobile: tab slide */
+  --tab-corner-end: 0s; /* phones: when the tab's corner has finished filling; the bar's background waits for it */
+  --bar-reveal-delay: 150ms; /* top bar: the background waits this long to retract after the links fade out */
 
   /* ---------- Nav hover rule ---------- */
   --nav-rule-weight: 1px;
@@ -285,7 +299,7 @@
   --footer-bg: var(--sapphire-600);
   --rule: var(--sapphire-600);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-800-static); /* darker than the header */
+  --tab-bg-hover: var(--sapphire-700-static); /* one step past the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800);
   --link-hover: var(--sapphire-800-static);
@@ -322,7 +336,7 @@
     --footer-bg: var(--sapphire-800-static);
     --rule: var(--sapphire-300-static);
     --tab-bg: var(--sapphire-500);
-    --tab-bg-hover: var(--sapphire-950-static); /* darker than the header */
+    --tab-bg-hover: var(--sapphire-800-static); /* darker than the tab */
     --placeholder: var(--sapphire-900-static);
     --focus: var(--sapphire-300-static);
     --link-hover: var(--sapphire-300-static);
@@ -358,7 +372,7 @@
   --footer-bg: var(--sapphire-800-static);
   --rule: var(--sapphire-300-static);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-950-static); /* darker than the header */
+  --tab-bg-hover: var(--sapphire-800-static); /* darker than the tab */
   --placeholder: var(--sapphire-900-static);
   --focus: var(--sapphire-300-static);
   --link-hover: var(--sapphire-300-static);
@@ -393,7 +407,7 @@
   --footer-bg: var(--sapphire-600-static);
   --rule: var(--sapphire-600-static);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-800-static); /* darker than the header */
+  --tab-bg-hover: var(--sapphire-700-static); /* one step past the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800-static);
   --link-hover: var(--sapphire-800-static);
@@ -415,5 +429,34 @@
 @media (min-width: 640px) {
   :root {
     --divider-ornament-height: 42px;
+  }
+}
+
+/* Wide screens: the larger tab. Below this width the top bar uses its narrow layout (tab at the left, a dropdown),
+   which covers phones and portrait tablets. The split layout needs about 890px: the tab (312px) plus about 264px
+   for the widest side (the two page links), plus gutters. 960px is also where the maps go side by side. */
+@media (min-width: 960px) {
+  :root {
+    --tab-logo-height: 40px;
+    --tab-pad-y: 10px;
+    --tab-unit: 6.6667;
+  }
+}
+
+/* Top bar on phones (under 640px), in order on the way down: the tab slides left (easing in and out)
+   while its left corner fills in, starting after --tab-corner-delay (tuned by eye); then the bar's background
+   pulls down, and the links fade in 250ms after that.
+   On the way up the links fade out, the background retracts, then the tab slides back and the corner empties. */
+@media (max-width: 639px) {
+  :root {
+    --tab-slide-duration: calc(var(--fade-duration) * 1.5);
+    --tab-corner-delay: 250ms;
+    --tab-corner-duration: calc(var(--tab-slide-duration) * 0.5);
+    --tab-corner-end: calc(
+      var(--tab-corner-delay) + var(--tab-corner-duration)
+    );
+    --bar-text-delay: calc(var(--tab-corner-end) + 250ms);
+    --bar-reveal-delay: 250ms;
+    --tab-return-delay: calc(var(--bar-reveal-delay) + var(--fade-duration));
   }
 }

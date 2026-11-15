@@ -10,7 +10,7 @@ hero:
 ---
 
 <!-- Editing guide: this page is plain text with a few "include" lines. Edit the sentences freely.
-     Each "## Heading" is a section: the sticky nav is built from these headings automatically, and a
+     Each "## Heading" is a section: the top bar's section links are built from these headings automatically, and a
      section runs from the divider above it to the next divider. Photos come from _data/story_images.yml;
      milestones from _data/milestones.yml; first impressions from _data/first_impressions.yml.
      TK = still to come. -->
@@ -22,8 +22,6 @@ hero:
 {% include divider.html ornament=true sentinel=true %}
 
 {% include image-group.html group=site.data.story_images.first_kiss edit_path="_data/story_images.yml" %}
-
-## How we met
 
 Bumble. Jenna thought Tyler was very hot and his profile made her laugh. It said, “Knows enough to make jokes, but not enough to be funny.”
 

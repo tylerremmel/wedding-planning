@@ -2,6 +2,7 @@
 <nav class="site-nav {{ include.class }}" aria-label="{{ include.label | default: 'Main' }}" {% include edit-attr.html path="_data/navigation.yml" %}>
   <ul role="list">
     {%- for item in site.data.navigation %}
+    {%- if item.disabled %}{% continue %}{% endif %}
     <li><a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
     {%- endfor %}
   </ul>
