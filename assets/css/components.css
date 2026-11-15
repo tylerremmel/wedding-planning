@@ -46,7 +46,7 @@
     var(--tab-h) - var(--tab-rule-weight) * 2
   ); /* one row of the bar: from under the rule to 4px above the tab's bottom edge */
   position: fixed;
-  top: 0;
+  top: var(--safe-top);
   left: 0;
   right: 0;
   z-index: 1;
@@ -58,6 +58,17 @@
 }
 .site-top > * {
   pointer-events: auto;
+}
+/* The page runs under the status bar (viewport-fit=cover, see head.html), so paint the strip above the bar in
+   the tab's color: it reads as the rule extended up, and iOS Safari tints the status bar from it. */
+.site-top::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: var(--safe-top);
+  background: var(--tab-bg);
 }
 .site-bar {
   margin-top: var(--tab-rule-weight);
@@ -457,7 +468,8 @@
 .site-footer {
   background: var(--footer-bg);
   color: var(--text-on-header);
-  padding: var(--space-225) var(--gutter);
+  padding: var(--space-225) var(--gutter)
+    calc(var(--space-225) + env(safe-area-inset-bottom, 0px));
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -625,7 +637,8 @@ img[data-alt-missing] {
 /* Anything on the page can be a jump target; leave room for the fixed top bar above it (the tab is its tallest part). */
 .story > * {
   scroll-margin-top: calc(
-    var(--tab-logo-height) + var(--tab-pad-y) * 2 + var(--space-150)
+    var(--safe-top) + var(--tab-logo-height) + var(--tab-pad-y) * 2 +
+      var(--space-150)
   );
 }
 
@@ -769,10 +782,10 @@ img[data-alt-missing] {
   /* Pinned below the site nav while the split is on screen; it scrolls away with the split's last section. */
   .js .map-split > .travel-map--sticky {
     position: sticky;
-    top: var(--nav-height);
+    top: calc(var(--safe-top) + var(--nav-height));
     align-self: start;
-    height: calc(100vh - var(--nav-height));
-    height: calc(100dvh - var(--nav-height));
+    height: calc(100vh - var(--safe-top) - var(--nav-height));
+    height: calc(100dvh - var(--safe-top) - var(--nav-height));
   }
 }
 

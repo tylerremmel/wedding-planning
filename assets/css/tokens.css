@@ -204,6 +204,10 @@
 
   /* ---------- Layout ---------- */
   --gutter: var(--space-150);
+  --safe-top: env(
+    safe-area-inset-top,
+    0px
+  ); /* the status bar / notch; the page runs under it (viewport-fit=cover) */
   --measure: 640px; /* reading column */
   --page-max: 1280px;
   --header-pad-top: var(--space-600);

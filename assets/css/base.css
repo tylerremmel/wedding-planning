@@ -26,6 +26,9 @@ html {
 }
 body {
   margin: 0;
+  padding-top: var(
+    --safe-top
+  ); /* the page runs under the status bar; the fixed top bar paints it */
   min-height: 100vh; /* a short page still reaches the bottom of the screen; the rest is html's color */
   min-height: 100dvh;
   color: var(--text);
