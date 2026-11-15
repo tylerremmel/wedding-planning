@@ -60,17 +60,19 @@
 .site-top > * {
   pointer-events: auto;
 }
-/* The page runs under the status bar (viewport-fit=cover, see head.html), so paint the strip above the bar in
-   the tab's color: it reads as the rule extended up, and iOS Safari tints the status bar from it. */
-.site-top::before {
-  content: "";
-  position: absolute;
-  z-index: 1; /* over the bar, which slides up behind it when hidden */
+/* The page runs under the status bar (viewport-fit=cover, see head.html), so this strip fills it in the tab's
+   color, reading as the rule extended up. It is its own fixed element with a plain background-color, because
+   iOS Safari tints the status bar from the first fixed element at the top edge and ignores one that has no
+   background of its own, is see-through to clicks (pointer-events: none), or is only a pseudo-element. It
+   needs --safe-top to be more than 0, so it exists only where there's a status bar to paint. */
+.site-status {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 2; /* over the bar, which slides up behind it when hidden */
   height: var(--safe-top);
-  background: var(--tab-bg);
+  background-color: var(--tab-bg);
 }
 .site-bar {
   margin-top: var(--tab-rule-weight);
