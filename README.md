@@ -67,7 +67,7 @@ Check changes to type in WebKit (Safari, or Playwright's WebKit) as well as Chro
 
 ### iOS Safari chrome color
 
-Safari 26 ignores `theme-color` and tints the status bar, bottom toolbar and overscroll area from the page background. `html` is painted with `--header-bg` (the header and footer share it) and `body` paints `--surface` over it, so the top and bottom of the page read as part of the header and footer. Safari also tints from a `position: fixed` or sticky element at the top edge. The top bar's tab and 4px rule are always fixed there, so the status bar takes `--tab-bg` rather than `--header-bg`. Keep `theme-color` in `_includes/head.html` for older iOS and other browsers.
+Safari 26 ignores `theme-color` and tints the status bar, bottom toolbar and overscroll area from the page background. `html` is painted with `--header-bg` (the header and footer share it) and `.site-main` paints `--surface` over it (`body` has no background), so the top and bottom of the page read as part of the header and footer. Safari also tints from a `position: fixed` or sticky element at the top edge. The top bar's tab and 4px rule are always fixed there, so the status bar takes `--tab-bg` rather than `--header-bg`. Keep `theme-color` in `_includes/head.html` for older iOS and other browsers.
 
 ### Styleguide page
 
