@@ -85,7 +85,7 @@ Maps are hidden and the page falls back to the single text column.
 scripts.
 
 - `_includes/travel-map.html`: the map figure (tabs, frame, caption). Params: `mode` (`routes` | `local` |
-  `toggle`), `sticky`, `show` (`narrow` | `wide`), `local_from` (toggle maps).
+  `toggle`), `sticky`, `show` (`narrow` | `wide`), `portrait` (cap the map at a portrait photo's width), `local_from` (toggle maps).
 - `assets/js/travel-map.js`: builds every `[data-travel-map]` with Leaflet. Only maps that are visible get built; a
   map hidden at the current width is built when it first appears.
 - `assets/lib/leaflet/`: Leaflet 1.9.4, self-hosted. Loaded only on pages that contain a map.
@@ -100,7 +100,7 @@ scripts.
 ### Getting There (`/getting-there/`)
 
 - **Wide screens (960px and up):** `.map-split`. One sticky map in the left half with the tabs, from "Arriving by
-  air" through "Where to stay". It sits below the 50px reserved for the coming sticky nav (`--nav-height`), with
+  air" through "Where to stay". It sits below the fixed top bar (`--nav-height`, the tab's height: 50px at this width), with
   80px (`--map-pad`) around the map; the text column has 80px side padding.
 - **Narrow screens:** two inline maps, no tabs: routes (3:5) before "Arriving by air", local (3:2) before "Where to
   stay".
@@ -113,7 +113,7 @@ scripts.
 
 ```liquid
 {% include travel-map.html mode="toggle" sticky=true show="wide" local_from="where-to-stay" %}  <!-- Getting There, wide -->
-{% include travel-map.html mode="routes" show="narrow" %}                                      <!-- Getting There, narrow -->
+{% include travel-map.html mode="routes" show="narrow" portrait=true %}                              <!-- Getting There, narrow -->
 {% include travel-map.html mode="local" show="narrow" %}                                       <!-- Getting There, narrow -->
 {% include travel-map.html mode="local" %}                                                     <!-- The Wedding -->
 ```
@@ -121,4 +121,3 @@ scripts.
 ## Open items
 
 - The page copy still describes driving "from Portsmouth"; the map's southern route starts in New Haven.
-- `--nav-height` reserves space for a sticky site nav that doesn't exist yet.

@@ -1,0 +1,18 @@
+{%- comment -%}
+  The logo tab: one SVG so the 4px top rule and the tab read as a single shape (modeled on divider.html).
+  The tab is the original outline (viewBox 2082.15 x 400, a 5.2:1 trapezoid with rounded lower corners). The rule
+  is a stroked path that continues far past both edges; .site-tab clips it to the page width. Both take their
+  fill from --tab-fill, set on .site-tab, so hover and focus recolor them together. Sizing is in components.css.
+  On phones a plate (the wedge left of the tab's slanted edge, down to its flat bottom) squares off the tab's
+  left side. It grows from its bottom-right apex along the slant, so the corner fills in as a wipe, not a fade.
+{%- endcomment -%}
+<div class="site-tab">
+  <a class="site-tab__link" href="{{ '/' | relative_url }}" aria-label="Home: Jenna and Tyler">
+    <svg class="site-tab__shape" viewBox="0 0 2082.15 400" aria-hidden="true" focusable="false">
+      <path class="site-tab__rule" fill="none" d="M-20000,0H22082.15"/>
+      <path class="site-tab__plate" d="M0,0L520,400H0Z"/>
+      <path class="site-tab__body" d="M2082.15,0l-451.59,377.51c-17.38,14.53-39.32,22.49-61.98,22.49H513.57c-22.66,0-44.59-7.96-61.98-22.49L0,0h2082.15Z"/>
+    </svg>
+    <img class="site-tab__logo" src="{{ '/assets/img/jt27-pigbronco-small.svg' | relative_url }}" alt="" width="129" height="40">
+  </a>
+</div>

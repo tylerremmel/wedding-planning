@@ -1,5 +1,5 @@
 # Site navigation (header and footer). Order here = order on the site.
-# `url` must match the page's permalink.
+# `url` must match the page's permalink. `disabled: true` hides an item from every nav (not ready yet).
 - label: our story
   url: /our-story/
 - label: the wedding
@@ -10,3 +10,4 @@
   url: /what-to-know/
 - label: photos
   url: /photos/
+  disabled: true

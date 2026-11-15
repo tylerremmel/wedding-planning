@@ -10,7 +10,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 - Page blocks go through the `.content > *` pattern: max-width 688px (640 + 24 + 24), centered, 24px side padding and bottom padding (padding, not margin). Headings are centered globally.
 - Type roles (headline, subhead, body, meta) × steps (050…400) carry their own weight tokens, ramped lighter at large sizes. Change weights in the tokens, not at the usage site.
 - The ornament divider is used once per page (the first); later dividers are plain rules. Dividers max out at 640px.
-- The sticky section nav is generated at build time from the page's `<h2 id>` headings. Never hard-code its items.
+- The top bar's section links (Our Story) are generated at build time from the page's `<h2 id>` headings. Never hard-code its items.
 
 ## Content and images
 
@@ -36,7 +36,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 ## iOS Safari chrome color
 
 - Safari 26 tints the status bar, toolbar and overscroll from the page background, not `theme-color`. `html` is painted `--header-bg` (same as the footer) and `body` paints `--surface`; keep that pairing in `base.css`.
-- A fixed or sticky element at the top edge (the Our Story sticky nav) recolors the status bar while visible.
+- A fixed or sticky element at the top edge recolors the status bar while visible. The top bar's tab and 4px rule are always fixed at the top edge, so the status bar takes `--tab-bg` (sapphire-500-static in light, sapphire-600-static in dark), not `--header-bg`. `theme-color` in `head.html` matches `--tab-bg` for browsers that still read it; keep the two in sync.
 
 ## Visual QA
 

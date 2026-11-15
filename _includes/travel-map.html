@@ -4,7 +4,8 @@
   Params:
     mode    routes | local | toggle (both, with tabs; the map follows the reader's scroll until a tab is picked)
     sticky  true to stay in view while its .map-split is on screen (wide screens)
-    show    narrow | wide to limit the map to one side of the 960px breakpoint (default: both)
+    show    narrow | wide to limit the map to one side of the split (960px wide and landscape; default: both)
+    portrait  true to cap the map at the width of a portrait photo (in the content column)
     local_from  (toggle maps) id of the heading where the map switches to the local view as the reader scrolls
   Without JavaScript the map is hidden; the page text carries everything it shows.
 {%- endcomment -%}
@@ -12,6 +13,7 @@
 {%- assign tm_class = "travel-map" -%}
 {%- if include.sticky %}{% assign tm_class = tm_class | append: " travel-map--sticky" %}{% endif -%}
 {%- if include.show %}{% assign tm_class = tm_class | append: " travel-map--" | append: include.show %}{% endif -%}
+{%- if include.portrait %}{% assign tm_class = tm_class | append: " travel-map--portrait" %}{% endif -%}
 {%- assign tm_label = "Map of driving routes to Waterford, Maine" -%}
 {%- if tm_mode == "local" %}{% assign tm_label = "Map of wedding locations near Waterford, Maine" %}{% endif -%}
 {%- if tm_mode == "toggle" %}{% assign tm_label = "Map of Waterford, Maine and the routes there" %}{% endif -%}

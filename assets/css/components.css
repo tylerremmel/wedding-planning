@@ -1,6 +1,6 @@
 /* ==========================================================================
    Components: header, footer, nav, page container, divider, styleguide helpers.
-   Uses tokens only. (Image group, timeline, sticky nav, promo tiles are added in later passes.)
+   Uses tokens only. (Image group, timeline, promo tiles are added in later passes.)
    ========================================================================== */
 
 /* ---------- Header ---------- */
@@ -10,33 +10,6 @@
   color: var(--text-on-header);
   text-align: center;
   padding: var(--space-400) var(--gutter) var(--space-200);
-}
-.site-header__tab {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 208px;
-  height: 40px;
-  color: var(--tab-bg);
-}
-.site-header__tab:hover,
-.site-header__tab:focus-visible {
-  color: var(--tab-bg-hover); /* the tab darkens past the header colour */
-}
-.site-header__tab-shape {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.site-header__logo {
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 96.75px;
-  height: 30px;
 }
 .site-header__inner {
   display: flex;
@@ -48,6 +21,406 @@
 }
 .site-header__title {
   color: var(--text-on-header);
+}
+
+/* Everything in the page body (Leaflet's panes, the top bar, timeline dots) keeps its own z-indexes
+   inside this stacking context, so none of it can ever overlap the fixed top bar. */
+.site-main {
+  isolation: isolate;
+}
+
+/* ---------- Fixed top bar ----------
+   .site-top holds the tab + rule (.site-tab) and the page links (.site-bar). It's fixed to the top of the screen
+   and is the only z-index on the page outside .site-main. The bar runs from under the rule to 4px above the
+   tab's bottom edge, so the tab protrudes below it. Its background is the surface color at 70% with an 8px blur.
+   --tab-left is where the tab sits on phones: flush left, shifted so the logo's left edge lines up with the
+   page's text (the gutter). 3.225 is the logo's width/height ratio. From 640px the tab stays centered. */
+.site-top {
+  --tab-h: calc(var(--tab-logo-height) + var(--tab-pad-y) * 2);
+  --tab-w: calc(var(--tab-h) * 5.2);
+  --tab-left: calc(
+    var(--gutter) - (var(--tab-w) - var(--tab-logo-height) * 3.225) / 2
+  );
+  --bar-h: calc(
+    var(--tab-h) - var(--tab-rule-weight) * 2
+  ); /* one row of the bar: from under the rule to 4px above the tab's bottom edge */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.site-bar {
+  margin-top: var(--tab-rule-weight);
+  min-height: var(--bar-h);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+}
+/* With JavaScript the bar starts hidden at the top of the page. When it's revealed (top-bar.js adds
+   .is-visible) its background pulls down from the top edge, then the links fade in; hiding runs in reverse. */
+.js .site-bar {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--fade-duration) ease var(--bar-reveal-delay);
+}
+.js .site-bar.is-visible {
+  clip-path: inset(0);
+  transition-delay: 0s;
+}
+.js .site-bar > * {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--fade-duration) ease,
+    visibility 0s linear var(--fade-duration);
+}
+.js .site-bar.is-visible > * {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--fade-duration) ease var(--bar-text-delay),
+    visibility 0s linear 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .site-bar,
+  .js .site-bar > *,
+  .js .site-tab__plate,
+  .js .site-tab__link {
+    transition: none;
+  }
+}
+/* Story pages: the bar holds two sets of links and shows one at a time (top-bar.js sets data-mode). The incoming
+   set fades in; the first time it's shown, so is-swapped keeps the page load itself from animating. */
+.site-bar[data-mode="pages"] > .site-bar__lists[data-set="sections"],
+.site-bar[data-mode="sections"] > .site-bar__lists[data-set="pages"] {
+  display: none;
+}
+@keyframes site-bar-set-in {
+  from {
+    opacity: 0;
+  }
+}
+.site-bar.is-swapped > .site-bar__lists {
+  animation: site-bar-set-in var(--fade-duration) ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-bar.is-swapped > .site-bar__lists {
+    animation: none;
+  }
+}
+.site-bar__toggle {
+  display: none;
+}
+.site-bar__chevron {
+  flex: none;
+}
+.site-bar__lists-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-inline: var(--gutter);
+}
+.site-bar .site-bar__list {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 0;
+}
+
+/* Narrow screens: the tab sits at the left, the current page and a chevron at the right. Without JavaScript the
+   links just show, right-aligned.
+   One row recipe serves the label and every link: --menu-row tall, text centered, 3px of bottom padding because
+   capitals sit low in the line box. The label's center (--label-center) is the collapsed bar's center nudged 1px
+   down, and --menu-row is chosen so the gap between any two rows equals the gap between the rule and the label's
+   capitals (label center + half a cap height, 0.711em for Roboto Flex). The bar's constant top padding then puts
+   the label's row where that center falls, open or closed, so nothing moves when the menu unfurls. */
+@media (max-width: 959px) {
+  /* The global nav rule steps up to 16px from 640px, which would be too large for this bar on a tablet. */
+  .site-bar a,
+  .site-bar__toggle {
+    font-size: var(--step-075);
+    --w-meta: var(--meta-wght-075);
+  }
+  .site-bar {
+    --label-center: calc((var(--bar-h) - 3px) / 2 + 1px);
+    --menu-row: calc(var(--label-center) + 0.711 * var(--step-075) / 2);
+    padding-top: calc(var(--label-center) - (var(--menu-row) - 3px) / 2);
+    --chevron: 16px;
+    --chevron-gap: var(--space-050);
+    --bar-edge: var(--space-100);
+  }
+  /* --bar-edge is the space from the window's right edge to the chevron.
+     The labels share a right edge: the links are inset by the chevron and its gap, so their right edge lines up
+     with the active label's, which has the chevron to its right. */
+  /* The bar's background waits for the tab's left corner to finish filling in. */
+  .js .site-bar.is-visible {
+    transition-delay: var(--tab-corner-end);
+  }
+  .site-bar__lists-inner {
+    padding-inline: var(--bar-edge);
+  }
+  .js .site-bar__lists-inner {
+    padding-inline: var(--bar-edge)
+      calc(var(--bar-edge) + var(--chevron) + var(--chevron-gap));
+  }
+  .site-bar__chevron {
+    width: var(--chevron);
+    height: var(--chevron);
+  }
+  /* The menu's bottom spacing lives on the last list, inside the clipped area, so a collapsed menu adds no height. */
+  .site-bar .site-bar__list--end {
+    padding-bottom: var(--space-050);
+  }
+  .site-bar li {
+    display: flex;
+    align-items: center;
+    min-height: var(--menu-row);
+    padding-bottom: 3px;
+  }
+  .js .site-bar__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--chevron-gap);
+    min-height: var(--menu-row);
+    padding: 0 var(--bar-edge) 3px;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .site-bar.is-open .site-bar__chevron {
+    transform: rotate(180deg);
+  }
+  .js .site-bar li[data-current] {
+    display: none;
+  }
+
+  /* The menu unfurls the way the bar first appears: the bar's background grows down from above (the wrapper's
+     height animates 0 to its content), then the links fade in. Closed, it can't be tabbed into. These selectors
+     out-rank the reveal rules above, which also target the bar's children. */
+  .js .site-bar__lists {
+    display: grid;
+    grid-template-rows: 0fr;
+  }
+  .js .site-bar__lists-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .js .site-bar.is-visible > .site-bar__lists {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--fade-duration) ease,
+      opacity var(--fade-duration) ease,
+      visibility 0s linear var(--fade-duration);
+  }
+  .js .site-bar.is-visible.is-open > .site-bar__lists {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      grid-template-rows var(--fade-duration) ease,
+      opacity var(--fade-duration) ease var(--bar-reveal-delay),
+      visibility 0s linear 0s;
+  }
+}
+@media (max-width: 959px) and (prefers-reduced-motion: reduce) {
+  .js .site-bar.is-visible > .site-bar__lists,
+  .js .site-bar.is-visible.is-open > .site-bar__lists {
+    transition: none;
+  }
+}
+
+/* Tablets (640px up to the split layout): the dropdown aligns to the left edge of the body text instead of the
+   right edge of the screen, with the chevron in the margin to the left of that edge (the mirror image of the
+   phone layout, where the labels share a right edge and the chevron sits to its right). The tab stays centered
+   and the labels are too short to reach it. */
+@media (min-width: 640px) and (max-width: 959px) {
+  .site-bar {
+    --text-left: max(var(--gutter), (100vw - var(--measure)) / 2);
+    align-items: flex-start;
+  }
+  .js .site-bar__toggle {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    padding: 0 0 3px
+      calc(var(--text-left) - var(--chevron) - var(--chevron-gap));
+  }
+  .site-bar__lists-inner,
+  .site-bar .site-bar__list {
+    align-items: flex-start;
+  }
+  .site-bar__lists-inner,
+  .js .site-bar__lists-inner {
+    padding-inline: var(--text-left) var(--bar-edge);
+  }
+}
+
+/* Wide screens: the links build outward from the tab. The middle column is exactly the tab's top width, so the
+   inner link on each side is anchored where the tab meets the rule: the left group is right-aligned against the
+   tab's left corner, the right group left-aligned against its right corner. */
+@media (min-width: 960px) {
+  .site-bar {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    align-items: stretch;
+  }
+  .site-bar a,
+  .site-bar__toggle {
+    font-size: var(--step-087);
+    --w-meta: var(--meta-wght-087);
+  }
+  .site-bar__lists-inner {
+    display: grid;
+    grid-template-columns: 1fr var(--tab-w) 1fr;
+    align-items: center;
+    min-height: var(--bar-h);
+    padding: 0;
+  }
+  .site-bar .site-bar__list {
+    flex-direction: row;
+    align-items: center;
+    gap: 0 var(--space-200);
+    padding-bottom: 3px; /* optical centering, as on narrow screens */
+  }
+  .site-bar .site-bar__list--start {
+    grid-column: 1;
+    justify-content: flex-end;
+  }
+  .site-bar .site-bar__list--end {
+    grid-column: 3;
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- Logo tab ----------
+   One SVG (see tab.html): the tab outline plus the top rule as a single shape, both filled from --tab-fill so
+   hover or focus on either darkens the whole thing. .site-tab is only as tall as the rule, so hovering the
+   space beside the tab below the rule does nothing; the tab hangs below it, and overflow-x clips the rule's
+   long ends to the page width. The SVG is 5.2:1 and the rule sits inside its height, so the logo is centered
+   on rule + tab together. --tab-unit = SVG units per px, to keep the rule a true 4px at any size. */
+.site-tab {
+  --tab-fill: var(--tab-bg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--tab-rule-weight);
+  overflow-x: clip;
+}
+@media (min-width: 640px) {
+  .site-tab {
+    display: flex;
+    justify-content: center;
+  }
+}
+.site-tab:hover,
+.site-tab:has(:focus-visible) {
+  --tab-fill: var(--tab-bg-hover); /* one step past the tab */
+}
+.site-tab__link {
+  position: relative;
+  display: block;
+  width: var(--tab-w);
+  height: var(--tab-h);
+  margin-left: var(--tab-left);
+  color: inherit;
+}
+@media (min-width: 640px) {
+  .site-tab__link {
+    margin-left: 0;
+  }
+}
+/* Phones with JavaScript: the tab starts centered at the top of the page and slides to the left as the bar is
+   revealed (top-bar.js adds .is-visible to the bar, which comes before the tab). It slides back out in step with
+   the bar's background retracting. Tablets and wider keep the tab centered. */
+@media (max-width: 639px) {
+  .js .site-tab__link {
+    margin-left: calc(50% - var(--tab-w) / 2);
+    transition: margin-left var(--tab-slide-duration) ease-in-out
+      var(--tab-return-delay);
+  }
+  .js .site-bar.is-visible ~ .site-tab .site-tab__link {
+    margin-left: var(--tab-left);
+    transition-delay: 0s;
+  }
+}
+.site-tab__link:hover,
+.site-tab__link:focus-visible {
+  color: inherit; /* the global link tint must not leak in; the shape uses --tab-fill */
+}
+.site-tab__shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.site-tab__body,
+.site-tab__plate {
+  fill: var(--tab-fill);
+  transition: fill var(--fade-duration) ease;
+}
+/* Phones: a plate fills the wedge left of the tab's slanted edge, so the tab's left side is square, flush with
+   the window edge (the link ends up shifted left, so the wedge's left side is off-screen). With JavaScript it
+   grows from its bottom-right apex along the slant, so the corner is swept away rather than faded; its timing
+   (--tab-corner-delay, --tab-corner-duration) was tuned by eye against the slide. Tablets and wider keep the
+   symmetric tab. */
+.site-tab__plate {
+  display: none;
+}
+@media (max-width: 639px) {
+  .site-tab__plate {
+    display: block;
+  }
+  .js .site-tab__plate {
+    transform: scale(0);
+    transform-origin: 520px 400px; /* the wedge's bottom-right apex, in SVG units (see tab.html) */
+    transition:
+      fill var(--fade-duration) ease,
+      transform var(--tab-corner-duration) ease-out var(--tab-return-delay);
+  }
+  .js .site-bar.is-visible ~ .site-tab .site-tab__plate {
+    transform: scale(1);
+    transition:
+      fill var(--fade-duration) ease,
+      transform var(--tab-corner-duration) ease-out var(--tab-corner-delay);
+  }
+}
+/* The home page has no bar, so nothing reveals and the tab never slides: it stays centered on every screen, with
+   its symmetric shape. */
+@media (max-width: 639px) {
+  .site-top--solo .site-tab__link,
+  .js .site-top--solo .site-tab__link {
+    margin-left: calc(50% - var(--tab-w) / 2);
+  }
+  .site-top--solo .site-tab__plate {
+    display: none;
+  }
+}
+.site-tab__rule {
+  stroke: var(--tab-fill);
+  transition: stroke var(--fade-duration) ease;
+  stroke-width: calc(var(--tab-rule-weight) * var(--tab-unit));
+  transform: translateY(calc(var(--tab-rule-weight) * var(--tab-unit) / 2));
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-tab__body,
+  .site-tab__rule {
+    transition: none;
+  }
+}
+.site-tab__logo {
+  position: absolute;
+  top: var(--tab-pad-y);
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  height: var(--tab-logo-height);
 }
 
 /* ---------- Nav ---------- */
@@ -114,15 +487,6 @@
   .site-header {
     padding-top: var(--header-pad-top);
     padding-bottom: var(--space-200);
-  }
-  .site-header__tab {
-    width: 312.188px;
-    height: 60px;
-  }
-  .site-header__logo {
-    top: 10px;
-    width: 129px;
-    height: 40px;
   }
   .site-header__inner {
     max-width: 940px;
@@ -240,14 +604,16 @@ img[data-alt-missing] {
 .story {
   padding-block: var(--space-300) var(--page-bottom);
 }
-/* A block right after a divider starts its section: no extra padding above it, so the sticky-nav jump
-   (see sticky-nav.js) lands exactly on it. */
+/* A block right after a divider starts its section: no extra padding above it, so the top bar's section jump
+   (see top-bar.js) lands exactly on it. */
 .content > .divider + * {
   padding-top: 0;
 }
-/* Anything on the page can be a jump target; leave room for the sticky nav above it. */
+/* Anything on the page can be a jump target; leave room for the fixed top bar above it (the tab is its tallest part). */
 .story > * {
-  scroll-margin-top: calc(var(--sticky-nav-height) + var(--space-150));
+  scroll-margin-top: calc(
+    var(--tab-logo-height) + var(--tab-pad-y) * 2 + var(--space-150)
+  );
 }
 
 /* ---------- Image group ---------- */
@@ -272,7 +638,7 @@ img[data-alt-missing] {
   object-fit: cover;
 }
 .image-group--portrait > * {
-  max-width: 300px;
+  max-width: var(--portrait-max);
   margin-inline: auto;
 }
 .image-group figcaption {
@@ -344,111 +710,19 @@ img[data-alt-missing] {
   gap: var(--space-150);
 }
 
-/* ---------- Sticky section nav ---------- */
-.section-nav {
-  position: sticky; /* without JavaScript: a plain bar that stays in view */
-  top: 0;
-  z-index: 20;
-  background: var(--header-bg);
-  color: var(--text-on-header);
-}
-.section-nav__list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px var(--space-200);
-  min-height: var(--sticky-nav-height);
-  padding: 0 var(--gutter);
-}
-.section-nav a {
-  padding-block: 0;
-}
-.section-nav__toggle {
-  display: none;
-}
-
-/* With JavaScript: hidden until the first divider has scrolled away, then fades in. */
-.js .section-nav {
-  position: fixed;
-  inset: 0 0 auto 0;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--fade-duration) ease,
-    visibility 0s linear var(--fade-duration);
-}
-.js .section-nav.is-visible {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
-}
-
-@media (max-width: 639px) {
-  .js .section-nav__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-075);
-    width: 100%;
-    min-height: var(--sticky-nav-height);
-    padding: 0 var(--space-100);
-    border: 0;
-    background: none;
-    color: inherit;
-    cursor: pointer;
-  }
-  .section-nav__chevron {
-    transition: transform var(--fade-duration) ease;
-  }
-  .section-nav.is-open .section-nav__chevron {
-    transform: rotate(180deg);
-  }
-  .js .section-nav__list {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: var(--space-075);
-    padding: var(--space-075) var(--gutter) var(--space-100);
-    background: var(--sticky-nav-menu-bg);
-    color: var(--sticky-nav-menu-text);
-  }
-  .js .section-nav.is-open .section-nav__list {
-    display: flex;
-  }
-  .js .section-nav li[data-current] {
-    display: none;
-  }
-}
-
-/* Inert copy for the styleguide. */
-.js .section-nav.section-nav--static {
-  position: static;
-  opacity: 1;
-  visibility: visible;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js .section-nav,
-  .section-nav__chevron {
-    transition: none;
-  }
-}
-
 /* ---------- Map split ----------
-   A map beside text from 960px (--bp-split), used on Getting there:
+   A map beside text from 960px wide, in landscape only (--bp-split), used on Getting there:
      <div class="map-split">
      {% include travel-map.html … show="wide" %}
      <div class="map-split__text content" markdown="1"> …markdown… </div>
      </div>
-   Each half keeps --map-pad (80px) around its map or text. Below 960px, and without JavaScript, the split is
-   an ordinary text column. */
+   Each half keeps --map-pad (80px) around its map or text. Below 960px, in portrait (an iPad held upright is
+   wider than 960px), and without JavaScript, the split is an ordinary text column. */
 .content > .map-split {
   max-width: none;
   padding: 0;
 }
-@media (min-width: 960px) {
+@media (min-width: 960px) and (orientation: landscape) {
   .js .map-split {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -494,15 +768,19 @@ img[data-alt-missing] {
 .travel-map {
   position: relative;
 }
+/* A map in the content column sized like a portrait photo: its 300px plus the column's side padding. */
+.content > .travel-map--portrait {
+  max-width: calc(var(--portrait-max) + var(--space-150) * 2);
+}
 html:not(.js) .travel-map {
   display: none;
 }
-@media (max-width: 959px) {
+@media (max-width: 959px), (orientation: portrait) {
   .travel-map--wide {
     display: none;
   }
 }
-@media (min-width: 960px) {
+@media (min-width: 960px) and (orientation: landscape) {
   .travel-map--narrow {
     display: none;
   }
