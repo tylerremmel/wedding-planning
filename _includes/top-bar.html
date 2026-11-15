@@ -21,6 +21,7 @@
   {%- if nav_ids.size > 0 %}{% assign bar_sections = true %}{% endif -%}
   {%- assign sec_split = nav_ids.size | plus: 1 | divided_by: 2 -%}
 {%- endif -%}
+<div class="site-status" aria-hidden="true"></div>
 <div class="site-top{% if page.layout == "home" %} site-top--solo{% endif %}">
   {%- unless page.layout == "home" %}
   <nav class="site-nav site-bar" aria-label="Pages" data-top-bar data-mode="pages" {% include edit-attr.html path="_data/navigation.yml" %}>
