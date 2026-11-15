@@ -35,7 +35,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 
 ## iOS Safari chrome color
 
-- Safari 26 tints the status bar, toolbar and overscroll from the page background, not `theme-color`. `html` is painted `--header-bg` (same as the footer) and `body` paints `--surface`; keep that pairing in `base.css`.
+- Safari 26 tints the status bar, toolbar and overscroll from the page background, not `theme-color`. `html` is painted `--header-bg` (same as the footer) and `.site-main` paints `--surface` (`body` has no background, so the area below the footer stays the header color); keep that pairing in `base.css` and `components.css`.
 - A fixed or sticky element at the top edge recolors the status bar while visible. The top bar's tab and 4px rule are always fixed at the top edge, so the status bar takes `--tab-bg` (sapphire-500-static in light, sapphire-600-static in dark), not `--header-bg`. `theme-color` in `head.html` matches `--tab-bg` for browsers that still read it; keep the two in sync.
 
 ## Visual QA

@@ -16,7 +16,7 @@ html {
   scroll-behavior: smooth;
   /* The canvas behind the page: iOS Safari tints the status bar, the bottom toolbar and the rubber-band
      overscroll from this. The header and footer share a color, so it reads as one continuous band.
-     body paints --surface over it for the content. */
+     .site-main paints --surface over it for the content. */
   background: var(--header-bg);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -26,9 +26,8 @@ html {
 }
 body {
   margin: 0;
-  min-height: 100vh; /* html is not --surface, so body must cover a short page itself */
+  min-height: 100vh; /* a short page still reaches the bottom of the screen; the rest is html's color */
   min-height: 100dvh;
-  background: var(--surface);
   color: var(--text);
 }
 img,

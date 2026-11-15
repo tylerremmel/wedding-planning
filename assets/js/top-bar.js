@@ -22,15 +22,26 @@
     nav.classList.toggle("is-visible", on);
     if (!on) setOpen(false);
   }
-  /* Shown only once the topper is gone off the TOP of the screen (not while it's still below the fold). */
-  if (topper && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      var e = entries[entries.length - 1];
-      show(!e.isIntersecting && e.boundingClientRect.bottom <= 0);
-    }).observe(topper);
-  } else {
-    show(true);
+  /* Shown only once the topper is gone off the TOP of the screen (not while it's still below the fold).
+     Checked on scroll, not with an IntersectionObserver: on iOS Safari the observer sometimes skipped the
+     crossing, so the bar stayed hidden. */
+  var revealTicking = false;
+  function checkReveal() {
+    revealTicking = false;
+    show(!topper || topper.getBoundingClientRect().bottom <= 0);
   }
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!revealTicking) {
+        revealTicking = true;
+        window.requestAnimationFrame(checkReveal);
+      }
+    },
+    { passive: true },
+  );
+  window.addEventListener("resize", checkReveal);
+  checkReveal();
 
   /* ---- Dropdown disclosure (narrow screens) ---- */
   function setOpen(open) {
