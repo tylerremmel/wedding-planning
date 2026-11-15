@@ -46,14 +46,15 @@
     var(--tab-h) - var(--tab-rule-weight) * 2
   ); /* one row of the bar: from under the rule to 4px above the tab's bottom edge */
   position: fixed;
-  top: var(--safe-top);
+  top: 0;
   left: 0;
   right: 0;
   z-index: 1;
-  /* The container is as tall as the tab (not just its in-flow bar, which the home page doesn't have), so
-     iOS Safari's fixed layer covers everything drawn in it. Clicks pass through to the page except on the
-     bar and the tab itself. */
-  height: var(--tab-h);
+  /* The container covers the status bar strip and the whole tab (not just its in-flow bar, which the home page
+     doesn't have), so iOS Safari's fixed layer paints everything drawn in it: it doesn't paint children outside
+     the container's own box. Clicks pass through to the page except on the bar and the tab itself. */
+  padding-top: var(--safe-top);
+  height: calc(var(--safe-top) + var(--tab-h));
   pointer-events: none;
 }
 .site-top > * {
@@ -64,7 +65,8 @@
 .site-top::before {
   content: "";
   position: absolute;
-  bottom: 100%;
+  z-index: 1; /* over the bar, which slides up behind it when hidden */
+  top: 0;
   left: 0;
   right: 0;
   height: var(--safe-top);
@@ -328,7 +330,7 @@
 .site-tab {
   --tab-fill: var(--tab-bg);
   position: absolute;
-  top: 0;
+  top: var(--safe-top);
   left: 0;
   right: 0;
   height: var(--tab-h);
