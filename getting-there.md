@@ -15,9 +15,11 @@ For reference, Waterford is located about 50 miles north of Portland.
 
 If you are interested in shared transportation options from Portland to the Waterford area, reach out to Jenna and Tyler [via email](mailto:jtwedding@tylerremmel.com) so they can coordinate and/or connect you with other guests who may have similar needs.
 
-<!-- `MAP LEAFLET PANEL – sticky at 50% screen width on desktop, but inline and free-scrolling on mobile` -->
+<div class="map-split">
+{% include travel-map.html mode="toggle" sticky=true show="wide" local_from="where-to-stay" %}
+<div class="map-split__text content" markdown="1">
 
-<!-- `ROUTES VIEW` -->
+{% include travel-map.html mode="routes" show="narrow" %}
 
 ## Arriving by air
 
@@ -35,7 +37,7 @@ For guests who are interested in arriving by train, the **Amtrak Downeaster line
 
 If you are driving from the south, take **I-95 North** from Portsmouth, New Hampshire, through Gray, Maine, exiting to follow **ME-26 North** for another 35 miles to Waterford.
 
-<!-- `LOCAL VIEW` -->
+{% include travel-map.html mode="local" show="narrow" %}
 
 ## Where to stay
 
@@ -50,3 +52,6 @@ If the couple has previously reached out to you about accommodations, refer to t
 ## Things to do
 
 This "Things to do" list is on our to-do list — come back for recommendations later!
+
+</div>
+</div>

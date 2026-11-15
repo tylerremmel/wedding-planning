@@ -436,6 +436,313 @@ img[data-alt-missing] {
   }
 }
 
+/* ---------- Map split ----------
+   A map beside text from 960px (--bp-split), used on Getting there:
+     <div class="map-split">
+     {% include travel-map.html … show="wide" %}
+     <div class="map-split__text content" markdown="1"> …markdown… </div>
+     </div>
+   Each half keeps --map-pad (80px) around its map or text. Below 960px, and without JavaScript, the split is
+   an ordinary text column. */
+.content > .map-split {
+  max-width: none;
+  padding: 0;
+}
+@media (min-width: 960px) {
+  .js .map-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .js .map-split__text > * {
+    max-width: calc(var(--measure) + var(--map-pad) * 2);
+    padding-inline: var(--map-pad);
+  }
+  /* The map fills its half, less --map-pad all round; the tabs sit in the padding above it and the caption
+     in the padding below. */
+  .js .map-split > .travel-map {
+    display: flex;
+    flex-direction: column;
+    padding: var(--map-pad);
+  }
+  .js .map-split > .travel-map .travel-map__frame {
+    flex: 1;
+    aspect-ratio: auto;
+    min-height: var(--map-min-height);
+  }
+  .js .map-split > .travel-map .travel-map__tabs {
+    position: absolute;
+    top: calc(var(--map-pad) - var(--map-label-height));
+    left: var(--map-pad);
+  }
+  .js .map-split > .travel-map figcaption {
+    position: absolute;
+    top: calc(100% - var(--map-pad));
+    inset-inline: var(--map-pad);
+  }
+  /* Pinned below the site nav while the split is on screen; it scrolls away with the split's last section. */
+  .js .map-split > .travel-map--sticky {
+    position: sticky;
+    top: var(--nav-height);
+    align-self: start;
+    height: calc(100vh - var(--nav-height));
+    height: calc(100dvh - var(--nav-height));
+  }
+}
+
+/* ---------- Travel map (see travel-map.js) ----------
+   A static picture: tabs above (toggle maps), the map, and the tile credit as the caption below. */
+.travel-map {
+  position: relative;
+}
+html:not(.js) .travel-map {
+  display: none;
+}
+@media (max-width: 959px) {
+  .travel-map--wide {
+    display: none;
+  }
+}
+@media (min-width: 960px) {
+  .travel-map--narrow {
+    display: none;
+  }
+}
+/* Routes maps (phones) are tall: Boston to the Inne fills the height long before the labels fill the width. */
+.travel-map__frame {
+  position: relative;
+  display: flex;
+  aspect-ratio: 3 / 5;
+  background: var(--placeholder);
+}
+/* The local places spread east to west, so their map is landscape. */
+.travel-map[data-travel-map="local"] .travel-map__frame {
+  aspect-ratio: 3 / 2;
+}
+.travel-map__canvas {
+  flex: 1;
+  background: var(--placeholder);
+}
+/* Loading: a spinner over the frame until the map is built. If its data fails to load, a message instead. */
+.travel-map__loading,
+.travel-map__error {
+  position: absolute;
+  inset: 0;
+}
+.travel-map__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.travel-map__spinner {
+  width: var(--map-spinner-size);
+  height: var(--map-spinner-size);
+  border: var(--map-spinner-weight) solid var(--map-ink);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: travel-map-spin var(--map-spinner-speed) linear infinite;
+}
+@keyframes travel-map-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.travel-map__error {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: var(--space-150);
+  background: var(--map-error-bg);
+  color: var(--map-error-ink);
+  text-align: center;
+}
+.travel-map.is-ready .travel-map__loading,
+.travel-map.is-failed .travel-map__loading {
+  display: none;
+}
+.travel-map.is-failed .travel-map__error {
+  display: flex;
+}
+@media (prefers-reduced-motion: reduce) {
+  .travel-map__spinner {
+    animation-duration: 3s;
+  }
+}
+.travel-map figcaption {
+  margin-top: 6px;
+}
+.travel-map figcaption a {
+  color: inherit;
+}
+
+/* Tabs: small tabs on the map's top-left corner. */
+.travel-map__tabs {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.travel-map__tab {
+  display: flex;
+  align-items: center;
+  height: var(--map-label-height);
+  padding-inline: var(--space-075);
+  background: var(--map-tab-bg);
+  color: var(--map-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--fade-duration) ease,
+    color var(--fade-duration) ease;
+}
+.travel-map__tab:hover {
+  background: var(--map-tab-bg-hover);
+}
+.travel-map__tab:has(input:checked) {
+  background: var(--map-tab-active-bg);
+  color: var(--map-tab-active-text);
+}
+.travel-map__tab:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* The tiles' tint: keeps their light and dark, takes its hue from --map-tint. Above the tile layer (z-index 1). */
+.travel-map__tint {
+  position: absolute;
+  z-index: 2;
+  background: var(--map-tint);
+  mix-blend-mode: color;
+  opacity: var(--map-tint-strength);
+  pointer-events: none;
+}
+
+/* Routes. Leaflet writes stroke attributes; these rules override them. */
+.travel-map__route {
+  stroke: var(--map-route);
+  stroke-width: var(--map-route-weight);
+  stroke-opacity: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Icons: glyph in ink, outline in paper (they swap between schemes). */
+.travel-map__icon {
+  display: block;
+  flex: none;
+  width: var(--map-icon-size);
+  height: var(--map-icon-size);
+}
+.travel-map__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.travel-map__icon-glyph {
+  fill: var(--map-ink);
+}
+.travel-map__icon-outline {
+  fill: var(--map-paper);
+}
+.travel-map__label {
+  display: flex;
+  align-items: center;
+  min-height: var(--map-label-height);
+  padding: 2px 6px;
+  background: var(--map-paper);
+  color: var(--map-ink);
+  white-space: nowrap;
+}
+
+/* Markers: Leaflet places a zero-size element on the point. The pin is a row of icons and the label. In the
+   local view the icon next to the label's far end is centered on the point; in the routes view (--beside) the
+   pin hangs on the route line and starts --map-route-clearance off it. --nudge shifts a pin sideways. */
+.travel-map__marker {
+  width: 0;
+  height: 0;
+}
+.travel-map__pin {
+  position: absolute;
+  top: calc(var(--map-icon-size) / -2);
+  display: flex;
+  align-items: center;
+  gap: var(--map-gap);
+  white-space: nowrap;
+}
+.travel-map__pin--right {
+  left: calc(var(--map-icon-size) / -2 + var(--nudge, 0px));
+}
+.travel-map__pin--left {
+  right: calc(var(--map-icon-size) / -2 - var(--nudge, 0px));
+}
+.travel-map__pin--beside.travel-map__pin--right {
+  left: calc(var(--map-route-clearance) + var(--nudge, 0px));
+}
+.travel-map__pin--beside.travel-map__pin--left {
+  right: calc(var(--map-route-clearance) - var(--nudge, 0px));
+}
+/* Label above (--top) or below (--bottom) the icon, centered on it. The pin is zero width and its icon and
+   label overflow it evenly on both sides. Beside a route, the icon sits --map-route-clearance to the left of the
+   line's end (the Inne, where the line arrives from the east). */
+.travel-map__pin--top,
+.travel-map__pin--bottom {
+  left: var(--nudge, 0px);
+  width: 0;
+  flex-direction: column;
+}
+.travel-map__pin--top {
+  top: auto;
+  bottom: calc(var(--map-icon-size) / -2);
+  flex-direction: column-reverse;
+}
+.travel-map__pin--beside:is(.travel-map__pin--top, .travel-map__pin--bottom) {
+  left: calc(
+    var(--nudge, 0px) - var(--map-route-clearance) - var(--map-icon-size) / 2
+  );
+}
+
+/* Drivers from the south: label above the icon, pinned to the bottom-left corner in the routes view. Its
+   label keeps the line breaks from the data. */
+.travel-map__corner {
+  position: absolute;
+  z-index: 500; /* above Leaflet's panes */
+  bottom: var(--map-corner-inset);
+  left: var(--map-corner-inset);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--map-gap);
+  pointer-events: none;
+}
+.travel-map__corner .travel-map__label {
+  white-space: pre-line;
+}
+
+/* Switching views: every view's routes, pins and labels stay on the map. The outgoing view's fade out at once;
+   the incoming view's wait until the zoom has nearly settled, then fade in. Nothing carries over between views
+   (not even the Inne): the map tiles give the continuity. */
+.travel-map__view-routes,
+.travel-map__view-local {
+  transition: opacity var(--map-fade) ease;
+}
+.travel-map:not([data-view="routes"]) .travel-map__view-routes,
+.travel-map:not([data-view="local"]) .travel-map__view-local {
+  opacity: 0;
+}
+.travel-map[data-view="routes"] .travel-map__view-routes,
+.travel-map[data-view="local"] .travel-map__view-local {
+  transition-delay: var(--map-fade-in-delay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-map__tab,
+  .travel-map__view-routes,
+  .travel-map__view-local {
+    transition: none;
+  }
+}
+
 /* ---------- Styleguide ---------- */
 .sg {
   max-width: 1100px;

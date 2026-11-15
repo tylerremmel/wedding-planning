@@ -1,0 +1,38 @@
+{%- comment -%}
+  Travel map (assets/js/travel-map.js builds it with Leaflet; content is in _data/travel_map.yml).
+  The map is a static picture: no popovers, no panning or zooming by the reader.
+  Params:
+    mode    routes | local | toggle (both, with tabs; the map follows the reader's scroll until a tab is picked)
+    sticky  true to stay in view while its .map-split is on screen (wide screens)
+    show    narrow | wide to limit the map to one side of the 960px breakpoint (default: both)
+    local_from  (toggle maps) id of the heading where the map switches to the local view as the reader scrolls
+  Without JavaScript the map is hidden; the page text carries everything it shows.
+{%- endcomment -%}
+{%- assign tm_mode = include.mode | default: "routes" -%}
+{%- assign tm_class = "travel-map" -%}
+{%- if include.sticky %}{% assign tm_class = tm_class | append: " travel-map--sticky" %}{% endif -%}
+{%- if include.show %}{% assign tm_class = tm_class | append: " travel-map--" | append: include.show %}{% endif -%}
+{%- assign tm_label = "Map of driving routes to Waterford, Maine" -%}
+{%- if tm_mode == "local" %}{% assign tm_label = "Map of wedding locations near Waterford, Maine" %}{% endif -%}
+{%- if tm_mode == "toggle" %}{% assign tm_label = "Map of Waterford, Maine and the routes there" %}{% endif -%}
+<figure class="{{ tm_class }}" data-travel-map="{{ tm_mode }}" data-src="{{ '/assets/data/travel-map.json' | relative_url }}" data-icons="{{ '/assets/icons/updated/' | relative_url }}"{% if include.local_from %} data-local-from="{{ include.local_from }}"{% endif %} role="region" aria-label="{{ tm_label }}" {% include edit-attr.html path="_data/travel_map.yml" %}>
+  {%- if tm_mode == "toggle" %}
+  <fieldset class="travel-map__tabs">
+    <legend class="visually-hidden">Map view</legend>
+    {%- assign tm_tabs = "routes:Traveling there,local:Once you’re there" | split: "," -%}
+    {%- for tab in tm_tabs %}
+    {%- assign tm_tab = tab | split: ":" %}
+    <label class="travel-map__tab meta s-075">
+      <input class="visually-hidden" type="radio" name="travel-map-view" value="{{ tm_tab[0] }}"{% if forloop.first %} checked{% endif %}>
+      {{ tm_tab[1] }}
+    </label>
+    {%- endfor %}
+  </fieldset>
+  {%- endif %}
+  <div class="travel-map__frame">
+    <div class="travel-map__canvas"></div>
+    <div class="travel-map__loading" role="status"><span class="travel-map__spinner" aria-hidden="true"></span><span class="visually-hidden">Loading map</span></div>
+    <p class="travel-map__error meta s-075" role="alert">The map didn’t load. Try refreshing the page.</p>
+  </div>
+  <figcaption><a href="https://leafletjs.com">Leaflet</a> | Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ</figcaption>
+</figure>

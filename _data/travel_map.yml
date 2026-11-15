@@ -1,0 +1,78 @@
+# The travel map on Getting there and The wedding (see _includes/travel-map.html).
+# `label` is the short name shown with the icons; `side` (right, left, top or bottom; default right) is where it
+# goes. The destination's `routes_side` is its side in the routes view. `routes_side_narrow` overrides the side on
+# the narrow-layout routes map (phones). `icons` are drawn left to right; files are
+# assets/icons/updated/jt-<icon>-outlined.svg. `nudge` shifts a marker sideways, in pixels.
+# Route lines live in _data/travel_routes.json. After moving a point a route starts at, ends at or passes
+# through, rerun `ruby scripts/fetch-travel-routes.rb` to redraw them.
+
+# "Traveling there": where guests start. The map is static: no popovers; the page copy carries the details.
+origins:
+  - id: portland
+    label: "Portland"
+    icons: [train, plane]
+    # On phones, left of the line with the other labels, which leaves the map narrower.
+    routes_side_narrow: left
+    # Portland Transportation Center (the Jetport is about 2 miles away and shares the label).
+    lat: 43.65399
+    lng: -70.29128
+  - id: boston
+    label: "Boston"
+    icons: [plane]
+    # Boston Logan International Airport.
+    lat: 42.36318
+    lng: -71.01364
+
+# Where every route ends.
+destination: inne
+
+# Every route is drawn through these points, in order, so it follows the page copy: I-95 North to Gray,
+# then ME-26 North to Norway (and on to Waterford).
+via:
+  - { lat: 43.88609, lng: -70.33036 } # Gray
+  - { lat: 44.21362, lng: -70.54234 } # Norway
+
+# The route lines. `main` passes Portland on the way. A route with `joins` stops where it meets that route, so no
+# two lines overlap. In the routes view, pins sit just off the line beside their point.
+routes:
+  main:
+    from: { lat: 42.36318, lng: -71.01364 } # Boston Logan
+  south:
+    # Starts in New Haven so the line always runs off the bottom-left edge of the map.
+    from: { lat: 41.30854, lng: -72.92492 } # I-91, New Haven
+    via:
+      - { lat: 41.77102, lng: -72.68008 } # I-84, Hartford
+      - { lat: 42.29594, lng: -71.74713 } # I-290, Worcester
+    joins: main
+
+# Drivers from the south: an icon and label pinned to the map's bottom-left corner (not to a point).
+# Line breaks in the label are kept.
+south:
+  label: "Driving\nfrom\nall points\nsouth"
+  icon: bronco
+
+# "Once you're there": the places in the Waterford area.
+places:
+  - id: inne
+    label: "The Waterford Inne"
+    side: right
+    routes_side: left
+    routes_side_narrow: top
+    icons: [star]
+    lat: 44.21300
+    lng: -70.69449
+  - id: hampton
+    label: "Hampton Inn"
+    icons: [pin]
+    lat: 44.11699
+    lng: -70.44288
+    # Hampton Inn and Oxbow are close together: nudged apart so their icons don't overlap on phones.
+    side: bottom
+    nudge: 12
+  - id: oxbow
+    label: "Oxbow Beer Garden"
+    side: left
+    nudge: -12
+    icons: [pin]
+    lat: 44.13100
+    lng: -70.46118

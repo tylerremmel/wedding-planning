@@ -235,6 +235,39 @@
   --image-ratio-pair: 3 / 4;
   --image-ratio-single: 4 / 3;
 
+  /* ---------- Travel map ----------
+     Ink and paper swap between schemes: sapphire icons and text on white in light, white on sapphire in
+     dark. Routes (--map-route, set per scheme below) are sapphire-600 in light and the paler sapphire-400 in
+     dark. */
+  --bp-split: 960px; /* documentation only: where .map-split goes side by side */
+  --nav-height: 50px; /* reserved for the coming sticky site nav; sticky blocks sit below it */
+  --map-tint: var(
+    --sapphire-600-static
+  ); /* the hue the gray map tiles take on */
+  --map-route-weight: 4px;
+  --map-icon-size: 24px; /* icons fit inside this square */
+  --map-label-height: 24px; /* single-line labels and the tabs */
+  --map-gap: 4px; /* between icons, and between icons and their label */
+  --map-route-clearance: var(
+    --space-075
+  ); /* from the route line to the pin beside it (12px) */
+  --map-corner-inset: 20px; /* the drivers-from-the-south pin, from the map's bottom-left corner */
+  --map-tab-active-bg: var(--sapphire-600-static);
+  --map-tab-active-text: var(--white);
+  --map-pad: var(
+    --space-500
+  ); /* around the map and the text beside it, side by side (80px) */
+  --map-min-height: 400px;
+  --map-spinner-size: 32px;
+  --map-spinner-weight: 3px;
+  --map-spinner-speed: 0.9s;
+  --map-error-bg: var(--sapphire-800-static);
+  --map-error-ink: var(--white);
+  --map-fade: var(
+    --fade-duration
+  ); /* labels, routes and icons fading between views */
+  --map-fade-in-delay: 500ms; /* before the incoming view fades in, so it lands as the zoom settles */
+
   /* ---------- Motion ---------- */
   --fade-duration: 300ms;
 
@@ -258,6 +291,12 @@
   --link-hover: var(--sapphire-800-static);
   --tk-bg: #fff3bf;
   --tk-text: #5c4500;
+  --map-ink: var(--sapphire-600-static); /* icon glyphs, label text */
+  --map-paper: var(--white); /* icon outlines, label backgrounds */
+  --map-tab-bg: var(--sapphire-200-static);
+  --map-tab-bg-hover: var(--sapphire-300-static);
+  --map-route: var(--sapphire-600-static);
+  --map-tint-strength: 0.1; /* how strongly the tiles take the tint */
 }
 
 /* ---------- Dark scheme (follows the OS; there is no toggle) ----------
@@ -289,6 +328,12 @@
     --link-hover: var(--sapphire-300-static);
     --tk-bg: #4a3b00;
     --tk-text: #ffe9a3;
+    --map-ink: var(--white);
+    --map-paper: var(--sapphire-600-static);
+    --map-tab-bg: var(--sapphire-800-static);
+    --map-tab-bg-hover: var(--sapphire-700-static);
+    --map-route: var(--sapphire-300-static);
+    --map-tint-strength: 0.5; /* how strongly the tiles take the tint */
   }
 }
 
@@ -319,6 +364,12 @@
   --link-hover: var(--sapphire-300-static);
   --tk-bg: #4a3b00;
   --tk-text: #ffe9a3;
+  --map-ink: var(--white);
+  --map-paper: var(--sapphire-600-static);
+  --map-tab-bg: var(--sapphire-800-static);
+  --map-tab-bg-hover: var(--sapphire-700-static);
+  --map-route: var(--sapphire-300-static);
+  --map-tint-strength: 0.5; /* how strongly the tiles take the tint */
   background: var(--surface);
   color: var(--text);
 }
@@ -348,6 +399,12 @@
   --link-hover: var(--sapphire-800-static);
   --tk-bg: #fff3bf;
   --tk-text: #5c4500;
+  --map-ink: var(--sapphire-600-static);
+  --map-paper: var(--white);
+  --map-tab-bg: var(--sapphire-200-static);
+  --map-tab-bg-hover: var(--sapphire-300-static);
+  --map-route: var(--sapphire-600-static);
+  --map-tint-strength: 0.1; /* how strongly the tiles take the tint */
   background: var(--surface);
   color: var(--text);
 }

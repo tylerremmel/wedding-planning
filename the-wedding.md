@@ -15,7 +15,7 @@ You can find information below about the general contours of the weekend and wha
 
 Please note that Jenna and Tyler are still ironing out many of the details, but here is what they know so far!
 
-<!-- `MAP LEAFLET PANEL WITH ONLY LOCAL VIEW – on desktop only, side-by-side grid with map on left and text on the right (would consider sticky to match getting-there if the depth gets too long on text)` -->
+{% include travel-map.html mode="local" %}
 
 **The ceremony and reception will be held at [The Waterford Inne](https://www.thewaterfordinne.com/)**, located at 258 Chadbourne Road, Waterford, Maine 04088.
 
