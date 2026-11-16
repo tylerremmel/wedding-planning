@@ -1,0 +1,24 @@
+# The weekend schedule on The wedding page, in order. One entry per day: `date` and `events`.
+# Each event has `time`, optional `place` (shown as "time at place"; leave it off when it is the same as the
+# event above) and `text`. `text` can use **markdown**. TK = still to come.
+- date: "Friday, July 30, 2027"
+  events:
+    - time: "5 p.m. until 9 p.m."
+      place: "Oxbow Beer Garden, Oxford"
+      text: "Welcome event; select food and drinks will be provided."
+- date: "Saturday, July 31, 2027"
+  events:
+    - time: "4 p.m."
+      place: "The Waterford Inne"
+      text: "Wedding ceremony"
+    - time: "5 p.m."
+      text: "Cocktail hour and hors d'oeuvres"
+    - time: "6 p.m."
+      text: "Reception begins with buffet-style dinner, dancing to follow"
+    - time: "10 p.m."
+      text: "Reception ends, please leave. (There will be no after party, so don’t even ask. Go home. Go to sleep.)"
+- date: "Sunday, August 1, 2027"
+  events:
+    - time: "TBA"
+      place: "The Waterford Inne"
+      text: "Goodbye and thank you brunch"

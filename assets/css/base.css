@@ -66,11 +66,16 @@ ol {
   padding-bottom: var(--paragraph-spacing);
 }
 /* Headings sit closer to what they introduce; section headings and block components get extra room above. */
-.content > :is(h2, h3) {
+.content > :is(h2, h3),
+.faq__item > h2 {
   padding-bottom: var(--space-100);
 }
-.content > :is(h2, .impressions, .timeline, .faq, .hotels, figure) {
+.content > :is(h2, .timeline, .schedule, .hotels, figure) {
   padding-top: var(--block-pad-top);
+}
+/* A photo or map (with its caption) gets the same room below as above: --section-gap. */
+.content > :is(.image-group, .travel-map) {
+  padding-bottom: var(--section-gap);
 }
 .content > ul {
   list-style: disc;
@@ -90,6 +95,18 @@ h4,
 h5,
 h6 {
   text-align: center;
+}
+/* ...except headings that introduce left-aligned text: FAQ questions, schedule days, and the Getting there text beside the map (meta text under headline subheads, with eyebrow labels above the groups like the schedule's days). */
+:is(.faq__item, .schedule__day) > :is(h2, h3),
+.map-split__text > h3 {
+  text-align: left;
+}
+/* Sections after the first get extra room above (like the dividers they replaced), except one that follows a group label or the map under it. */
+.map-split__text > h3 ~ h3 {
+  padding-top: var(--space-150);
+}
+.map-split__text > :is(.eyebrow, .travel-map) + h3 {
+  padding-top: 0;
 }
 
 /* Balanced wrapping for short text blocks, everywhere. */
@@ -151,7 +168,8 @@ blockquote,
 small,
 figcaption,
 nav a,
-nav button {
+nav button,
+.map-split__text :is(p, li):not(.eyebrow) {
   font-family: var(--meta-family);
   font-weight: var(--w-meta);
   letter-spacing: var(--meta-tracking);
@@ -181,6 +199,7 @@ nav button {
 }
 
 .s-075,
+.map-split__text .eyebrow,
 nav a,
 nav button,
 figcaption,
@@ -239,6 +258,7 @@ blockquote {
 }
 
 .s-150,
+.map-split__text > h3,
 .lead,
 .tile-title,
 .site-footer__title {

@@ -5,7 +5,7 @@ lead:
   - "We know — you can’t believe that Jenna Grande and Tyler Remmel aren’t married yet."
   - "Do you believe us now?"
 
-body: "They figured that it was about time that the couple tied the knot. TK (more of a cheeky welcome message here)"
+body: "They figured that it was about time that the couple tied the knot. After years of rumors that maybe they’re already married, they’re finally doing the dang thing. Not because everyone has been pressuring them. But because they really just can’t stand not being married to one another. Plus, it’s time Pigs In A Blanket knew his parents were married. He’s three years old and starting to ask questions."
 
 date_line: "Saturday, July 31, 2027 in Waterford, Maine"
 
@@ -17,7 +17,7 @@ tiles:
     image:
       src: engagement-steps.jpg
       alt: Jenna, Tyler and Pigs sit on the steps outside Tyler’s old apartment building after getting engaged on March 30, 2025.
-    text: "How we met, major milestones in our relationship, the proposal story … and the Pig of it all."
+    text: "How they met, major milestones in their relationship, the proposal story … and the Pig of it all."
   - title: "The wedding"
     url: /the-wedding/
     image:
@@ -29,7 +29,12 @@ tiles:
     image:
       src: waterford-handout-1.jpg
       alt: An aerial view of The Waterford Inne, set in a forest with mountains visible in the distance.
-    text: "Information and recommendations about booking your travel and accommodations."
+    text: "Information and recommendations for booking your travel and accommodations."
   - title: "What to know"
     url: /what-to-know/
+    image:
+      src: waterford-handout-4.jpg
+      alt: Mist clears in the early morning over a meadow at The Waterford Inne.
+      width: 1600
+      height: 1061
     text: "Learn more about the dress code and whether the wedding will be kid-friendly, along with other FAQs."

@@ -1,4 +1,4 @@
-# The Wedding of Jenna Grande and Tyler Remmel
+# The wedding of Jenna Grande and Tyler Remmel
 
 Our wedding website: a custom Jekyll site (no theme gem) deployed to GitHub Pages with GitHub Actions, plus a legacy React venue explorer backed by Airtable that now lives at an unlinked URL.
 
@@ -15,7 +15,7 @@ Content editors: start with [EDITING.md](EDITING.md). This README is for develop
 | Page            | File               | Layout   | Notes                                                                   |
 | --------------- | ------------------ | -------- | ----------------------------------------------------------------------- |
 | Home            | `index.md`         | `home`   | Words and tiles come from `_data/home.yml`                              |
-| Our story       | `our-story.md`     | `story`  | Prose, plus milestones, first impressions and photo groups from `_data` |
+| Our story       | `our-story.md`     | `story`  | Prose, plus milestones and photo groups from `_data` |
 | The wedding     | `the-wedding.md`   | `page`   |                                                                         |
 | Getting there   | `getting-there.md` | `page`   | Hotel blocks from `_data/hotels.yml`                                    |
 | What to know    | `what-to-know.md`  | `page`   | FAQs from `_data/faqs.yml`                                              |

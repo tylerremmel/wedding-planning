@@ -59,6 +59,12 @@
 .site-top > * {
   pointer-events: auto;
 }
+/* Phones: the bar's background runs all the way down to the tab's bottom edge (elsewhere it stops one rule short). */
+@media (max-width: 639px) {
+  .site-top {
+    --bar-h: calc(var(--tab-h) - var(--tab-rule-weight));
+  }
+}
 /* Status bar tint (iOS Safari 26). The page runs under the status bar, but fixed elements start below it, so
    nothing can be painted there. Safari tints the status bar from the first fixed element it finds about 4px
    below the top edge, and skips one that is 10px thick or less, has no plain background-color, or is
@@ -168,12 +174,12 @@
   /* The global nav rule steps up to 16px from 640px, which would be too large for this bar on a tablet. */
   .site-bar a,
   .site-bar__toggle {
-    font-size: var(--step-075);
-    --w-meta: var(--meta-wght-075);
+    font-size: var(--step-087);
+    --w-meta: var(--meta-wght-087);
   }
   .site-bar {
     --label-center: calc((var(--bar-h) - 3px) / 2 + 1px);
-    --menu-row: calc(var(--label-center) + 0.711 * var(--step-075) / 2);
+    --menu-row: calc(var(--label-center) + 0.711 * var(--step-087) / 2);
     padding-top: calc(var(--label-center) - (var(--menu-row) - 3px) / 2);
     --chevron: 16px;
     --chevron-gap: var(--space-050);
@@ -325,7 +331,7 @@
 
 /* ---------- Logo tab ----------
    One SVG (see tab.html): the tab outline plus the top rule as a single shape, both filled from --tab-fill so
-   hover or focus on either darkens the whole thing. .site-tab is as tall as the tab but ignores the pointer
+   focus on the link darkens the whole thing. .site-tab is as tall as the tab but ignores the pointer
    (only the link takes it), so hovering beside the tab does nothing; overflow-x clips the rule's long ends
    to the page width. The SVG is 5.2:1 and the rule sits inside its height, so the logo is centered
    on rule + tab together. --tab-unit = SVG units per px, to keep the rule a true 4px at any size. */
@@ -345,9 +351,9 @@
     justify-content: center;
   }
 }
-.site-tab:hover,
+/* No hover tint (the tab is a separate shape from the rule now); keyboard focus still recolors it. */
 .site-tab:has(:focus-visible) {
-  --tab-fill: var(--tab-bg-hover); /* one step past the tab */
+  --tab-fill: var(--tab-bg-focus);
 }
 .site-tab__link {
   position: relative;
@@ -447,8 +453,23 @@
   top: var(--tab-pad-y);
   left: 50%;
   transform: translateX(-50%);
-  width: auto;
   height: var(--tab-logo-height);
+  aspect-ratio: 128.998 / 39.9948; /* the SVG's own ratio */
+  background-color: var(--white);
+  -webkit-mask: url("../img/jt27-pigbronco-small.svg") center / contain
+    no-repeat;
+  mask: url("../img/jt27-pigbronco-small.svg") center / contain no-repeat;
+  transition: background-color var(--fade-duration) ease;
+}
+@media (hover: hover) {
+  .site-tab__link:hover .site-tab__logo {
+    background-color: var(--sapphire-300-static);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-tab__logo {
+    transition: none;
+  }
 }
 
 /* ---------- Nav ---------- */
@@ -495,17 +516,24 @@
 .page__title {
   margin-bottom: var(--space-200);
 }
-.faq,
 .hotels {
   display: flex;
   flex-direction: column;
   gap: var(--section-gap);
 }
-.faq__item,
 .hotels__item {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+/* An FAQ answer spaces like the rest of the page: the question sits --space-100 above its answer (as a heading
+   does), and paragraphs are --paragraph-spacing apart, as padding. */
+.faq__item {
+  display: flex;
+  flex-direction: column;
+}
+.faq__item > p:not(:last-child) {
+  padding-bottom: var(--paragraph-spacing);
 }
 
 @media (min-width: 640px) {
@@ -538,6 +566,11 @@
   padding: var(--divider-pad-top) var(--space-150) var(--divider-space);
   color: var(--rule);
 }
+.divider--tight {
+  /* A divider with --space-150 above and --space-300 below, for runs of dividers (What to know); the default is 40px / 64px. */
+  --divider-pad-top: var(--space-150);
+  --divider-space: var(--space-300);
+}
 .divider__line {
   display: flex;
   justify-content: center;
@@ -563,9 +596,7 @@ img[data-alt-missing] {
 }
 
 /* ---------- Home ---------- */
-.hero {
-  background: var(--header-bg);
-}
+
 .hero__img,
 .hero__placeholder {
   display: block;
@@ -574,6 +605,22 @@ img[data-alt-missing] {
 }
 .hero__img {
   object-fit: cover;
+  background: var(
+    --header-bg
+  ); /* shows until the photo loads; the caption below sits on the page, not on this */
+}
+/* The caption hangs below the photo without taking up layout height, so the space between the photo and the
+   page's first block is the same with or without one (it sits in that space, which is taller than the caption). */
+.hero {
+  position: relative;
+}
+.hero__caption {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 6px var(--space-150);
+  text-align: right;
 }
 .hero__placeholder {
   display: grid;
@@ -584,16 +631,38 @@ img[data-alt-missing] {
   padding-top: var(--space-300);
   padding-bottom: var(--page-bottom);
 }
+.home > .divider {
+  max-width: var(--home-wide-max);
+}
 .home__intro {
   text-align: center;
+}
+/* The handwritten note is a drawing, not a photo: the SVG is a mask over the text color, so it follows the scheme. */
+.home__note {
+  padding-bottom: calc(
+    var(--paragraph-spacing) + var(--space-050)
+  ); /* an extra 8px below the note */
+}
+.home__note-art {
+  display: block;
+  width: 100%;
+  max-width: var(--portrait-max);
+  margin-inline: auto;
+  aspect-ratio: 1108.68 / 1026.31;
+  background-color: var(--text);
+  -webkit-mask: url("../img/handwritten-note.svg") center / contain no-repeat;
+  mask: url("../img/handwritten-note.svg") center / contain no-repeat;
 }
 .home__tiles {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-300);
-  max-width: calc(900px + var(--space-150) * 2);
+  max-width: var(--home-wide-max);
   margin-inline: auto;
   padding-inline: var(--space-150);
+  padding-bottom: var(
+    --paragraph-spacing
+  ); /* like a content block, so the divider below spaces the same as above */
 }
 
 .promo-tile__link {
@@ -649,11 +718,10 @@ img[data-alt-missing] {
   display: grid;
   gap: var(--image-gap);
 }
-.image-group--2 .image-group__images {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-}
-.image-group--3 .image-group__images {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+/* Grids keep their columns at every width; they never stack. */
+.image-group--2 .image-group__images,
+.image-group--4 .image-group__images {
+  grid-template-columns: repeat(2, 1fr);
 }
 .image-group__img {
   width: 100%;
@@ -661,7 +729,7 @@ img[data-alt-missing] {
   border-radius: var(--image-radius);
 }
 .image-group--2 .image-group__img,
-.image-group--3 .image-group__img {
+.image-group--4 .image-group__img {
   aspect-ratio: var(--image-ratio-pair);
   object-fit: cover;
 }
@@ -671,18 +739,6 @@ img[data-alt-missing] {
 }
 .image-group figcaption {
   margin-top: 6px;
-}
-
-/* ---------- First impressions ---------- */
-.impressions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: var(--space-150) var(--space-300);
-}
-.impressions__item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 /* ---------- Timeline ----------
@@ -737,6 +793,62 @@ img[data-alt-missing] {
   flex-direction: column;
   gap: var(--space-150);
 }
+/* In the timeline a lone portrait photo is full width, not capped like a portrait elsewhere. */
+.timeline__body .image-group--portrait > * {
+  max-width: none;
+}
+
+/* ---------- Schedule ----------
+   A headline per day, then its events: each an open dot with a rule joining the dots within the day. Events have
+   no gap between them (padding instead), so each event's rule segment (its dot centre down to the next event's
+   dot centre) is exactly its own height. Dots center on the event's first line. */
+.schedule__day + .schedule__day {
+  padding-top: var(--timeline-gap);
+}
+.schedule__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
+.schedule__events {
+  display: flex;
+  flex-direction: column;
+}
+.schedule__event {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: var(--timeline-indent);
+  padding-bottom: var(--space-150);
+}
+.schedule__event:last-child {
+  padding-bottom: 0;
+}
+.schedule__event::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: calc(0.5lh - var(--timeline-dot) / 2);
+  width: var(--timeline-dot);
+  height: var(--timeline-dot);
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--surface);
+}
+.schedule__event::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--timeline-dot) / 2 - 0.5px);
+  top: 0.5lh;
+  width: 1px;
+  height: 100%;
+  background: var(--rule);
+}
+.schedule__event:last-child::after {
+  display: none;
+}
 
 /* ---------- Map split ----------
    A map beside text from 960px wide, in landscape only (--bp-split), used on Getting there:
@@ -750,6 +862,22 @@ img[data-alt-missing] {
   max-width: none;
   padding: 0;
 }
+/* The divider between the split's two groups: 16px above and 8px below (plus the spacing of the blocks around it). */
+.map-split__text > .divider {
+  padding-top: var(--space-100);
+  padding-bottom: var(--space-050);
+}
+
+.map-split__text .eyebrow {
+  padding-bottom: var(--space-150);
+}
+
+@media (max-width: 959px) {
+  .map-split__text .eyebrow {
+    padding-bottom: 0;
+  }
+}
+
 @media (min-width: 960px) and (orientation: landscape) {
   .js .map-split {
     display: grid;
@@ -759,6 +887,13 @@ img[data-alt-missing] {
     max-width: calc(var(--measure) + var(--map-pad) * 2);
     padding-inline: var(--map-pad);
   }
+  /* The text half is the .map-split__text element itself (it also has .content), so no descendant selector. It has
+     --map-pad above, and half a screen below so the last section can scroll up to the middle of the screen. */
+  .js .map-split__text {
+    padding-top: var(--map-pad);
+    padding-bottom: 50vh;
+  }
+
   /* The map fills its half, less --map-pad all round; the tabs sit in the padding above it and the caption
      in the padding below. */
   .js .map-split > .travel-map {
@@ -773,8 +908,11 @@ img[data-alt-missing] {
   }
   .js .map-split > .travel-map .travel-map__tabs {
     position: absolute;
-    top: calc(var(--map-pad) - var(--map-label-height));
+    top: var(--map-pad);
     left: var(--map-pad);
+    transform: translateY(
+      -100%
+    ); /* the tabs' bottom edge sits on the map's top edge */
   }
   .js .map-split > .travel-map figcaption {
     position: absolute;
@@ -796,9 +934,10 @@ img[data-alt-missing] {
 .travel-map {
   position: relative;
 }
-/* A map in the content column sized like a portrait photo: its 300px plus the column's side padding. */
+/* A tall map in the content column: the full column on phones, capped at --map-narrow-max (plus the column's side
+   padding) so it doesn't get huge on tablets. */
 .content > .travel-map--portrait {
-  max-width: calc(var(--portrait-max) + var(--space-150) * 2);
+  max-width: calc(var(--map-narrow-max) + var(--space-150) * 2);
 }
 html:not(.js) .travel-map {
   display: none;
@@ -891,23 +1030,21 @@ html:not(.js) .travel-map {
   border: 0;
 }
 .travel-map__tab {
+  font-size: var(--step-075);
+  --w-subhead: var(--subhead-wght-075);
   display: flex;
   align-items: center;
-  height: var(--map-label-height);
-  padding-inline: var(--space-075);
-  background: var(--map-tab-bg);
-  color: var(--map-ink);
+  padding: 6px var(--space-075);
+  border: 1px solid currentColor;
+  border-bottom: 0;
+  border-radius: 4px 4px 0 0;
+  color: var(--sapphire-400-static); /* inactive */
   cursor: pointer;
-  transition:
-    background-color var(--fade-duration) ease,
-    color var(--fade-duration) ease;
+  transition: color var(--fade-duration) ease;
 }
-.travel-map__tab:hover {
-  background: var(--map-tab-bg-hover);
-}
+.travel-map__tab:hover,
 .travel-map__tab:has(input:checked) {
-  background: var(--map-tab-active-bg);
-  color: var(--map-tab-active-text);
+  color: var(--text);
 }
 .travel-map__tab:has(input:focus-visible) {
   outline: 2px solid var(--focus);

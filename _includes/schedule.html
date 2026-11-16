@@ -1,0 +1,25 @@
+{%- comment -%} The weekend schedule from _data/schedule.yml: a headline for
+each day, then its events, each with an open dot. A rule joins the dots within a
+day. {%- endcomment -%}
+<div class="schedule" {% include edit-attr.html path="_data/schedule.yml" %}>
+  {%- for day in site.data.schedule %}
+  <section class="schedule__day">
+    <h3 class="headline s-125">{{ day.date }}</h3>
+    <ol class="schedule__events" role="list">
+      {%- for event in day.events %}
+      <li class="schedule__event meta s-100">
+        <p class="meta s-100">
+          <strong
+            >{{ event.time }}{% if event.place %} at {{ event.place }}{% endif
+            %}</strong
+          >
+        </p>
+        <p class="meta s-100">
+          {% include md.html text=event.text inline=true %}
+        </p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </section>
+  {%- endfor %}
+</div>

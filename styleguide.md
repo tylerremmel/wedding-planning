@@ -51,7 +51,7 @@ noindex: true
 <tr><td>--accent / --rule</td><td>sapphire-600</td><td>sapphire-300 (11.0:1 on 950)</td></tr>
 <tr><td>--header-bg / --footer-bg</td><td>sapphire-600</td><td>sapphire-800</td></tr>
 <tr><td>--tab-bg (logo tab and top rule; also <code>theme-color</code>)</td><td>sapphire-500</td><td>sapphire-600</td></tr>
-<tr><td>--tab-bg-hover</td><td>sapphire-700-static</td><td>sapphire-800-static</td></tr>
+<tr><td>--tab-bg-focus</td><td>sapphire-700-static</td><td>sapphire-800-static</td></tr>
 </tbody></table></div>
 </section>
 
@@ -151,7 +151,7 @@ noindex: true
 <tr><td>--tab-rule-weight</td><td>5px</td><td>top rule thickness (stays 5px when the tab scales; at least 5px so the status bar tint element reaches it)</td></tr>
 <tr><td>--tab-logo-height, --tab-pad-y</td><td>30px, 5px (34px, 8px from 960px)</td><td>tab height = logo + 2 &times; pad</td></tr>
 <tr><td>--nav-height</td><td>the tab height (40px; 50px from 960px)</td><td>sticky blocks (the map) sit below it</td></tr>
-<tr><td>--tab-bg, --tab-bg-hover</td><td>see Color</td><td>tab fill, and on hover or focus</td></tr>
+<tr><td>--tab-bg, --tab-bg-focus</td><td>see Color</td><td>tab fill, and on keyboard focus</td></tr>
 <tr><td>--fade-duration, --bar-text-delay, --bar-reveal-delay</td><td>300ms, 250ms, 150ms</td><td>bar reveal timing</td></tr>
 </tbody></table></div>
 </section>
@@ -163,8 +163,6 @@ noindex: true
 <thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead>
 <tbody>
 <tr><td>--map-route</td><td>sapphire-600-static</td><td>sapphire-300-static</td></tr>
-<tr><td>--map-tab-bg / --map-tab-bg-hover</td><td>sapphire-200-static / 300-static</td><td>sapphire-800-static / 700-static</td></tr>
-<tr><td>--map-tab-active-bg / --map-tab-active-text</td><td colspan="2">sapphire-600-static / white</td></tr>
 <tr><td>--map-error-bg / --map-error-ink</td><td colspan="2">sapphire-800-static / white</td></tr>
 <tr><td>--map-pad, --map-min-height, --map-corner-inset</td><td colspan="2">80px, 400px, 20px</td></tr>
 </tbody></table></div>

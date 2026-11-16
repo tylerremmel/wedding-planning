@@ -192,6 +192,13 @@
   }
 
   function build(el, data) {
+    /* data-hide: ids of places this map leaves out (a copy, since the data is shared between maps). */
+    var hidden = (el.getAttribute("data-hide") || "").split(/[\s,]+/);
+    data = Object.assign({}, data, {
+      places: data.places.filter(function (p) {
+        return hidden.indexOf(p.id) === -1;
+      }),
+    });
     var frame = el.querySelector(".travel-map__frame");
     var canvas = el.querySelector(".travel-map__canvas");
     var initialMode = el.getAttribute("data-travel-map");

@@ -6,6 +6,7 @@
     sticky  true to stay in view while its .map-split is on screen (wide screens)
     show    narrow | wide to limit the map to one side of the split (960px wide and landscape; default: both)
     portrait  true to cap the map at the width of a portrait photo (in the content column)
+    hide    ids of places (in _data/travel_map.yml) to leave off this map, space-separated, e.g. "oxbow"
     local_from  (toggle maps) id of the heading where the map switches to the local view as the reader scrolls
   Without JavaScript the map is hidden; the page text carries everything it shows.
 {%- endcomment -%}
@@ -17,14 +18,14 @@
 {%- assign tm_label = "Map of driving routes to Waterford, Maine" -%}
 {%- if tm_mode == "local" %}{% assign tm_label = "Map of wedding locations near Waterford, Maine" %}{% endif -%}
 {%- if tm_mode == "toggle" %}{% assign tm_label = "Map of Waterford, Maine and the routes there" %}{% endif -%}
-<figure class="{{ tm_class }}" data-travel-map="{{ tm_mode }}" data-src="{{ '/assets/data/travel-map.json' | relative_url }}" data-icons="{{ '/assets/icons/updated/' | relative_url }}"{% if include.local_from %} data-local-from="{{ include.local_from }}"{% endif %} role="region" aria-label="{{ tm_label }}" {% include edit-attr.html path="_data/travel_map.yml" %}>
+<figure class="{{ tm_class }}" data-travel-map="{{ tm_mode }}" data-src="{{ '/assets/data/travel-map.json' | relative_url }}" data-icons="{{ '/assets/icons/updated/' | relative_url }}"{% if include.local_from %} data-local-from="{{ include.local_from }}"{% endif %}{% if include.hide %} data-hide="{{ include.hide }}"{% endif %} role="region" aria-label="{{ tm_label }}" {% include edit-attr.html path="_data/travel_map.yml" %}>
   {%- if tm_mode == "toggle" %}
   <fieldset class="travel-map__tabs">
     <legend class="visually-hidden">Map view</legend>
     {%- assign tm_tabs = "routes:Traveling there,local:Once you’re there" | split: "," -%}
     {%- for tab in tm_tabs %}
     {%- assign tm_tab = tab | split: ":" %}
-    <label class="travel-map__tab meta s-075">
+    <label class="travel-map__tab eyebrow">
       <input class="visually-hidden" type="radio" name="travel-map-view" value="{{ tm_tab[0] }}"{% if forloop.first %} checked{% endif %}>
       {{ tm_tab[1] }}
     </label>

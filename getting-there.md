@@ -5,23 +5,28 @@ permalink: /getting-there/
 hero:
   src: waterford-handout-1.jpg
   width: 1600
-  height: 1067
+  height: 900
   alt: An aerial view of The Waterford Inne, set in a forest with mountains visible in the distance.
+  caption: "(Courtesy of The Waterford Inne)"
 ---
 
-<p class="lead">The ceremony and reception will be held at <a href="https://www.thewaterfordinne.com/">The Waterford Inne</a> in Waterford, Maine.</p>
+<p class="lead">The ceremony and reception will be held Saturday, July 31, 2027, at The Waterford Inne in Waterford, Maine.</p>
 
 For reference, Waterford is located about 50 miles north of Portland.
 
 If you are interested in shared transportation options from Portland to the Waterford area, reach out to Jenna and Tyler [via email](mailto:jtwedding@tylerremmel.com) so they can coordinate and/or connect you with other guests who may have similar needs.
 
 <div class="map-split">
-{% include travel-map.html mode="toggle" sticky=true show="wide" local_from="where-to-stay" %}
+{% include travel-map.html mode="toggle" sticky=true show="wide" local_from="once-youre-there" hide="oxbow" %}
 <div class="map-split__text content" markdown="1">
+
+{% include divider.html %}
+
+<p class="eyebrow">Traveling there</p>
 
 {% include travel-map.html mode="routes" show="narrow" portrait=true %}
 
-## Arriving by air
+### Arriving by air
 
 For guests who will be flying in, there are two airports to consider. Renting a car is recommended since there are no other ground transportation options into the Waterford area.
 
@@ -29,29 +34,33 @@ For guests who will be flying in, there are two airports to consider. Renting a 
 
 **Boston Logan International Airport (BOS)** is 160 miles away from Waterford, about 3 hours driving. The drive is longer, but BOS offers more direct flight options and prices that are generally much cheaper than flying into PWM. Jenna and Tyler have actually chosen this route themselves on a past trip to Maine.
 
-## Arriving by train
+### Arriving by train
 
 For guests who are interested in arriving by train, the **Amtrak Downeaster line** will take you as far as the Portland Transportation Center (PTC) from Boston, with connections down the Northeast Corridor from there.
 
-## Arriving by car
+### Arriving by car
 
 If you are driving from the south, take **I-95 North** from Portsmouth, New Hampshire, through Gray, Maine, exiting to follow **ME-26 North** for another 35 miles to Waterford.
 
-{% include travel-map.html mode="local" show="narrow" %}
+{% include divider.html %}
 
-## Where to stay
+<p class="eyebrow" id="once-youre-there">Once you’re there</p>
 
-If you are looking to stay in a hotel, Jenna and Tyler have negotiated a discounted rate of $239 per night (plus tax) per room at the nearby [**Hampton Inn By Hilton**](https://www.hilton.com/en/hotels/pwmoxhx-hampton-oxford/) in Oxford.
+{% include travel-map.html mode="local" show="narrow" hide="oxbow" %}
 
-In order to book, <mark class="tk">TK</mark>. Reservations must be made by June 15, 2027 in order to access the discounted rates.
+### Where to stay
+
+If you are looking to stay in a hotel, Jenna and Tyler have a room block at the nearby [**Hampton Inn By Hilton**](https://www.hilton.com/en/hotels/pwmoxhx-hampton-oxford/) in Oxford offering discounted rates.
+
+In order to book, <mark class="tk">TK</mark>. Reservations must be made by Saturday, June 19, 2027, in order to access the discounted rates.
 
 There are also many Airbnb and Vrbo listings nearby.
 
-If the couple has previously reached out to you about accommodations, refer to that communication instead of booking directly yourself.
+If the couple has previously reached out to you about accommodations, refer to that communication instead of booking yourself.
 
-## Things to do
+### Things to do
 
-This "Things to do" list is on our to-do list — come back for recommendations later!
+This “Things to do” list is on our to-do list — come back for recommendations later!
 
 </div>
 </div>

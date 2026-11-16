@@ -9,7 +9,6 @@ You only ever edit plain text files. Layout and styling are handled for you.
 | Home page words, date line, tile text                   | `_data/home.yml`                                                      |
 | Our Story prose                                         | `our-story.md`                                                        |
 | Relationship milestones                                 | `_data/milestones.yml`                                                |
-| First impressions                                       | `_data/first_impressions.yml`                                         |
 | Our Story section names and the top bar's section links | the `## Headings` in `our-story.md` (the nav builds itself from them) |
 | Photo groups and captions                               | `_data/story_images.yml`                                              |
 | Menu items (`disabled: true` hides one)                 | `_data/navigation.yml`                                                |

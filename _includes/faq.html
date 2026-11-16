@@ -1,9 +1,12 @@
-{%- comment -%} Questions and answers from _data/faqs.yml. {%- endcomment -%}
-<div class="faq">
-  {%- for item in site.data.faqs %}
-  <section class="faq__item" {% include edit-attr.html path="_data/faqs.yml" %}>
-    <h2 class="s-150">{{ item.question }}</h2>
-    {% include md.html text=item.answer %}
-  </section>
-  {%- endfor %}
-</div>
+{%- comment -%}
+  Questions and answers from _data/faqs.yml. Each question is a section with a plain divider above it. There is no
+  wrapper: the dividers and sections are direct children of the page's .content column, so they get its widths and
+  spacing (and a question right after its divider starts flush with it).
+{%- endcomment -%}
+{%- for item in site.data.faqs %}
+{% include divider.html class="divider--tight" %}
+<section class="faq__item" {% include edit-attr.html path="_data/faqs.yml" %}>
+  <h2 class="s-175">{{ item.question }}</h2>
+  {% include md.html text=item.answer %}
+</section>
+{%- endfor %}

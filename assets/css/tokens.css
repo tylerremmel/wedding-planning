@@ -178,6 +178,7 @@
   --space-150: 1.5rem; /* 24px */
   --space-200: 2rem; /* 32px */
   --space-225: 2.25rem; /* 36px */
+  --space-250: 2.5rem; /* 40px */
   --space-300: 3rem; /* 48px */
   --space-400: 4rem; /* 64px */
   --space-500: 5rem; /* 80px */
@@ -206,7 +207,7 @@
   --gutter: var(--space-150);
   --measure: 640px; /* reading column */
   --page-max: 1280px;
-  --header-pad-top: var(--space-600);
+  --header-pad-top: var(--space-500);
   --bp-nav: 640px; /* documentation only; media queries can't read custom properties */
   --bp-bar: 960px; /* documentation only: the top bar goes from dropdown to split-around-the-tab */
 
@@ -234,10 +235,14 @@
   --timeline-gap: var(--section-gap);
 
   /* ---------- Image group ---------- */
-  --image-gap: var(--space-150);
+  --image-gap: var(--space-075);
   --image-radius: 0;
   --image-ratio-pair: 3 / 4;
   --portrait-max: 300px; /* widest a portrait photo (or a map sized to match) gets */
+  --map-narrow-max: 420px; /* widest the narrow-screen routes map gets (it is tall: 3 / 5), centered above that */
+  --home-wide-max: calc(
+    900px + var(--space-150) * 2
+  ); /* the Home tiles' width, plus gutters; Home dividers match it */
   --image-ratio-single: 4 / 3;
 
   /* ---------- Travel map ----------
@@ -259,8 +264,6 @@
     --space-075
   ); /* from the route line to the pin beside it (12px) */
   --map-corner-inset: 20px; /* the drivers-from-the-south pin, from the map's bottom-left corner */
-  --map-tab-active-bg: var(--sapphire-600-static);
-  --map-tab-active-text: var(--white);
   --map-pad: var(
     --space-500
   ); /* around the map and the text beside it, side by side (80px) */
@@ -296,7 +299,7 @@
   --footer-bg: var(--sapphire-600);
   --rule: var(--sapphire-600);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-700-static); /* one step past the tab */
+  --tab-bg-focus: var(--sapphire-700-static); /* keyboard focus on the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800);
   --link-hover: var(--sapphire-800-static);
@@ -304,8 +307,6 @@
   --tk-text: #5c4500;
   --map-ink: var(--sapphire-600-static); /* icon glyphs, label text */
   --map-paper: var(--white); /* icon outlines, label backgrounds */
-  --map-tab-bg: var(--sapphire-200-static);
-  --map-tab-bg-hover: var(--sapphire-300-static);
   --map-route: var(--sapphire-600-static);
   --map-tint-strength: 0.1; /* how strongly the tiles take the tint */
 }
@@ -333,7 +334,7 @@
     --footer-bg: var(--sapphire-800-static);
     --rule: var(--sapphire-300-static);
     --tab-bg: var(--sapphire-500);
-    --tab-bg-hover: var(--sapphire-800-static); /* darker than the tab */
+    --tab-bg-focus: var(--sapphire-800-static); /* keyboard focus on the tab */
     --placeholder: var(--sapphire-900-static);
     --focus: var(--sapphire-300-static);
     --link-hover: var(--sapphire-300-static);
@@ -341,8 +342,6 @@
     --tk-text: #ffe9a3;
     --map-ink: var(--white);
     --map-paper: var(--sapphire-600-static);
-    --map-tab-bg: var(--sapphire-800-static);
-    --map-tab-bg-hover: var(--sapphire-700-static);
     --map-route: var(--sapphire-300-static);
     --map-tint-strength: 0.5; /* how strongly the tiles take the tint */
   }
@@ -369,7 +368,7 @@
   --footer-bg: var(--sapphire-800-static);
   --rule: var(--sapphire-300-static);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-800-static); /* darker than the tab */
+  --tab-bg-focus: var(--sapphire-800-static); /* keyboard focus on the tab */
   --placeholder: var(--sapphire-900-static);
   --focus: var(--sapphire-300-static);
   --link-hover: var(--sapphire-300-static);
@@ -377,8 +376,6 @@
   --tk-text: #ffe9a3;
   --map-ink: var(--white);
   --map-paper: var(--sapphire-600-static);
-  --map-tab-bg: var(--sapphire-800-static);
-  --map-tab-bg-hover: var(--sapphire-700-static);
   --map-route: var(--sapphire-300-static);
   --map-tint-strength: 0.5; /* how strongly the tiles take the tint */
   background: var(--surface);
@@ -404,7 +401,7 @@
   --footer-bg: var(--sapphire-600-static);
   --rule: var(--sapphire-600-static);
   --tab-bg: var(--sapphire-500);
-  --tab-bg-hover: var(--sapphire-700-static); /* one step past the tab */
+  --tab-bg-focus: var(--sapphire-700-static); /* keyboard focus on the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800-static);
   --link-hover: var(--sapphire-800-static);
@@ -412,8 +409,6 @@
   --tk-text: #5c4500;
   --map-ink: var(--sapphire-600-static);
   --map-paper: var(--white);
-  --map-tab-bg: var(--sapphire-200-static);
-  --map-tab-bg-hover: var(--sapphire-300-static);
   --map-route: var(--sapphire-600-static);
   --map-tint-strength: 0.1; /* how strongly the tiles take the tint */
   background: var(--surface);

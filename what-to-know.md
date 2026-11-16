@@ -2,15 +2,18 @@
 layout: page
 title: What to know
 permalink: /what-to-know/
+hero:
+  src: waterford-handout-4.jpg
+  width: 1600
+  height: 1061
+  alt: Mist clears in the early morning over a meadow at The Waterford Inne.
+  caption: "(Courtesy of The Waterford Inne)"
 ---
 
-<p class="lead">Details are coming soon.</p>
+<p class="lead">Find answers to the most common questions.</p>
 
-| Question | Answer |
-| :---- | :---- |
-| What should I wear? | <mark class="tk">TK (dress code, with color palette and footwear advice for grass and other outdoor terrain)</mark> |
-| Are children welcome? | <mark class="tk">TK (children policy, including whether childcare will be available)</mark> |
-| Can I bring a plus-one? | <mark class="tk">TK (plus-one policy)</mark> |
-| What if it rains? | <mark class="tk">TK (weather and backup plan)</mark> |
-| Parking/shuttle information | <mark class="tk">TK</mark> |
-| Childcare | <mark class="tk">TK</mark> |
+Want to know about something that isn’t covered? Reach out to Jenna and Tyler [via email](mailto:jtwedding@tylerremmel.com) and they will be happy to help answer other questions.
+
+_This page will be updated as more information becomes available._
+
+{% include faq.html %}

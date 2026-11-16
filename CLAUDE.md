@@ -9,7 +9,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 - Colors: `--sapphire-N` flips with `prefers-color-scheme` (100↔950, 200↔900, …); `--sapphire-N-static` never changes. Pick based on whether the element should follow the scheme. There's no manual toggle.
 - Page blocks go through the `.content > *` pattern: max-width 688px (640 + 24 + 24), centered, 24px side padding and bottom padding (padding, not margin). Headings are centered globally.
 - Type roles (headline, subhead, body, meta) × steps (050…400) carry their own weight tokens, ramped lighter at large sizes. Change weights in the tokens, not at the usage site.
-- The ornament divider is used once per page (the first); later dividers are plain rules. Dividers max out at 640px.
+- The ornament divider is used once per page (the first); later dividers are plain rules. Dividers max out at 640px of content, except on Home, where the rule under the tiles matches the tiles' width (`--home-wide-max`).
 - The top bar's section links (Our Story) are generated at build time from the page's `<h2 id>` headings. Never hard-code its items.
 
 ## Content and images
@@ -17,7 +17,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 - Copy comes verbatim from the planning doc (typos included). Anything unwritten is a visible `TK` marker, including photo alt text, which a human writes.
 - Never open or view the wedding photos.
 - Run every new image through `scripts/prep-image.sh` (strips EXIF/GPS/other metadata, resizes, converts to sRGB JPEG, prints the YAML). Originals live in `~/wedding-image-originals/`, outside the repo. Keep an eye out for other hidden metadata.
-- The site title is "The Wedding of Jenna Grande and Tyler Remmel" (`_config.yml`). Don't reintroduce "The Grande-Remmel Wedding". The header headline always reads "Jenna and Tyler are getting married".
+- The site title is "The wedding of Jenna Grande and Tyler Remmel" (`_config.yml`), with a lowercase "wedding" everywhere it appears (web manifest, README, docs). Don't reintroduce "The Grande-Remmel Wedding". The header headline always reads "Jenna and Tyler are getting married".
 
 ## Jekyll gotchas
 

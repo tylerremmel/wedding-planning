@@ -1,6 +1,6 @@
 {%- comment -%}
   Section divider. A plain rule by default; pass ornament=true for the ornament version (use it for the first
-  divider on a page). Params: ornament=true, sentinel=true (marks the divider the top bar watches).
+  divider on a page). Params: ornament=true, sentinel=true (marks the divider the top bar watches), class (extra CSS classes).
 
   Ornament: cleaned from assets/img/divider-ornament.svg (source), with one change: each swoop's stroke path
   continues in a straight line far past the ornament's edge (3000 units, about 11,000px), so the rule and the
@@ -8,7 +8,7 @@
   shows overflow and .divider clips it to the container width, so the rules always run edge to edge.
 {%- endcomment -%}
 {%- if include.ornament -%}
-<div class="divider" role="separator"{% if include.sentinel %} data-sticky-sentinel{% endif %}>
+<div class="divider{% if include.class %} {{ include.class }}{% endif %}" role="separator"{% if include.sentinel %} data-sticky-sentinel{% endif %}>
   <div class="divider__line">
   <svg class="divider__ornament" viewBox="0 0 25.42 11.29" aria-hidden="true" focusable="false">
     <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width=".25" d="M6.37,4.05l-2.07.8C2.93,5.37,1.47,5.64,0,5.64H-3000"/>
@@ -22,5 +22,5 @@
   </div>
 </div>
 {%- else -%}
-<div class="divider divider--plain" role="separator"{% if include.sentinel %} data-sticky-sentinel{% endif %}><div class="divider__line"></div></div>
+<div class="divider divider--plain{% if include.class %} {{ include.class }}{% endif %}" role="separator"{% if include.sentinel %} data-sticky-sentinel{% endif %}><div class="divider__line"></div></div>
 {%- endif -%}

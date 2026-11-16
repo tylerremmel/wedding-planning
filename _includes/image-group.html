@@ -1,7 +1,7 @@
 {%- comment -%}
-  1-3 images with an optional caption. Params: group (images: [{src, alt, width, height}], caption),
+  1, 2 or 4 images with an optional caption. Params: group (images: [{src, alt, width, height}], caption),
   edit_path (the data file the group lives in, for ?edit). Used standalone and inside timeline items.
-  A lone portrait image is narrower than a lone landscape one; pairs sit side by side and stack when narrow.
+  A lone portrait image is narrower than a lone landscape one; grids (2 or 4) always stay side by side, never stacking.
 {%- endcomment -%}
 {%- assign images = include.group.images -%}
 {%- assign count = images | size -%}
