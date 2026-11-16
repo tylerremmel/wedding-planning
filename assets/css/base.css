@@ -169,7 +169,8 @@ small,
 figcaption,
 nav a,
 nav button,
-.map-split__text :is(p, li):not(.eyebrow) {
+.map-split__text :is(p, li):not(.eyebrow),
+.promo-tile__text p {
   font-family: var(--meta-family);
   font-weight: var(--w-meta);
   letter-spacing: var(--meta-tracking);
@@ -388,7 +389,7 @@ h1,
    1. Inline links: underlined; the text tints on hover.
    2. Nav links (top and bottom navs): no underline; a 1px rule fades in below on hover, focus and
       for the current page.
-   3. Headline links (footer title, tile titles, any h1-h3 link): no underline; text tints on hover. */
+   3. Headline links (footer title, tile titles, any h1-h3 link): no underline; text tints on hover (a whole tile tints, text included). */
 a {
   color: inherit;
   text-decoration: underline;
@@ -431,22 +432,12 @@ nav a[aria-current="location"]::after {
 a:has(.tile-title) {
   text-decoration: none;
 }
-a:hover .tile-title,
-a:focus-visible .tile-title {
-  color: var(--link-hover);
-}
-.tile-title {
-  transition: color var(--fade-duration) ease;
-}
-a:has(.tile-title):hover,
-a:has(.tile-title):focus-visible {
-  color: inherit;
-} /* tint only the title, not the tile's body text */
+/* A tile link tints as a whole (title and text): both inherit the link's color and its fade. */
 
 @media (prefers-reduced-motion: reduce) {
   a,
   nav a::after,
-  .tile-title {
+  .promo-tile__media {
     transition: none;
   }
 }

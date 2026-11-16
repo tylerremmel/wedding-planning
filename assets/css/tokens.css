@@ -175,6 +175,7 @@
   --space-050: 0.5rem; /* 8px */
   --space-075: 0.75rem; /* 12px */
   --space-100: 1rem; /* 16px */
+  --space-125: 1.25rem; /* 20px */
   --space-150: 1.5rem; /* 24px */
   --space-200: 2rem; /* 32px */
   --space-225: 2.25rem; /* 36px */
@@ -292,13 +293,13 @@
   /* ---------- Semantic color: LIGHT (default) ---------- */
   color-scheme: light;
   --surface: var(--white);
-  --text: var(--sapphire-600);
+  --text: var(--sapphire-700);
   --text-on-header: var(--white);
   --accent: var(--sapphire-600);
-  --header-bg: var(--sapphire-600);
-  --footer-bg: var(--sapphire-600);
+  --header-bg: var(--sapphire-700);
+  --footer-bg: var(--sapphire-700);
   --rule: var(--sapphire-600);
-  --tab-bg: var(--sapphire-500);
+  --tab-bg: var(--sapphire-600);
   --tab-bg-focus: var(--sapphire-700-static); /* keyboard focus on the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800);
@@ -394,13 +395,13 @@
   --sapphire-950: var(--sapphire-950-static);
   color-scheme: light;
   --surface: var(--white);
-  --text: var(--sapphire-600-static);
+  --text: var(--sapphire-700-static);
   --text-on-header: var(--white);
   --accent: var(--sapphire-600-static);
-  --header-bg: var(--sapphire-600-static);
-  --footer-bg: var(--sapphire-600-static);
+  --header-bg: var(--sapphire-700-static);
+  --footer-bg: var(--sapphire-700-static);
   --rule: var(--sapphire-600-static);
-  --tab-bg: var(--sapphire-500);
+  --tab-bg: var(--sapphire-600);
   --tab-bg-focus: var(--sapphire-700-static); /* keyboard focus on the tab */
   --placeholder: #d9d9d9;
   --focus: var(--sapphire-800-static);

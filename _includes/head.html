@@ -15,11 +15,11 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/favicons/favicon-16x16.png' | relative_url }}">
   <link rel="apple-touch-icon" href="{{ '/assets/favicons/apple-touch-icon.png' | relative_url }}">
   <link rel="manifest" href="{{ '/assets/favicons/site.webmanifest' | relative_url }}">
-  {%- comment -%} Matches --tab-bg, the persistent tab and top rule: sapphire-500-static (#339e9d) in light, sapphire-600-static (#007776) in dark. {%- endcomment -%}
+  {%- comment -%} Matches --tab-bg, the persistent tab and top rule: sapphire-600-static (#007776) in both light and dark. {%- endcomment -%}
   {%- if page.scheme == 'light' %}
-  <meta name="theme-color" content="#339e9d">
+  <meta name="theme-color" content="#007776">
   {%- else %}
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#339e9d">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#007776">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#007776">
   {%- endif %}
   <link rel="preload" href="{{ '/assets/fonts/roboto-serif-latin.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>

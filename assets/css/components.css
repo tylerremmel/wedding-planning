@@ -11,6 +11,11 @@
   text-align: center;
   padding: var(--space-400) var(--gutter) var(--space-200);
 }
+@media (max-width: 639px) {
+  .site-header {
+    padding-bottom: var(--space-150);
+  }
+}
 .site-header__inner {
   display: flex;
   flex-direction: column;
@@ -18,6 +23,11 @@
   gap: var(--space-100);
   max-width: 345px;
   margin: 0 auto;
+}
+@media (max-width: 639px) {
+  .site-header__inner {
+    gap: var(--space-075);
+  }
 }
 .site-header__title {
   color: var(--text-on-header);
@@ -86,10 +96,15 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   color: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+  .site-bar {
+    background: color-mix(in srgb, var(--surface) 30%, transparent);
+  }
 }
 /* With JavaScript the bar starts hidden at the top of the page. When it's revealed (top-bar.js adds
    .is-visible) its background pulls down from the top edge, then the links fade in; hiding runs in reverse.
@@ -483,6 +498,16 @@
   display: inline-block;
   padding: 2px 0;
 }
+/* Header and footer navs share the same markup and styles; on narrow screens they lay out as a 2-column grid
+   (2x2 for four links). From 640px up they're the centered row above. */
+@media (max-width: 639px) {
+  :is(.site-header, .site-footer) .site-nav ul {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: center;
+    gap: var(--space-025) var(--space-200);
+  }
+}
 /* In the header and footer, link text is white on sapphire, so the hover tint is a slightly darker near-white sapphire. */
 .site-header,
 .site-footer {
@@ -500,8 +525,10 @@
   align-items: center;
   gap: var(--space-100);
 }
-.site-footer .site-nav ul {
-  gap: 6px var(--space-100);
+@media (max-width: 639px) {
+  .site-footer {
+    gap: var(--space-075);
+  }
 }
 
 /* ---------- Page container ---------- */
@@ -546,13 +573,10 @@
   }
   .site-header__inner {
     max-width: 940px;
-    gap: var(--space-150);
+    gap: var(--space-100);
   }
   .site-nav ul {
     gap: 6px var(--space-200);
-  }
-  .site-footer .site-nav ul {
-    gap: 6px var(--space-100);
   }
 }
 
@@ -668,13 +692,19 @@ img[data-alt-missing] {
 .promo-tile__link {
   display: flex;
   flex-direction: column;
-  gap: var(--space-150);
+  gap: var(--space-125);
   text-align: center;
 }
 .promo-tile__media {
   aspect-ratio: 7 / 5;
   background: var(--placeholder);
   overflow: hidden;
+  outline: 1px solid transparent; /* drawn over the image, inside the frame */
+  outline-offset: -1px;
+  transition: outline-color var(--fade-duration) ease;
+}
+.promo-tile__link:is(:hover, :focus-visible) .promo-tile__media {
+  outline-color: var(--link-hover);
 }
 .promo-tile__img {
   width: 100%;

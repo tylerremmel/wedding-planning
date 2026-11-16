@@ -1,4 +1,4 @@
 <footer class="site-footer">
-  <p class="site-footer__title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></p>
+  <p class="site-footer__title"><a href="{{ '/' | relative_url }}">{{ site.title | replace: 'Jenna Grande', 'Jenna&nbsp;Grande' | replace: 'Tyler Remmel', 'Tyler&nbsp;Remmel' }}</a></p>
   {%- include nav.html label="Footer" class="site-nav--footer" %}
 </footer>
