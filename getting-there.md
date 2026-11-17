@@ -53,9 +53,9 @@ If you are driving from the south, take **I-95 North** from Portsmouth, New Hamp
 
 ### Where to stay
 
-If you are looking to stay in a hotel, Jenna and Tyler have a room block at the nearby [**Hampton Inn By Hilton**](https://www.hilton.com/en/hotels/pwmoxhx-hampton-oxford/) in Oxford offering discounted rates.
+If you are looking to stay in a hotel, Jenna and Tyler have a room block offering discounted rates at the nearby [**Hampton Inn By Hilton**](https://group.hamptoninn.com/eonzqh) in Oxford.
 
-Reservations must be made by Saturday, June 19, 2027, in order to access the discounted rates. More information about how to book will be added here soon.
+You can [book here](https://group.hamptoninn.com/eonzqh) directly with our group code or call [(207) 539-6055](<tel:(207)539-6055>) and mention the Grande-Remmel Wedding. Reservations must be made by Saturday, June 19, 2027, in order to access the discounted rates.
 
 There are also many Airbnb and Vrbo listings nearby.
 
