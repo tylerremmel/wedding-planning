@@ -1,0 +1,18 @@
+{%- comment -%}
+  A drawer: a modal <dialog> that unfurls from an edge of the screen over a scrim. Params:
+    id     (required) what a trigger points at: <button class="link-button" data-drawer-open="ID">
+    text   (markdown) the slot's content, rendered through md.html
+    side   bottom (default), left or right
+    label  accessible name for the dialog
+  The close button sits in the upper right corner of the panel. Behavior lives in assets/js/drawer.js.
+  Content must be written before the include, e.g. {% capture body %}...{% endcapture %}.
+{%- endcomment -%}
+{%- assign drawer_side = include.side | default: "bottom" -%}
+<dialog class="drawer" id="{{ include.id }}" data-side="{{ drawer_side }}" aria-label="{{ include.label | default: 'More information' }}">
+  <button type="button" class="drawer__close" data-drawer-close aria-label="Close">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+  </button>
+  <div class="drawer__slot content">
+    {%- include md.html text=include.text %}
+  </div>
+</dialog>

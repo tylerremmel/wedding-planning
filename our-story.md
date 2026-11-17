@@ -165,11 +165,18 @@ But he is a protector and lover boy at heart, and Jenna and Tyler can’t imagin
 
 {% include timeline.html %}
 
-_**\*Why officially\*?** Because the night before Jenna left for a trip back to Connecticut in June 2021, while relaxing and goofing around at Tyler’s apartment in the Capitol Hill neighborhood, Tyler and Jenna had the following exchange:_
+{% capture why_officially %}
 
-- _Tyler: “I love this”_
-- _Jenna: “What?”_
-- _Tyler: “You, all of this”_
-- _Jenna: “Did you just say you love me?”_
-- _Tyler: silence_
-- _Tyler and Jenna: laughter_
+### Why officially?
+
+Because the night before Jenna left for a trip back to Connecticut in June 2021, while relaxing and goofing around at Tyler’s apartment in the Capitol Hill neighborhood, Tyler and Jenna had the following exchange:
+
+- **Tyler:** “I love this.”
+- **Jenna:** “What?”
+- **Tyler:** “You, all of this.”
+- **Jenna:** “Did you just say you love me?”
+- **Tyler:** SILENCE
+- **Tyler and Jenna:** LAUGHTER
+
+{% endcapture %}
+{% include drawer.html id="why-officially-drawer" label="Why officially?" text=why_officially %}

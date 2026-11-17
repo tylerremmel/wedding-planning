@@ -780,14 +780,21 @@ img[data-alt-missing] {
   flex-direction: column;
   gap: var(--timeline-gap);
 }
-.timeline__item {
+.timeline__item,
+.drawer__slot > ul > li {
   position: relative;
+}
+.timeline__item {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.timeline__item,
+.drawer__slot > ul > li {
   padding-left: var(--timeline-indent);
 }
-.timeline__item::before {
+.timeline__item::before,
+.drawer__slot > ul > li::before {
   content: "";
   position: absolute;
   z-index: 1;
@@ -799,7 +806,8 @@ img[data-alt-missing] {
   border-radius: 50%;
   background: var(--surface);
 }
-.timeline__item::after {
+.timeline__item::after,
+.drawer__slot > ul > li::after {
   content: "";
   position: absolute;
   left: calc(var(--timeline-dot) / 2 - 0.5px);
@@ -815,7 +823,8 @@ img[data-alt-missing] {
     transparent 2px 6px
   );
 }
-.timeline__item:last-child::after {
+.timeline__item:last-child::after,
+.drawer__slot > ul > li:last-child::after {
   display: none;
 }
 .timeline__body {
@@ -826,6 +835,128 @@ img[data-alt-missing] {
 /* In the timeline a lone portrait photo is full width, not capped like a portrait elsewhere. */
 .timeline__body .image-group--portrait > * {
   max-width: none;
+}
+
+/* ---------- Drawer ----------
+   A modal <dialog> (_includes/drawer.html, assets/js/drawer.js) that slides in from the bottom (default),
+   left or right edge over a scrim (::backdrop). The dialog itself has no padding: a click on it is a click
+   on the scrim. Content goes in .drawer__slot (a .content column). The close button is pinned to the
+   panel's upper right corner. Without JS the drawer is just an inline block after the text. */
+dialog.drawer {
+  --drawer-hidden: translateY(100%);
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: var(--drawer-max);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--drawer-bg);
+  color: var(--drawer-ink);
+  border-top: 1px solid var(--rule);
+}
+.drawer[data-side="left"],
+.drawer[data-side="right"] {
+  inset: 0 auto 0 0;
+  width: var(--drawer-max-width);
+  max-height: none;
+  height: 100dvh;
+  border-top: 0;
+  border-right: 1px solid var(--rule);
+  --drawer-hidden: translateX(-100%);
+}
+.drawer[data-side="right"] {
+  inset: 0 0 0 auto;
+  border-right: 0;
+  border-left: 1px solid var(--rule);
+  --drawer-hidden: translateX(100%);
+}
+.drawer__slot {
+  padding-top: var(--space-250);
+  padding-bottom: var(--space-050);
+}
+/* A drawer's heading is left-aligned, with a tighter gap before the text. Its size is in base.css. */
+.drawer__slot > h3 {
+  text-align: left;
+  padding-bottom: var(--space-075);
+}
+/* A list in the slot is a small timeline: the same dots and rule, closer together, with no bullets. */
+.drawer__slot > ul {
+  --timeline-gap: var(--space-075);
+  display: flex;
+  flex-direction: column;
+  gap: var(--timeline-gap);
+  list-style: none;
+}
+.drawer__slot > ul > li,
+.drawer__slot > ul > li + li {
+  margin: 0;
+}
+.drawer__close {
+  position: absolute;
+  top: -1px; /* the panel's own 1px top rule: the button's top border sits on it */
+  right: 0;
+  display: block;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--rule);
+  cursor: pointer;
+}
+.drawer__close svg {
+  display: block; /* no inline baseline gap: the border hugs the 24px icon */
+}
+html:not(.js) .drawer {
+  display: block;
+  position: static;
+  transform: none;
+  border: 0;
+}
+html:not(.js) .drawer__close {
+  display: none;
+}
+
+/* Page scroll is locked while a drawer is open. */
+html:has(.drawer[open]) {
+  overflow: hidden;
+}
+
+/* Slide in and out (and fade the scrim). Browsers without @starting-style / allow-discrete just show and
+   hide instantly. */
+.drawer,
+.drawer::backdrop {
+  transition:
+    transform var(--drawer-duration) ease,
+    opacity var(--drawer-duration) ease,
+    overlay var(--drawer-duration) allow-discrete,
+    display var(--drawer-duration) allow-discrete;
+}
+.drawer::backdrop {
+  background: var(--drawer-scrim);
+  opacity: 0;
+}
+.drawer:not([open]) {
+  transform: var(--drawer-hidden);
+}
+.drawer[open]::backdrop {
+  opacity: 1;
+}
+@starting-style {
+  .drawer[open] {
+    transform: var(--drawer-hidden);
+  }
+  .drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .drawer::backdrop {
+    transition: none;
+  }
 }
 
 /* ---------- Schedule ----------

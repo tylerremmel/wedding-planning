@@ -87,7 +87,7 @@ ol {
   margin-top: 8px;
 }
 
-/* Headings are centered everywhere. */
+/* Headings are centered everywhere (except in a drawer: components.css). */
 h1,
 h2,
 h3,
@@ -170,6 +170,7 @@ figcaption,
 nav a,
 nav button,
 .map-split__text :is(p, li):not(.eyebrow),
+.drawer__slot :is(p, li),
 .promo-tile__text p {
   font-family: var(--meta-family);
   font-weight: var(--w-meta);
@@ -179,6 +180,11 @@ nav button,
 }
 /* .label = meta role at the strong weight (dates, small titles). */
 .label {
+  font-weight: var(--meta-wght-strong);
+}
+
+/* Bold inside meta text takes the strong weight (the font's maximum), not the browser's "bolder". */
+:is(.meta, .drawer__slot :is(p, li)) strong {
   font-weight: var(--meta-wght-strong);
 }
 
@@ -249,6 +255,7 @@ h3 {
 }
 
 .s-125,
+.drawer__slot h3,
 blockquote {
   font-size: var(--step-125);
   --w-headline: var(--headline-wght-125);
@@ -390,7 +397,8 @@ h1,
    2. Nav links (top and bottom navs): no underline; a 1px rule fades in below on hover, focus and
       for the current page.
    3. Headline links (footer title, tile titles, any h1-h3 link): no underline; text tints on hover (a whole tile tints, text included). */
-a {
+a,
+.link-button {
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -398,8 +406,20 @@ a {
   transition: color var(--fade-duration) ease;
 }
 a:hover,
-a:focus-visible {
+a:focus-visible,
+.link-button:hover,
+.link-button:focus-visible {
   color: var(--link-hover);
+}
+/* A <button> that looks like an inline link (it opens a drawer rather than navigating). */
+.link-button {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
 }
 
 nav a {
@@ -436,6 +456,7 @@ a:has(.tile-title) {
 
 @media (prefers-reduced-motion: reduce) {
   a,
+  .link-button,
   nav a::after,
   .promo-tile__media {
     transition: none;

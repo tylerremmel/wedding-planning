@@ -14,6 +14,9 @@
   {%- include footer.html %}
   <script src="{{ '/assets/js/edit-mode.js' | relative_url }}" defer></script>
   <script src="{{ '/assets/js/top-bar.js' | relative_url }}" defer></script>
+  {%- if content contains "data-drawer-open" %}
+  <script src="{{ '/assets/js/drawer.js' | relative_url }}" defer></script>
+  {%- endif %}
   {%- if content contains "data-travel-map" %}
   <script src="{{ '/assets/lib/leaflet/leaflet.js' | relative_url }}" defer></script>
   <script src="{{ '/assets/js/travel-map.js' | relative_url }}" defer></script>
