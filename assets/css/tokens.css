@@ -279,6 +279,14 @@
   ); /* labels, routes and icons fading between views */
   --map-fade-in-delay: 500ms; /* before the incoming view fades in, so it lands as the zoom settles */
 
+  /* ---------- Drawer ---------- */
+  --drawer-duration: 400ms;
+  --drawer-max: 85dvh; /* tallest a bottom drawer gets; side drawers use --drawer-max-width */
+  --drawer-max-width: min(100vw, 480px);
+  --drawer-scrim: color-mix(in srgb, var(--sapphire-100) 60%, transparent);
+  --drawer-bg: var(--surface);
+  --drawer-ink: var(--text);
+
   /* ---------- Motion ---------- */
   --fade-duration: 300ms;
   --bar-text-delay: 250ms; /* top bar: the links fade in this long after its background starts pulling down */

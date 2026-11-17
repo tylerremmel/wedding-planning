@@ -29,7 +29,7 @@
       width: 1199
       height: 1600
 - date: "Sometime at the end of June 2021"
-  text: 'Jenna and Tyler officially\* say “I love you.”'
+  text: 'Jenna and Tyler <button type="button" class="link-button" data-drawer-open="why-officially-drawer" aria-haspopup="dialog">officially</button> say “I love you.”'
 - date: "July 4-6, 2021"
   text: "Tyler invites Jenna to join him on a trip to Pittsburgh and New York City to watch the Brewers play the Pirates and the Mets. This will be the first two games out of MANY the couple watches together, both on TV and in person."
   caption: "They watched the fireworks in Pittsburgh and obviously enjoyed ice cream at Citi Field."
