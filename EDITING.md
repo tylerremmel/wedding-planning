@@ -36,6 +36,12 @@ GitHub decides who is allowed to save.
 - **`TK` means "to come".** It shows as a yellow marker on the page. Search for `TK` to find unfinished content. Remove it when the real text is in.
 - **Never put private information** (phone numbers, addresses, RSVP details) in these files: the repository is public.
 
+## Keeping a page out of search
+
+Add `noindex: true` to a page's front matter (between the `---` lines) to tell search engines not to list it. `getting-there.md` uses it because it has the hotel's booking link. `robots.txt` also asks AI-training and bulk-scraper crawlers to skip the whole site. Both are polite requests, not locks: anyone with the page address (or the public repository) can still see the page.
+
+Don't add a page to `robots.txt` to hide it. A crawler that can't open a page never sees its `noindex` tag, so the address can still show up in search results.
+
 ## The header headline and topper image
 
 The headline in the header ("Jenna and Tyler are getting married") is the same on every page. Change it once with `header_title` in `_config.yml` (one line of text per line shown on wide screens).

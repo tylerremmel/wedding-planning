@@ -2,6 +2,7 @@
 layout: page
 title: Getting there
 permalink: /getting-there/
+noindex: true
 hero:
   position: 50% 50%
   mobile_ratio: 4 / 5
