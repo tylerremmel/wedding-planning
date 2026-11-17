@@ -52,7 +52,7 @@ If you are driving from the south, take **I-95 North** from Portsmouth, New Hamp
 
 If you are looking to stay in a hotel, Jenna and Tyler have a room block at the nearby [**Hampton Inn By Hilton**](https://www.hilton.com/en/hotels/pwmoxhx-hampton-oxford/) in Oxford offering discounted rates.
 
-In order to book, <mark class="tk">TK</mark>. Reservations must be made by Saturday, June 19, 2027, in order to access the discounted rates.
+Reservations must be made by Saturday, June 19, 2027, in order to access the discounted rates. More information about how to book will be added here soon.
 
 There are also many Airbnb and Vrbo listings nearby.
 
