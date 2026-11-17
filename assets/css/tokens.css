@@ -235,6 +235,14 @@
   --timeline-indent: var(--space-150); /* dot width + 11px gap */
   --timeline-gap: var(--section-gap);
 
+  /* ---------- Hero (topper image) and promo tile images ----------
+     Set per image: heroes in page front matter, tiles in _data/home.yml (position, mobile_ratio, mobile_zoom). Position
+     and zoom are shared, so heroes and tiles frame photos identically. Desktop keeps a fixed aspect ratio. */
+  --img-position: 50% 50%;
+  --img-zoom-mobile: 1; /* 1 = no zoom; scales about the position point */
+  --hero-ratio-mobile: 4 / 5;
+  --tile-ratio-mobile: 1 / 1;
+
   /* ---------- Image group ---------- */
   --image-gap: var(--space-075);
   --image-radius: 0;

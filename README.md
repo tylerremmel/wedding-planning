@@ -29,7 +29,7 @@ should stay out of search engines set `noindex: true` in their front matter.
 
 ### Front matter options
 
-- `hero:` the topper image under the header (`src`, `width`, `height`, `alt`); `hero: false` removes the slot.
+- `hero:` the topper image under the header (`src`, `width`, `height`, `alt`, plus `position` for the crop focal point and `mobile_ratio` for the aspect ratio and `mobile_zoom` for the zoom factor (1 = none) below 640px); `hero: false` removes the slot.
 - `noindex: true` adds a `robots` noindex meta tag.
 - `scheme: light` forces the light color scheme (no dark mode, and a single `theme-color`).
 

@@ -3,6 +3,9 @@ layout: page
 title: What to know
 permalink: /what-to-know/
 hero:
+  position: 17% 50%
+  mobile_ratio: 4 / 5
+  mobile_zoom: 1
   src: waterford-handout-4.jpg
   width: 1600
   height: 1061

@@ -1,7 +1,8 @@
-{%- comment -%} One promo tile. Param: tile (an item from _data/home.yml). The <a> is inside the <li> so ?edit pencils (also links) are not nested in it. {%- endcomment -%}
+{%- comment -%} One promo tile. Param: tile (an item from _data/home.yml; its image takes the same optional position / mobile_ratio / mobile_zoom as a hero, see hero.html). The <a> is inside the <li> so ?edit pencils (also links) are not nested in it. {%- endcomment -%}
+{%- assign tile_img = include.tile.image -%}
 <li class="promo-tile" {% include edit-attr.html path="_data/home.yml" %}>
   <a class="promo-tile__link" href="{{ include.tile.url | relative_url }}">
-    <div class="promo-tile__media">
+    <div class="promo-tile__media"{% if tile_img.position or tile_img.mobile_ratio or tile_img.mobile_zoom %} style="{% if tile_img.position %}--img-position: {{ tile_img.position | escape }};{% endif %}{% if tile_img.mobile_ratio %} --tile-ratio-mobile: {{ tile_img.mobile_ratio | escape }};{% endif %}{% if tile_img.mobile_zoom %} --img-zoom-mobile: {{ tile_img.mobile_zoom | escape }};{% endif %}"{% endif %}>
       {%- if include.tile.image %}
       {%- include image.html src=include.tile.image.src alt=include.tile.image.alt width=include.tile.image.width height=include.tile.image.height class="promo-tile__img" %}
       {%- endif %}

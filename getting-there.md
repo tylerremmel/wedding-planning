@@ -3,6 +3,9 @@ layout: page
 title: Getting there
 permalink: /getting-there/
 hero:
+  position: 50% 50%
+  mobile_ratio: 4 / 5
+  mobile_zoom: 1
   src: waterford-handout-1.jpg
   width: 1600
   height: 900

@@ -3,6 +3,9 @@ layout: story
 title: Our story
 permalink: /our-story/
 hero:
+  position: 55% 50%
+  mobile_ratio: 4 / 5
+  mobile_zoom: 1
   src: engagement-steps.jpg
   width: 1600
   height: 1067

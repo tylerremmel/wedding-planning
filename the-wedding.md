@@ -3,6 +3,9 @@ layout: page
 title: The wedding
 permalink: /the-wedding/
 hero:
+  position: 70% 50%
+  mobile_ratio: 4 / 5
+  mobile_zoom: 1
   src: jt-at-waterford.jpg
   width: 1600
   height: 1200

@@ -1,6 +1,9 @@
 ---
 layout: home
 hero:
+  position: 50% 44%
+  mobile_ratio: 4 / 5
+  mobile_zoom: 1.25
   src: engagement-pig-bronco.jpg
   width: 2400
   height: 1600

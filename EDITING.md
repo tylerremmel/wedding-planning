@@ -48,7 +48,12 @@ hero:
   width: 1600
   height: 1067
   alt: TK
+  position: 50% 50% # which part of the photo stays in frame when it's cropped
+  mobile_ratio: 4 / 5 # width / height of the photo on phones; change per page to suit the composition
+  mobile_zoom: 1 # 1 = no zoom, 1.2 = 20% closer (on phones only)
 ```
+
+The photos on the Home page tiles (`_data/home.yml`) take the same `position`, `mobile_ratio` and `mobile_zoom` under each tile's `image:`.
 
 ## Photos
 

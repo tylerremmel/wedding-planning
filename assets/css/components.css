@@ -621,14 +621,24 @@ img[data-alt-missing] {
 
 /* ---------- Home ---------- */
 
+/* Clips the zoomed photo; a wrapper because .hero itself must not clip the caption hanging below it. */
+.hero__frame {
+  overflow: hidden;
+}
 .hero__img,
 .hero__placeholder {
   display: block;
   width: 100%;
-  aspect-ratio: 393 / 629;
+  aspect-ratio: var(--hero-ratio-mobile);
+}
+.hero__img,
+.promo-tile__img {
+  object-fit: cover;
+  object-position: var(--img-position);
+  transform: scale(var(--img-zoom-mobile));
+  transform-origin: var(--img-position);
 }
 .hero__img {
-  object-fit: cover;
   background: var(
     --header-bg
   ); /* shows until the photo loads; the caption below sits on the page, not on this */
@@ -696,7 +706,7 @@ img[data-alt-missing] {
   text-align: center;
 }
 .promo-tile__media {
-  aspect-ratio: 7 / 5;
+  aspect-ratio: var(--tile-ratio-mobile);
   background: var(--placeholder);
   overflow: hidden;
   outline: 1px solid transparent; /* drawn over the image, inside the frame */
@@ -707,9 +717,9 @@ img[data-alt-missing] {
   outline-color: var(--link-hover);
 }
 .promo-tile__img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 .promo-tile__text {
   display: flex;
@@ -721,6 +731,13 @@ img[data-alt-missing] {
   .hero__img,
   .hero__placeholder {
     aspect-ratio: 1280 / 853;
+  }
+  .hero__img,
+  .promo-tile__img {
+    transform: none;
+  }
+  .promo-tile__media {
+    aspect-ratio: 7 / 5;
   }
   .home__tiles {
     grid-template-columns: 1fr 1fr;

@@ -7,13 +7,18 @@
       width: 1600
       height: 1067
       alt: TK
+  Optional `position:` (CSS object-position for the crop, default "50% 50%") `mobile_ratio:` (CSS aspect-ratio below
+  640px wide, e.g. 4 / 5; default --hero-ratio-mobile) and `mobile_zoom:` (scale about the position point below
+  640px; 1 = none, 1.2 = 20% closer) let each page frame its photo; desktop keeps the aspect ratio.
   An optional `caption:` (e.g. a photo credit) shows under the image, right-aligned.
   Pass hero=false (front matter `hero: false`) for pages that shouldn't have one.
 {%- endcomment -%}
 {%- if include.hero != false -%}
-<figure class="hero">
+<figure class="hero"{% if include.hero.position or include.hero.mobile_ratio or include.hero.mobile_zoom %} style="{% if include.hero.position %}--img-position: {{ include.hero.position | escape }};{% endif %}{% if include.hero.mobile_ratio %} --hero-ratio-mobile: {{ include.hero.mobile_ratio | escape }};{% endif %}{% if include.hero.mobile_zoom %} --img-zoom-mobile: {{ include.hero.mobile_zoom | escape }};{% endif %}"{% endif %}>
   {%- if include.hero.src %}
-  {%- include image.html src=include.hero.src alt=include.hero.alt width=include.hero.width height=include.hero.height eager=true class="hero__img" %}
+  <div class="hero__frame">
+    {%- include image.html src=include.hero.src alt=include.hero.alt width=include.hero.width height=include.hero.height eager=true class="hero__img" %}
+  </div>
   {%- else %}
   <div class="hero__placeholder">
     {%- if jekyll.environment != 'production' %}<span class="tk">topper image TK</span>{% endif %}

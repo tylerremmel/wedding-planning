@@ -11,28 +11,41 @@ date_line: "Saturday, July 31, 2027 in Waterford, Maine"
 
 # The four tiles, in order. `image` is optional; without it a grey placeholder shows.
 # Photos go in assets/img/ (run scripts/prep-image.sh first). `alt` must be written by a person.
+# `position` (crop focal point), `mobile_ratio` (width / height) and `mobile_zoom` (1 = none) frame the photo on phones.
 tiles:
   - title: "Our story"
     url: /our-story/
     image:
+      position: 55% 50%
+      mobile_ratio: 1 / 1
+      mobile_zoom: 1
       src: engagement-steps.jpg
       alt: Jenna, Tyler and Pigs sit on the steps outside Tyler’s old apartment building after getting engaged on March 30, 2025.
     text: "How they met, major milestones in their relationship, the proposal story … and the Pig of it all."
   - title: "The wedding"
     url: /the-wedding/
     image:
+      position: 55% 50%
+      mobile_ratio: 1 / 1
+      mobile_zoom: 1
       src: jt-at-waterford.jpg
       alt: Jenna and Tyler paused for a selfie by the pond during their visit to The Waterford Inne in August 2026.
     text: "Everything you need to know about the weekend programming, including key locations and timing."
   - title: "Getting there"
     url: /getting-there/
     image:
+      position: 50% 50%
+      mobile_ratio: 1 / 1
+      mobile_zoom: 1
       src: waterford-handout-1.jpg
       alt: An aerial view of The Waterford Inne, set in a forest with mountains visible in the distance.
     text: "Information and recommendations for booking your travel and accommodations."
   - title: "What to know"
     url: /what-to-know/
     image:
+      position: 30% 50%
+      mobile_ratio: 1 / 1
+      mobile_zoom: 1
       src: waterford-handout-4.jpg
       alt: Mist clears in the early morning over a meadow at The Waterford Inne.
       width: 1600
