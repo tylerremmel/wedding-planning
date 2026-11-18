@@ -54,7 +54,7 @@ After finally splitting up, Jenna goes home and writes in her journal that she s
 
 {% include image-group.html group=site.data.story_images.ring edit_path="_data/story_images.yml" %}
 
-The ring features two stones in the “_toi et moi_” style and is layered with symbolism.
+The ring features two stones in the _“toi et moi”_ style and is layered with symbolism.
 
 The stones are a mix of old and new, representing the love before them and the love that will continue to grow with them.
 
@@ -72,9 +72,9 @@ The gold band’s swooping form wraps around Jenna’s finger like a sweet and s
 
 <!-- `END OF SCROLLYTELLING SEQUENCE` -->
 
-The style inspiration goes back to 2022. Jenna is a huge fan of _The New York Times_’ Style section, especially their wedding content. She loves vows, mini vows, Modern Love stories, tiny love stories — you name it.
+The style inspiration goes back to 2022. Jenna is a huge fan of _The New York Times’_ Style section, especially their wedding content. She loves vows, mini vows, Modern Love stories, tiny love stories — you name it.
 
-One day, Jenna was reading about engagement ring trends and [saw a style she’d never seen before](https://www.nytimes.com/2022/11/10/style/two-stone-bauble-engagement-ring.html): “_toi et moi_,” French for “you and me.” Jenna and Tyler knew even then that they would someday get married, but they were still years away from their engagement.
+One day, Jenna was reading about engagement ring trends and [saw a style she’d never seen before](https://www.nytimes.com/2022/11/10/style/two-stone-bauble-engagement-ring.html): _“toi et moi,”_ French for “you and me.” Jenna and Tyler knew even then that they would someday get married, but they were still years away from their engagement.
 
 Nonetheless, she filed this knowledge away for the future, appreciating that it would give each partner a physical representation in the ring.
 
@@ -136,7 +136,7 @@ Afterwards, they continued walking around their old neighborhood with Pigs, pick
 
 ## The Pig
 
-If you’re scrolling through and wondering why a dog is everywhere — that’s not just any dog, THAT IS THE COUPLE’S BABY! Yes, Jenna and Tyler are the all-too-proud parents of three-year-old Pigs In A Blanket.
+If you’re scrolling through and wondering why a dog is everywhere — that’s not just any dog, _that’s their baby._ Yes, Jenna and Tyler are the all-too-proud parents of three-year-old Pigs In A Blanket.
 
 Pitbull mixes are Jenna’s favorite type of dogs, and she frequently spends her free time scrolling through dogs that need a home.
 
@@ -178,8 +178,8 @@ Because the night before Jenna left for a trip back to Connecticut in June 2021,
 - **Jenna:** “What?”
 - **Tyler:** “You, all of this.”
 - **Jenna:** “Did you just say you love me?”
-- **Tyler:** SILENCE
-- **Tyler and Jenna:** LAUGHTER
+- **Tyler:** _[silence]_
+- **Tyler and Jenna:** _[laughter]_
 
 {% endcapture %}
 {% include drawer.html id="why-officially-drawer" label="Why officially?" text=why_officially %}

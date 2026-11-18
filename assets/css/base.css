@@ -188,6 +188,22 @@ nav button,
   font-weight: var(--meta-wght-strong);
 }
 
+/* Roboto Flex has no true italic, only its slnt axis (0 to 10deg of lean). Emphasis inside meta text sets the angle
+   from a token instead of the browser's default italic (which would clamp to the 10deg maximum).
+   Keep this selector list in step with the meta role above. */
+:is(
+    .meta,
+    .label,
+    small,
+    figcaption,
+    .map-split__text :is(p, li):not(.eyebrow),
+    .drawer__slot :is(p, li),
+    .promo-tile__text p
+  )
+  em {
+  font-style: oblique var(--meta-slant);
+}
+
 /* Navigation uses the meta weights but with the uppercase, tracked treatment from Figma. */
 nav a,
 nav button {
@@ -497,6 +513,13 @@ summary:focus-visible {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---------- Small caps ----------
+   Emphatic all-caps words are wrapped in .sc at build time (_plugins/small_caps.rb). */
+.sc {
+  font-size: var(--small-caps-size);
+  letter-spacing: var(--small-caps-tracking);
 }
 
 /* ---------- Unwritten content marker ---------- */

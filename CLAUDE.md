@@ -14,7 +14,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 
 ## Content and images
 
-- Copy comes verbatim from the planning doc (typos included). Anything unwritten is a visible `TK` marker, including photo alt text, which a human writes.
+- The copy on the site is the source of truth. Don't reword or "fix" it unless asked (typos included). Anything unwritten is a visible `TK` marker, including photo alt text, which a human writes.
 - Never open or view the wedding photos.
 - Run every new image through `scripts/prep-image.sh` (strips EXIF/GPS/other metadata, resizes, converts to sRGB JPEG, prints the YAML). Originals live in `~/wedding-image-originals/`, outside the repo. Keep an eye out for other hidden metadata.
 - The site title is "The wedding of Jenna Grande and Tyler Remmel" (`_config.yml`), with a lowercase "wedding" everywhere it appears (web manifest, README, docs). Don't reintroduce "The Grande-Remmel Wedding". The header headline always reads "Jenna and Tyler are getting married".
@@ -29,7 +29,7 @@ Jekyll site (see README.md for structure, EDITING.md for how content is edited).
 
 ## Fonts
 
-- `assets/fonts/roboto-serif-latin.woff2` and `roboto-flex-latin.woff2` must keep a `STAT` table, or iOS Safari ignores `font-weight`/`font-stretch` and renders them light and narrow. After re-subsetting or replacing either file, run `python3 scripts/add-stat-table.py` (needs `fonttools` and `brotli`).
+- `assets/fonts/roboto-serif-latin.woff2`, `roboto-serif-latin-italic.woff2` and `roboto-flex-latin.woff2` must keep a `STAT` table, or iOS Safari ignores `font-weight`/`font-stretch` and renders them light and narrow. Italics: Serif's is its own file (no slant axis); Flex slants via its `slnt` axis in the one file. `scripts/subset-fonts.py` regenerates all three from the Google Fonts downloads. After re-subsetting or replacing any of them, run `python3 scripts/add-stat-table.py` (needs `fonttools` and `brotli`).
 - Don't fix font mismatches with `font-variation-settings`. It inherits, so it overrides `font-weight` on children (`<strong>`, the venues app's Quicksand).
 - Type changes need checking in WebKit as well as Chrome (Playwright's WebKit reproduces the iOS Safari behavior). Tyler does that check; see Visual QA.
 

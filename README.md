@@ -45,6 +45,7 @@ should stay out of search engines set `noindex: true` in their front matter.
   - `drawer.html`: a modal drawer that slides in from the bottom (default), left or right over a scrim; `id`, `text` (markdown), `side`, `label`. Opened by any `<button class="link-button" data-drawer-open="ID">`.
   - `edit-attr.html`: emits the `data-edit-src` attribute used by edit mode.
 - `_plugins/highlight_tk.rb`: Liquid filter that wraps a standalone `TK` in visible text in `<mark class="tk">`. Custom plugins work because the site is built by Actions rather than the `github-pages` gem.
+- `_plugins/small_caps.rb`: Liquid filter, applied to the page body in `_layouts/default.html`, that wraps runs of all-caps words in visible text (emphasis like `SILENCE`) in `<span class="sc">`. Acronyms listed in `_data/small_caps_skip.yml` are left alone. Styling: `.sc` in `base.css`, sized by the `--small-caps-*` tokens.
 
 ### Styling and scripts
 
@@ -58,7 +59,7 @@ should stay out of search engines set `noindex: true` in their front matter.
 
 ### Fonts
 
-Roboto Serif and Roboto Flex are self-hosted variable fonts in `assets/fonts/`, declared in `tokens.css`. Both files **must contain a `STAT` table**. Without it, iOS Safari ignores `font-weight` and `font-stretch` for them and renders everything at the lightest weight and narrowest width (Chrome looks fine either way). Subsetting drops the table, so after re-subsetting or replacing either font, run:
+Roboto Serif (upright and italic files) and Roboto Flex are self-hosted variable fonts in `assets/fonts/`, declared in `tokens.css`. Italics: Roboto Serif has no slant axis, so its italic is a separate file (`roboto-serif-latin-italic.woff2`, picked by `font-style: italic`); Roboto Flex has a `slnt` axis in the one file (`font-style: oblique 0deg 10deg` in its `@font-face`), upright at 0. `scripts/subset-fonts.py` documents and reproduces how the files are cut from the full Google Fonts downloads. All three files **must contain a `STAT` table**. Without it, iOS Safari ignores `font-weight` and `font-stretch` for them and renders everything at the lightest weight and narrowest width (Chrome looks fine either way). Subsetting drops the table, so after re-subsetting or replacing either font, run:
 
 ```sh
 pip install fonttools brotli

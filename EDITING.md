@@ -34,6 +34,7 @@ GitHub decides who is allowed to save.
 - **Don't rename the left-hand keys** (`text:`, `date:`, `alt:`).
 - **On Our Story, a section runs from the divider above its `## Heading` to the next divider.** Add a section by adding a divider line (`{% include divider.html %}` is a plain rule; add `ornament=true` for the ornament, normally only the first), then a `## New heading`; the nav picks it up automatically.
 - **`TK` means "to come".** It shows as a yellow marker on the page. Search for `TK` to find unfinished content. Remove it when the real text is in.
+- **ALL CAPS words get the small-caps look automatically.** To keep an acronym (like `RSVP`) normal, add it to `_data/small_caps_skip.yml`.
 - **Never put private information** (phone numbers, addresses, RSVP details) in these files: the repository is public.
 
 ## Keeping a page out of search

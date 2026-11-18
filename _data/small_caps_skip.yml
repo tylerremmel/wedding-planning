@@ -1,0 +1,15 @@
+# All-caps terms that should NOT get the small-caps treatment (acronyms, codes).
+# Any other run of two or more capital letters in page text is styled (see _plugins/small_caps.rb).
+# Match is exact and case-sensitive. Add a term here if a new acronym gets styled by accident.
+- AKA
+- BOS
+- NAVTEQ
+- OKLCH
+- OS
+- PTC
+- PWM
+- RSVP
+- SVG
+- TBA
+- TK
+- TV

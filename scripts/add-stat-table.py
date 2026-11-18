@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add a STAT table to the self-hosted Roboto variable fonts, in place.
+"""Add a STAT table to the self-hosted Roboto variable fonts (serif, serif italic, flex), in place.
 
 Why: iOS Safari (WebKit/CoreText) only maps CSS font-weight / font-stretch onto a variable font's
 axes when the font has a STAT table. Our subsetting step drops it, and the fonts then render at their
@@ -27,22 +27,27 @@ def values(*items):
     ]
 
 
+SERIF_AXES = [
+    {"tag": "wdth", "name": "Width", "ordering": 0,
+     "values": values((120, "Expanded", True), (150, "Extra Expanded", False))},
+    {"tag": "opsz", "name": "Optical Size", "ordering": 1,
+     "values": values((8, "Caption", False), (20, "Text", True), (144, "Display", False))},
+    {"tag": "wght", "name": "Weight", "ordering": 2,
+     "values": values((300, "Light", False), (400, "Regular", True),
+                      (500, "Medium", False), (700, "Bold", False))},
+]
+
 SPECS = {
-    "roboto-serif-latin.woff2": [
-        {"tag": "wdth", "name": "Width", "ordering": 0,
-         "values": values((120, "Expanded", True), (150, "Extra Expanded", False))},
-        {"tag": "opsz", "name": "Optical Size", "ordering": 1,
-         "values": values((8, "Caption", False), (20, "Text", True), (144, "Display", False))},
-        {"tag": "wght", "name": "Weight", "ordering": 2,
-         "values": values((300, "Light", False), (400, "Regular", True),
-                          (500, "Medium", False), (700, "Bold", False))},
-    ],
+    "roboto-serif-latin.woff2": SERIF_AXES,
+    "roboto-serif-latin-italic.woff2": SERIF_AXES,
     "roboto-flex-latin.woff2": [
         {"tag": "opsz", "name": "Optical Size", "ordering": 0,
          "values": values((8, "Caption", False), (14, "Text", True), (144, "Display", False))},
         {"tag": "wght", "name": "Weight", "ordering": 1,
          "values": values((100, "Thin", False), (300, "Light", False),
                           (400, "Regular", True), (500, "Medium", False))},
+        {"tag": "slnt", "name": "Slant", "ordering": 2,
+         "values": values((-10, "Slanted", False), (0, "Upright", True))},
     ],
 }
 

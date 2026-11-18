@@ -5,7 +5,11 @@
    scroll lock while open (components.css). */
 (function () {
   function open(drawer) {
-    if (drawer && !drawer.open) drawer.showModal();
+    if (!drawer || drawer.open) return;
+    drawer.showModal();
+    /* showModal() focuses the first control, the close button, and iOS Safari draws its focus ring even after
+       a tap. Focus the panel instead (tabindex="-1"); screen readers still announce it by its aria-label. */
+    drawer.focus();
   }
 
   document.addEventListener("click", function (e) {

@@ -875,6 +875,11 @@ dialog.drawer {
   color: var(--drawer-ink);
   border-top: 1px solid var(--rule);
 }
+/* On open, drawer.js focuses the panel itself (not the close button), so no ring appears for touch users.
+   The panel is not a control; keyboard users Tab from it to the close button, which does show its ring. */
+dialog.drawer:focus {
+  outline: none;
+}
 .drawer[data-side="left"],
 .drawer[data-side="right"] {
   inset: 0 auto 0 0;

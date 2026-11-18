@@ -2,7 +2,7 @@ Roboto Flex: Copyright 2017 The Roboto Flex Project Authors (https://github.com/
 Roboto Serif: Copyright 2022 The Roboto Serif Project Authors (https://github.com/googlefonts/roboto-serif)
 
 These Font Software files are licensed under the SIL Open Font License, Version 1.1.
-roboto-flex-latin.woff2 and roboto-serif-latin.woff2 are modified subsets (Latin
+roboto-flex-latin.woff2, roboto-serif-latin.woff2 and roboto-serif-latin-italic.woff2 are modified subsets (Latin
 characters only; some variation axes fixed to the values used by this site).
 This license is copied below, and is also available with a FAQ at:
 http://scripts.sil.org/OFL
