@@ -9,6 +9,7 @@ hero:
   src: engagement-steps.jpg
   width: 1600
   height: 1067
+  caption: (Charla Jasper)
   alt: Jenna, Tyler and Pigs sit on the steps outside Tyler's old apartment building after getting engaged on March 30, 2025.
 ---
 
@@ -65,6 +66,8 @@ On the left is an heirloom round-cut diamond that was the gift of Jenna’s mate
 On the right is a pear-shaped Montana sapphire. This is an homage to the couple’s first big hiking trip together to Glacier National Park in August 2021.
 
 The two stones are set such that they rest on one another, just like Jenna and Tyler rely on each other for support.
+
+{% include image-group.html group=site.data.story_images.ring-close edit_path="_data/story_images.yml" %}
 
 The sapphire is oriented outward and upward with a thick prong that points towards their future trajectory together.
 

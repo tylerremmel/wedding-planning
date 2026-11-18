@@ -62,7 +62,7 @@ ol {
 .content > * {
   max-width: var(--block-max);
   margin-inline: auto;
-  padding-inline: var(--space-150);
+  padding-inline: var(--space-125);
   padding-bottom: var(--paragraph-spacing);
 }
 /* Headings sit closer to what they introduce; section headings and block components get extra room above. */

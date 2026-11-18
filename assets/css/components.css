@@ -605,6 +605,11 @@
   height: var(--divider-rule-weight);
   background: currentColor;
 }
+.divider__stroke {
+  /* Screen-pixel stroke, so the rules stay --divider-rule-weight at any ornament size. */
+  vector-effect: non-scaling-stroke;
+  stroke-width: var(--divider-rule-weight);
+}
 .divider__ornament {
   flex: none;
   width: var(--divider-ornament-width);

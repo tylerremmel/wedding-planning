@@ -211,7 +211,7 @@
   --section-gap: var(
     --space-225
   ); /* between blocks on a long page (Our Story) */
-  --divider-space: var(--space-400); /* above and below a section divider */
+  --divider-space: var(--space-300); /* above and below a section divider */
 
   /* Content column: every block is at most --measure of content plus a --space-150 gutter each side. */
   --block-max: calc(var(--measure) + var(--space-150) * 2); /* 688px */
@@ -240,14 +240,12 @@
   --tab-unit: 10;
 
   /* ---------- Ornament divider ----------
-     Set the ornament HEIGHT (42px on desktop, per Figma); width follows the SVG's 25.42 x 11.29 ratio.
-     The side rules are SVGs of the same height, so their stroke weight scales with the ornament. */
+     Set the ornament HEIGHT (42px on desktop, per Figma); width follows the SVG's 93.56 x 42 ratio (it includes the swoop stubs).
+     The side rules are strokes in the same SVG. */
   --divider-ornament-height: 32px;
-  --divider-ornament-width: calc(
-    var(--divider-ornament-height) * 25.42 / 11.29
-  );
-  /* A plain rule matches the ornament's stroke weight (0.25 of 11.29 units tall). */
-  --divider-rule-weight: calc(var(--divider-ornament-height) * 0.25 / 11.29);
+  --divider-ornament-width: calc(var(--divider-ornament-height) * 93.56 / 42);
+  /* Every rule is 1px: the plain rule, and the ornament's swoop strokes (non-scaling, see .divider__stroke). */
+  --divider-rule-weight: 1px;
 
   /* ---------- Timeline ---------- */
   --timeline-dot: 13px;

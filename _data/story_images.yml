@@ -1,4 +1,5 @@
-# Photo groups used in the Our Story page text. Each group has 1, 2 or 4 images and an optional caption.
+# Photo groups used in the Our Story page text. Each group has 1, 2 or 4 images and an optional caption. `narrow: true` caps a lone
+# non-portrait image at the portrait width.
 # `alt` must be written by a person (TK until then). Add photos with scripts/prep-image.sh, which
 # prints the src/width/height lines to paste here.
 first_kiss:
@@ -10,12 +11,21 @@ first_kiss:
       height: 1600
 
 ring:
-  caption: "Jenna models her new ring shortly after Tyler proposed."
+  caption: "Jenna models her new ring shortly after Tyler proposed. (Charla Jasper)"
   images:
     - src: jenna-ring-model.jpg
       alt: Jenna holds up her hand with the ring while Tyler kisses her.
-      width: 1252
+      width: 835
       height: 835
+
+ring-close:
+  narrow: true
+  caption: "Within the sapphire is a small inclusion that sometimes refracts the sunlight."
+  images:
+    - src: ring-close-up.jpg
+      alt: Details of the ring are visible, including the stones, prongs and band.
+      width: 761
+      height: 761
 
 grandparents:
   caption: "Jenna was very close with her grandparents, Anna and Frank Nesi."
@@ -50,15 +60,15 @@ boundary_waters:
       height: 1600
 
 proposal:
-  caption: "Spoiler alert: She said yes."
+  caption: "Spoiler alert: She said yes. (Charla Jasper)"
   images:
     - src: engagement-moment.jpg
       alt: Tyler gets down on one knee and presents the ring as he proposes to Jenna.
-      width: 1600
+      width: 1312
       height: 1312
 
 proposal_pigs:
-  caption: "Pigs briefly interrupted the proposal."
+  caption: "Pigs briefly interrupted the proposal. (Charla Jasper)"
   images:
     - src: engagement-pigs-moment.jpg
       alt: Pigs jumps out of his ‘wait’ and into Tyler’s arms while he was down on one knee.
@@ -66,11 +76,11 @@ proposal_pigs:
       height: 1600
 
 proposal_walking:
-  caption: "Jenna and Tyler have a penchant for holding hands."
+  caption: "Jenna and Tyler have a penchant for holding hands. (Charla Jasper)"
   images:
     - src: engagement-walking.jpg
       alt: Jenna and Tyler hold hands walking in Capitol Hill while Pigs sniffs by the sidewalk.
-      width: 1600
+      width: 1067
       height: 1067
 
 pigs_puppy:

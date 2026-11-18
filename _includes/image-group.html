@@ -1,12 +1,15 @@
 {%- comment -%}
-  1, 2 or 4 images with an optional caption. Params: group (images: [{src, alt, width, height}], caption),
+  1, 2 or 4 images with an optional caption. Params: group (images: [{src, alt, width, height}], caption, narrow),
   edit_path (the data file the group lives in, for ?edit). Used standalone and inside timeline items.
-  A lone portrait image is narrower than a lone landscape one; grids (2 or 4) always stay side by side, never stacking.
+  A lone portrait image (or one with `narrow: true` in its group) is narrower than a lone landscape one; grids (2 or 4) always stay side by side, never stacking.
 {%- endcomment -%}
 {%- assign images = include.group.images -%}
 {%- assign count = images | size -%}
 {%- assign first = images | first -%}
-<figure class="image-group image-group--{{ count }}{% if count == 1 and first.height > first.width %} image-group--portrait{% endif %}" {% if include.edit_path %}{% include edit-attr.html path=include.edit_path %}{% endif %}>
+{%- assign is_narrow = false -%}
+{%- if count == 1 and first.height > first.width %}{% assign is_narrow = true %}{% endif -%}
+{%- if count == 1 and include.group.narrow %}{% assign is_narrow = true %}{% endif -%}
+<figure class="image-group image-group--{{ count }}{% if is_narrow %} image-group--portrait{% endif %}" {% if include.edit_path %}{% include edit-attr.html path=include.edit_path %}{% endif %}>
   <div class="image-group__images">
     {%- for image in images %}
     {%- include image.html src=image.src alt=image.alt width=image.width height=image.height class="image-group__img" %}
